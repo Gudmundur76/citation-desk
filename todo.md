@@ -32,3 +32,4 @@
 - [ ] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
 - [ ] Tune CopilotKit model — discover available forge model IDs and pick the best one
 - [ ] Code-split large chunks (index-DDtaqSWB.js is 3.3 MB) with dynamic imports
+- [x] Proxy ttruthdesk.claims API through Express server to fix CORS/network issues in sandbox and production

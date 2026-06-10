@@ -1,9 +1,10 @@
 /**
  * API client for the ttruthdesk.claims backend.
- * All public tRPC procedures are called via GET with JSON-encoded input.
- * No auth required for public endpoints.
+ * All public tRPC procedures are routed through the server-side proxy at
+ * /api/external/trpc/* to avoid CORS and sandbox network restrictions.
+ * The Express server forwards requests to https://ttruthdesk.claims/api/trpc.
  */
-const BASE = 'https://ttruthdesk.claims/api/trpc'
+const BASE = '/api/external/trpc'
 
 function encode(input: unknown): string {
   return encodeURIComponent(JSON.stringify({ json: input }))

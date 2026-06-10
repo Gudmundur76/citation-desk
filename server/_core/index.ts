@@ -8,7 +8,8 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { registerCopilotKit } from "../copilotkit";
+import { registerCopilotKit } from "../copilotkit"
+import { registerExternalProxy } from "../externalProxy";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -38,6 +39,7 @@ async function startServer() {
   registerStorageProxy(app);
   registerOAuthRoutes(app);
   registerCopilotKit(app);
+  registerExternalProxy(app);
   // tRPC API
   app.use(
     "/api/trpc",
