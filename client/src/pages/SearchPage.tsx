@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Search as SearchIcon, Filter, X } from 'lucide-react'
-import { toast } from 'sonner'
 import { api } from '@/lib/api'
 import { ClaimCard } from '@/components/citation/ClaimCard'
 import { domainLabel } from '@/lib/utils'
@@ -22,7 +21,6 @@ export function Search() {
   const filterVerdict = params.get('verdict') ?? undefined
   const filterDomain = params.get('domain') ?? undefined
 
-  const prevQ = useRef('')
   const { data, isLoading, error } = useQuery({
     queryKey: ['search', q, filterVerdict, filterDomain],
     queryFn: () => api.searchClaims(q, {
@@ -33,23 +31,6 @@ export function Search() {
     enabled: q.length >= 2,
     staleTime: 30_000,
   })
-
-  useEffect(() => {
-    if (data && q && q !== prevQ.current) {
-      prevQ.current = q
-      if (data.count === 0) {
-        toast.info(`No claims found for "${q}"`, {
-          description: 'Try a different term or request an audit.',
-          duration: 4000,
-        })
-      } else {
-        toast.success(`${data.count} claim${data.count === 1 ? '' : 's'} found`, {
-          description: `Showing results for "${q}"`,
-          duration: 3000,
-        })
-      }
-    }
-  }, [data, q])
 
   useEffect(() => {
     setInput(params.get('q') ?? '')

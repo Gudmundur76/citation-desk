@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Search, BarChart2, BookOpen, Trophy, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NotificationBell } from './NotificationBell'
 
 const links = [
   { to: '/search', label: 'Search', icon: Search },
@@ -31,29 +30,24 @@ export function Nav() {
           </span>
         </Link>
 
-        {/* Nav links + notification bell */}
-        <div className="flex items-center gap-1">
-          <nav className="flex items-center gap-0.5">
-            {links.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
-                  pathname === to || pathname.startsWith(to + '/')
-                    ? 'bg-slate-100 text-slate-900'
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50',
-                )}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span className="hidden md:block">{label}</span>
-              </Link>
-            ))}
-          </nav>
-
-          {/* Notification bell — only shown when logged in */}
-          <NotificationBell />
-        </div>
+        {/* Nav links */}
+        <nav className="flex items-center gap-0.5">
+          {links.map(({ to, label, icon: Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                pathname === to || pathname.startsWith(to + '/')
+                  ? 'bg-slate-100 text-slate-900'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50',
+              )}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span className="hidden md:block">{label}</span>
+            </Link>
+          ))}
+        </nav>
       </div>
     </header>
   )

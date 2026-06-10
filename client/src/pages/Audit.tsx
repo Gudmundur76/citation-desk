@@ -1,9 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { CheckCircle, AlertCircle, FileText, Zap, Shield } from 'lucide-react'
-import { toast } from 'sonner'
 import { api, type AuditRequestInput } from '@/lib/api'
-import { trpc } from '@/lib/trpc'
 
 const TIERS = [
   {
@@ -41,40 +39,11 @@ export function Audit() {
   const [submitted, setSubmitted] = useState(false)
   const [requestId, setRequestId] = useState<number | null>(null)
 
-  const utils = trpc.useUtils()
-  const ownerNotify = trpc.system.notifyOwner.useMutation()
-
   const mutation = useMutation({
     mutationFn: (input: AuditRequestInput) => api.submitAuditRequest(input),
-    onSuccess: async (data) => {
+    onSuccess: data => {
       setRequestId(data.requestId)
       setSubmitted(true)
-
-      // 1. In-app toast
-      toast.success('Audit request submitted!', {
-        description: `Reference #${data.requestId} — we'll be in touch soon.`,
-        duration: 6000,
-      })
-
-      // 2. Owner notification (fire-and-forget — non-blocking)
-      ownerNotify.mutate(
-        {
-          title: `New audit request #${data.requestId}`,
-          content: `Tier: ${tier} | From: ${form.contactName} <${form.contactEmail}>${form.organization ? ` @ ${form.organization}` : ''}\n\n${form.documentDescription}`,
-        },
-        {
-          onError: (err) => console.error('[Audit] Owner notify failed:', err),
-        }
-      )
-
-      // 3. Refresh notification bell if the user is logged in
-      utils.notifications.unreadCount.invalidate()
-      utils.notifications.list.invalidate()
-    },
-    onError: (err) => {
-      toast.error('Submission failed', {
-        description: (err as Error).message ?? 'Please try again.',
-      })
     },
   })
 
