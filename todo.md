@@ -24,12 +24,12 @@
 
 ## Pending / Future Work
 
-- [ ] Write vitest tests for citation API helpers (lib/api.ts)
-- [ ] Write vitest tests for CitationCopilot readable context
-- [ ] Add tRPC procedure for audit request submission (Audit page form currently client-only)
-- [ ] Bind custom domain citation.is / citations.is via Manus Settings → Domains
-- [ ] Publish to production via Manus Publish button
-- [ ] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
-- [ ] Tune CopilotKit model — discover available forge model IDs and pick the best one
-- [ ] Code-split large chunks (index-DDtaqSWB.js is 3.3 MB) with dynamic imports
+- [x] Write vitest tests for citation API helpers (lib/api.ts)
+- [x] Write vitest tests for CitationCopilot readable context
+- [ ] Add tRPC procedure for audit request submission (Audit page form currently client-only) — deferred
+- [x] Bind custom domain citation.is + www.citation.is via Manus Settings → Domains (citations.is deferred — separate domain purchase required)
+- [x] Publish to production via Manus Publish button
+- [x] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
+- [x] Tune CopilotKit model — using gpt-4.1-mini via Manus forge endpoint
+- [x] Code-split large chunks — Vite manualChunks: copilotkit/charts/react/router/radix/query/vendor
 - [x] Proxy ttruthdesk.claims API through Express server to fix CORS/network issues in sandbox and production
