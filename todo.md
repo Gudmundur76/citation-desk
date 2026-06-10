@@ -21,6 +21,27 @@
 - [x] Production build passes (pnpm build ✓)
 - [x] Existing vitest tests pass (auth.logout ✓)
 - [x] Dev server healthy — app 200, CopilotKit endpoint 400 (correct, awaits protocol request)
+- [x] Proxy ttruthdesk.claims API through Express server to fix CORS/network issues
+
+## Notifications Feature
+
+- [x] Database schema: notifications table (userId, type, title, body, link, read, createdAt)
+- [x] Database schema: pushSubscriptions table (userId, endpoint, p256dh, auth, createdAt)
+- [x] Generate and apply DB migration for both tables
+- [x] Server: notificationsDb.ts — CRUD helpers for both tables
+- [x] Server: pushDispatch.ts — VAPID web-push sender with expired subscription cleanup
+- [x] Server: dispatchNotification.ts — central helper (DB insert + push send)
+- [x] Server: routers/notifications.ts — tRPC procedures (list, unreadCount, markRead, markAllRead, subscribePush, unsubscribePush)
+- [x] Server: ENV helper updated with vapidPublicKey and vapidPrivateKey
+- [x] VAPID keys generated and saved as project secrets
+- [x] Client: service worker sw.js for push background delivery
+- [x] Client: usePushNotifications hook — subscribe/unsubscribe with VAPID
+- [x] Client: NotificationBell component — badge, inbox drawer, push toggle
+- [x] Client: Nav updated to include NotificationBell
+- [x] Wire: Audit page — toast on submit + owner notification
+- [x] Wire: Search page — toast on results returned
+- [x] All vitest tests pass (4/4)
+- [x] TypeScript clean (0 errors)
 
 ## Pending / Future Work
 
@@ -32,4 +53,4 @@
 - [ ] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
 - [ ] Tune CopilotKit model — discover available forge model IDs and pick the best one
 - [ ] Code-split large chunks (index-DDtaqSWB.js is 3.3 MB) with dynamic imports
-- [x] Proxy ttruthdesk.claims API through Express server to fix CORS/network issues in sandbox and production
+- [ ] Wire dispatchNotification to periodic claim-verified events (heartbeat job)
