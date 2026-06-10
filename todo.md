@@ -33,3 +33,15 @@
 - [x] Tune CopilotKit model — using gpt-4.1-mini via Manus forge endpoint
 - [x] Code-split large chunks — Vite manualChunks: copilotkit/charts/react/router/radix/query/vendor
 - [x] Proxy ttruthdesk.claims API through Express server to fix CORS/network issues in sandbox and production
+- [x] Register hourly heartbeat cron (task_uid: VtXBG7Pohes3EXAEakm5s3, next run: 2026-06-10T23:00:00Z)
+
+## Registry and Claim Detail Pages
+- [x] Audit ttruthdesk.claims API for registry list and claim detail endpoints
+- [x] Build /registry page — searchable paginated claim list
+- [x] Build /claims/:id page — full claim detail with verdict, rationale, sources, JSON-LD
+- [x] Register both routes in App.tsx and add proxy endpoints
+- [x] Add Registry link to Nav.tsx
+- [x] Extend externalProxy.ts with /api/external/public/* passthrough
+- [x] Add PublicClaim / PublicClaimDetail types + registryClaims / claimById to lib/api.ts
+- [x] Write Vitest tests for proxy endpoints (registry.proxy.test.ts) — 6 tests pass
+- [x] All 26 tests pass, 0 TypeScript errors

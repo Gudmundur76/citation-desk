@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Search, BarChart2, BookOpen, Trophy, FileText } from 'lucide-react'
+import { Search, BarChart2, BookOpen, Trophy, FileText, Database } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
   { to: '/search', label: 'Search', icon: Search },
+  { to: '/registry', label: 'Registry', icon: Database },
   { to: '/verticals', label: 'Verticals', icon: BarChart2 },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { to: '/about', label: 'About', icon: BookOpen },

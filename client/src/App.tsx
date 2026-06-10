@@ -13,6 +13,8 @@ import { VerticalDetail } from '@/pages/VerticalDetail'
 import { Leaderboard } from '@/pages/Leaderboard'
 import { Audit } from '@/pages/Audit'
 import { About } from '@/pages/About'
+import { RegistryPage } from '@/pages/RegistryPage'
+import { ClaimDetail } from '@/pages/ClaimDetail'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,6 +77,8 @@ Current page: ${location.pathname}`}
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/audit" element={<Audit />} />
           <Route path="/about" element={<About />} />
+          <Route path="/registry" element={<RegistryPage />} />
+          <Route path="/claims/:id" element={<ClaimDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
