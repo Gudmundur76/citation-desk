@@ -54,3 +54,10 @@
 - [ ] Tune CopilotKit model — discover available forge model IDs and pick the best one
 - [ ] Code-split large chunks (index-DDtaqSWB.js is 3.3 MB) with dynamic imports
 - [ ] Wire dispatchNotification to periodic claim-verified events (heartbeat job)
+
+## Remaining Open Items
+- [x] Vitest tests for lib/api.ts (proxy URL construction, response shape validation)
+- [x] Vitest tests for CitationCopilot readable context builder
+- [x] Disable CopilotKit telemetry (COPILOTKIT_TELEMETRY_DISABLED=true env var)
+- [x] Code-split main bundle with dynamic imports (CopilotKit, recharts, heavy pages)
+- [x] Periodic heartbeat job for claim-verified notifications

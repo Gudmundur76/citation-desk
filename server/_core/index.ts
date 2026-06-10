@@ -10,6 +10,7 @@ import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { registerCopilotKit } from "../copilotkit"
 import { registerExternalProxy } from "../externalProxy";
+import { claimDigestHandler } from "../scheduledClaimDigest";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -40,6 +41,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerCopilotKit(app);
   registerExternalProxy(app);
+  // Heartbeat cron callbacks — must be mounted before Vite/static fallthrough
+  app.post("/api/scheduled/claimDigest", claimDigestHandler);
   // tRPC API
   app.use(
     "/api/trpc",

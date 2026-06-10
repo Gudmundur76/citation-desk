@@ -1,18 +1,38 @@
+import { lazy, Suspense } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CopilotKit } from '@copilotkit/react-core'
-import { CopilotSidebar } from '@copilotkit/react-ui'
-import '@copilotkit/react-ui/styles.css'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { CitationCopilot } from '@/components/citation/CitationCopilot'
 import { Nav } from '@/components/citation/Nav'
-import { Home as CitationHome } from '@/pages/CitationHome'
-import { Search as SearchPage } from '@/pages/SearchPage'
-import { Verticals } from '@/pages/Verticals'
-import { VerticalDetail } from '@/pages/VerticalDetail'
-import { Leaderboard } from '@/pages/Leaderboard'
-import { Audit } from '@/pages/Audit'
-import { About } from '@/pages/About'
+
+// ─── Lazy-loaded pages ────────────────────────────────────────────────────────
+// Each page is a separate dynamic chunk — only downloaded when first navigated to.
+const CitationHome   = lazy(() => import('@/pages/CitationHome').then(m => ({ default: m.Home })))
+const SearchPage     = lazy(() => import('@/pages/SearchPage').then(m => ({ default: m.Search })))
+const Verticals      = lazy(() => import('@/pages/Verticals').then(m => ({ default: m.Verticals })))
+const VerticalDetail = lazy(() => import('@/pages/VerticalDetail').then(m => ({ default: m.VerticalDetail })))
+const Leaderboard    = lazy(() => import('@/pages/Leaderboard').then(m => ({ default: m.Leaderboard })))
+const Audit          = lazy(() => import('@/pages/Audit').then(m => ({ default: m.Audit })))
+const About          = lazy(() => import('@/pages/About').then(m => ({ default: m.About })))
+
+// ─── Lazy-loaded CopilotKit sidebar (large chunk, not needed on first paint) ──
+const CopilotSidebar = lazy(() =>
+  import('@copilotkit/react-ui').then(m => {
+    // Side-effect: load CopilotKit styles once the chunk is fetched
+    import('@copilotkit/react-ui/styles.css')
+    return { default: m.CopilotSidebar }
+  })
+)
+
+// ─── Page loading fallback ────────────────────────────────────────────────────
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
+    </div>
+  )
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,14 +66,15 @@ function NotFound() {
 function AppRoutes() {
   const location = useLocation()
   return (
-    <CopilotSidebar
-      defaultOpen={false}
-      labels={{
-        title: 'citation.is Assistant',
-        initial:
-          'Ask me about scientific claims, research verticals, or request an audit. I have access to live data from the knowledge base.',
-      }}
-      instructions={`You are the citation.is scientific claim verification assistant. 
+    <Suspense fallback={<PageLoader />}>
+      <CopilotSidebar
+        defaultOpen={false}
+        labels={{
+          title: 'citation.is Assistant',
+          initial:
+            'Ask me about scientific claims, research verticals, or request an audit. I have access to live data from the knowledge base.',
+        }}
+        instructions={`You are the citation.is scientific claim verification assistant. 
 You help users understand scientific claims, find evidence, and navigate the knowledge base.
 You have access to live data about:
 - Global stats (total documents, claims, supported verdicts)
@@ -63,22 +84,25 @@ You have access to live data about:
 Always be precise and cite specific numbers when available. 
 If a user asks to search for something, suggest they use the search bar or tell them what you found in the readable context.
 Current page: ${location.pathname}`}
-    >
-      <CitationCopilot />
-      <div className="min-h-screen bg-white">
-        <Nav />
-        <Routes>
-          <Route path="/" element={<CitationHome />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/verticals" element={<Verticals />} />
-          <Route path="/verticals/:domain" element={<VerticalDetail />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/audit" element={<Audit />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </CopilotSidebar>
+      >
+        <CitationCopilot />
+        <div className="min-h-screen bg-white">
+          <Nav />
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<CitationHome />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/verticals" element={<Verticals />} />
+              <Route path="/verticals/:domain" element={<VerticalDetail />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/audit" element={<Audit />} />
+              <Route path="/about" element={<About />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </div>
+      </CopilotSidebar>
+    </Suspense>
   )
 }
 

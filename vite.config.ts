@@ -167,6 +167,26 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // CopilotKit — large UI + runtime bundle
+          if (id.includes('@copilotkit')) return 'copilotkit'
+          // Recharts + D3 — only used on Leaderboard/Audit pages
+          if (id.includes('recharts') || id.includes('d3-') || id.includes('victory')) return 'charts'
+          // React ecosystem core
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'react'
+          // React Router
+          if (id.includes('react-router')) return 'router'
+          // Radix UI primitives
+          if (id.includes('@radix-ui')) return 'radix'
+          // TanStack Query
+          if (id.includes('@tanstack')) return 'query'
+          // Remaining node_modules → vendor chunk
+          if (id.includes('node_modules')) return 'vendor'
+        },
+      },
+    },
   },
   server: {
     host: true,

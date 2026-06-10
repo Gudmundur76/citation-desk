@@ -62,3 +62,19 @@ export const pushSubscriptions = mysqlTable("pushSubscriptions", {
 
 export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type InsertPushSubscription = typeof pushSubscriptions.$inferInsert;
+
+/**
+ * Tracks project-level heartbeat cron jobs so their taskUid can be
+ * looked up for updates, pauses, and dedup in the callback handler.
+ */
+export const scheduledJobs = mysqlTable("scheduledJobs", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 128 }).notNull().unique(),
+  taskUid: varchar("taskUid", { length: 65 }).notNull(),
+  description: text("description"),
+  lastRunAt: timestamp("lastRunAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ScheduledJob = typeof scheduledJobs.$inferSelect;
+export type InsertScheduledJob = typeof scheduledJobs.$inferInsert;
