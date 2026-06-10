@@ -1,0 +1,34 @@
+import { VerdictBadge } from './VerdictBadge'
+import { confidenceColor, confidenceLabel, domainLabel, truncate } from '@/lib/utils'
+import type { ClaimResult } from '@/lib/api'
+
+interface Props {
+  claim: ClaimResult
+  showDocument?: boolean
+}
+
+export function ClaimCard({ claim, showDocument = true }: Props) {
+  const conf = claim.confidenceScore ?? 0
+  return (
+    <article className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:shadow-sm transition-all">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <VerdictBadge verdict={claim.verdict} />
+        <span className={`text-xs font-medium font-mono shrink-0 ${confidenceColor(conf)}`}>
+          {(conf * 100).toFixed(0)}% {confidenceLabel(conf)}
+        </span>
+      </div>
+      <p className="text-sm text-slate-700 leading-relaxed mb-3">
+        {truncate(claim.claimText, 280)}
+      </p>
+      {showDocument && claim.documentTitle && (
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
+          <span className="truncate">{truncate(claim.documentTitle, 80)}</span>
+          <span className="shrink-0 px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-xs">
+            {domainLabel(claim.verticalDomain)}
+          </span>
+        </div>
+      )}
+    </article>
+  )
+}
