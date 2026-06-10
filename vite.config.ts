@@ -167,6 +167,26 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // CopilotKit — largest single dependency
+          if (id.includes('node_modules/@copilotkit')) return 'copilotkit'
+          // Recharts + D3 — charting
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) return 'charts'
+          // React core
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) return 'react'
+          // React Router
+          if (id.includes('node_modules/react-router')) return 'router'
+          // Radix UI primitives
+          if (id.includes('node_modules/@radix-ui')) return 'radix'
+          // TanStack Query
+          if (id.includes('node_modules/@tanstack')) return 'query'
+          // All other node_modules
+          if (id.includes('node_modules')) return 'vendor'
+        },
+      },
+    },
   },
   server: {
     host: true,
