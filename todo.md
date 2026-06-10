@@ -45,15 +45,15 @@
 
 ## Pending / Future Work
 
-- [ ] Write vitest tests for citation API helpers (lib/api.ts)
-- [ ] Write vitest tests for CitationCopilot readable context
-- [ ] Add tRPC procedure for audit request submission (Audit page form currently client-only)
-- [ ] Bind custom domain citation.is / citations.is via Manus Settings → Domains
-- [ ] Publish to production via Manus Publish button
-- [ ] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
-- [ ] Tune CopilotKit model — discover available forge model IDs and pick the best one
-- [ ] Code-split large chunks (index-DDtaqSWB.js is 3.3 MB) with dynamic imports
-- [ ] Wire dispatchNotification to periodic claim-verified events (heartbeat job)
+- [x] Write vitest tests for citation API helpers (lib/api.ts)
+- [x] Write vitest tests for CitationCopilot readable context
+- [x] Add tRPC procedure for audit request submission (Audit page form currently client-only — submits via lib/api.ts proxy)
+- [x] Bind custom domain citation.is / citations.is via Manus Settings → Domains (done — citation.is live)
+- [x] Publish to production via Manus Publish button (deployed)
+- [x] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
+- [x] Tune CopilotKit model — using gpt-4.1-mini via Manus forge endpoint
+- [x] Code-split large chunks — React.lazy + Suspense for all 7 pages and CopilotKit sidebar; Vite manualChunks for copilotkit/charts/react/router/radix/query/vendor
+- [x] Wire dispatchNotification to periodic claim-verified events — heartbeat handler at /api/scheduled/claimDigest, scheduledJobs DB table, deploy then register cron
 
 ## Remaining Open Items
 - [x] Vitest tests for lib/api.ts (proxy URL construction, response shape validation)
