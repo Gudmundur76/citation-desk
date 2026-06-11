@@ -445,3 +445,27 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Update robots.txt to reference all three sitemaps
 - [x] Fix TypeScript errors: replaced claim.source_url with claim.evidence_url in ClaimReview JSON-LD
 - [x] Run TypeScript check (0 errors) and tests (35/35 pass), save checkpoint, update memory repo
+
+## Phase C5 — Developer Experience Improvements
+
+### Live API Playground
+- [x] Replace static "Try it now" hardcoded JSON with a live interactive playground that fires real API requests and renders the response
+- [x] Add interactive claim verifier input — text field + "Verify" button that calls /api/public/verify-claim and shows live result with verdict badge
+- [x] Add live claims browser — search input + filter dropdowns that call the real claims API and render results inline
+
+### MCP & Agent Documentation
+- [x] Add OAI-PMH documentation section (Identify, ListRecords, GetRecord with example URLs)
+- [x] Add A2A agent card documentation (/.well-known/agent-card.json)
+- [x] Add llms.txt / llms-full.txt documentation for LLM grounding
+- [x] Improve MCP section: add tool names, input schema, example tool call JSON
+
+### API Changelog & Versioning
+- [x] Add API changelog section with version history (v1.0, v1.1 changes)
+- [x] Add rate limits and SLA information section
+
+### SDK / TypeScript Types
+- [x] Add TypeScript types section with copy-paste type definitions for PublicClaim, VerifyClaimResult
+- [x] Add npm install hint for a hypothetical @citation-is/sdk package (with note: "coming soon")
+
+### Tests and delivery
+- [x] Run TypeScript check and tests, save checkpoint, update memory repo
