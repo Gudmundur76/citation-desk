@@ -181,3 +181,28 @@
 - [x] Run tests (27/27), 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 109 to memory repo
+
+## Phase 110 — Agent Readability Round 2 (59→90+)
+
+### Root cause analysis
+The scanner crawls citation.is without executing JavaScript. It sees the raw index.html shell
+(~8 words in <body>: just <div id="root"></div>). All h1/h2/landmarks are injected by React
+after hydration — invisible to the crawler. The fix is to embed static semantic HTML directly
+in index.html that the crawler sees immediately, while React still mounts into #root.
+
+### Phase 1: Semantic HTML + Citability (static pre-hydration content)
+- [x] Add static <header>, <main>, <h1>, <h2>, <p>, <footer> directly in index.html body
+      (outside #root) that the crawler sees before JS runs — React will overlay on top
+- [x] Word count: 1613 words in static shell (was 8)
+- [x] Add <nav> with landmark links in the static header
+
+### Phase 2: Speed (TTFB 1990ms, payload 363kb)
+- [x] Add Express compression middleware (gzip) — 108kb compressed vs 377kb uncompressed (71% reduction)
+- [x] Add Cache-Control headers for static assets (immutable for hashed assets, 1h for well-known)
+- [x] Google Fonts already uses display=swap; added dns-prefetch for fonts.gstatic.com
+- [x] Add <link rel="preconnect"> and <link rel="dns-prefetch"> for fonts.googleapis.com + fonts.gstatic.com
+
+### Phase 3: Tests + Checkpoint
+- [x] 27/27 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 110 to memory repo

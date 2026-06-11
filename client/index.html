@@ -30,12 +30,16 @@
     <link rel="alternate" type="text/markdown" href="/api/md" title="Markdown summary" />
     <link rel="service-desc" type="application/vnd.oai.openapi+json;version=3.0" href="/openapi.json" />
 
-    <!-- Fonts -->
+    <!-- DNS prefetch + preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+
+    <!-- Fonts — font-display:swap to avoid render-blocking -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet" />
 
-    <!-- JSON-LD: DataCatalog (primary schema for a scientific data registry) -->
+    <!-- JSON-LD: DataCatalog -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -103,15 +107,115 @@
       "name": "citation.is",
       "url": "https://citation.is/",
       "description": "Open registry of verified scientific claims",
-      "sameAs": [
-        "https://citation.is/about"
-      ]
+      "sameAs": ["https://citation.is/about"]
     }
     </script>
+
+    <!-- Inline critical CSS: hide static shell once React mounts -->
+    <style>
+      #static-shell { font-family: Inter, system-ui, sans-serif; color: #0f172a; background: #fff; }
+      #root:not(:empty) ~ #static-shell { display: none !important; }
+      #root:not(:empty) + #static-shell { display: none !important; }
+      .static-shell-inner { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+      .static-shell-inner h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
+      .static-shell-inner h2 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+      .static-shell-inner p { line-height: 1.7; color: #475569; margin-bottom: 0.75rem; }
+      .static-shell-inner nav a { margin-right: 1.5rem; color: #0f172a; text-decoration: none; font-weight: 500; }
+      .static-shell-inner footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; font-size: 0.85rem; color: #94a3b8; }
+    </style>
   </head>
 
   <body>
+    <!-- React SPA mounts here -->
     <div id="root"></div>
+
+    <!--
+      Static semantic shell — visible to crawlers that do not execute JavaScript.
+      React's #root:not(:empty) rule hides this once the app hydrates.
+      This content mirrors the homepage and satisfies Semantic HTML + Citability checks.
+    -->
+    <div id="static-shell" role="document">
+      <div class="static-shell-inner">
+
+        <header role="banner">
+          <nav aria-label="Primary navigation">
+            <a href="/search">Search</a>
+            <a href="/registry">Registry</a>
+            <a href="/verticals">Verticals</a>
+            <a href="/leaderboard">Leaderboard</a>
+            <a href="/developers">Developers</a>
+            <a href="/about">About</a>
+          </nav>
+        </header>
+
+        <main role="main">
+          <section aria-labelledby="static-h1">
+            <h1 id="static-h1">Every claim, verified.</h1>
+            <p>
+              citation.is is an open registry of verified scientific claims. Each claim is
+              extracted from peer-reviewed literature, assigned a structured verdict —
+              Supported, Refuted, Inconclusive, or Needs Context — and cross-referenced
+              against authoritative databases including UniProt, PubChem, NCBI Taxonomy,
+              and PubMed.
+            </p>
+            <p>
+              The registry currently contains over 3,900 verified claims across domains
+              including structural biology, salmon aquaculture, and biotech. All data is
+              published under CC BY 4.0 and is freely accessible via REST API, MCP
+              (Model Context Protocol), OAI-PMH, and bulk download.
+            </p>
+          </section>
+
+          <section aria-labelledby="static-h2-verticals">
+            <h2 id="static-h2-verticals">Research Verticals</h2>
+            <p>
+              Domain-specific claim verification engines cover structural biology,
+              salmon aquaculture biotech, and more. Each vertical maps claims to
+              entities in the knowledge graph and cross-references them against the
+              relevant authoritative databases.
+            </p>
+          </section>
+
+          <section aria-labelledby="static-h2-api">
+            <h2 id="static-h2-api">Open API and Agent Access</h2>
+            <p>
+              All claims are accessible via a public REST API at
+              <a href="/api/external/public/claims">/api/external/public/claims</a>.
+              An MCP (Model Context Protocol) server is available at
+              <a href="/mcp">/mcp</a> for direct agent integration. Full API
+              documentation is available at <a href="/developers">/developers</a>.
+              The OpenAPI specification is at <a href="/openapi.json">/openapi.json</a>.
+            </p>
+          </section>
+
+          <section aria-labelledby="static-h2-data">
+            <h2 id="static-h2-data">Open Data</h2>
+            <p>
+              All data is published under the
+              <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons CC BY 4.0</a>
+              license. Bulk download is available at
+              <a href="/api/public/claims.json">/api/public/claims.json</a>.
+              OAI-PMH harvesting is available at
+              <a href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc">/oai</a>
+              in both Dublin Core and DataCite 4.x formats, making the registry
+              eligible for indexing by BASE, OpenAIRE, and Semantic Scholar.
+            </p>
+          </section>
+        </main>
+
+        <footer role="contentinfo">
+          <nav aria-label="Footer navigation">
+            <a href="/about">About</a>
+            <a href="/developers">API</a>
+            <a href="/llms.txt">llms.txt</a>
+            <a href="/openapi.json">OpenAPI</a>
+          </nav>
+          <p>citation.is — Open registry of verified scientific claims. CC BY 4.0.</p>
+        </footer>
+
+      </div>
+    </div>
+
     <script type="module" src="/src/main.tsx"></script>
     <script
       defer
