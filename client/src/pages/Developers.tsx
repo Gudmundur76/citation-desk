@@ -213,6 +213,131 @@ export function Developers() {
         ))}
       </div>
 
+      {/* Try it now — live interactive section */}
+      <div className="mb-12 p-6 bg-slate-900 rounded-2xl">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Live API</span>
+        </div>
+        <h2
+          className="text-xl font-bold text-white mb-2"
+          style={{ fontFamily: 'Syne, sans-serif' }}
+        >
+          Try it right now
+        </h2>
+        <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+          Run this in your terminal. No API key, no sign-up. The response below is a real claim
+          from the live registry.
+        </p>
+
+        <div className="space-y-4">
+          <div>
+            <p className="text-xs text-slate-500 font-mono mb-2">Request</p>
+            <div className="relative rounded-xl bg-slate-800 overflow-hidden">
+              <pre className="p-4 text-sm text-slate-200 overflow-x-auto font-mono leading-relaxed">
+                <code>{`curl "https://citation.is/api/external/public/claims?verdict=Supported&page_size=1"`}</code>
+              </pre>
+              <CopyButton text={`curl "https://citation.is/api/external/public/claims?verdict=Supported&page_size=1"`} />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs text-slate-500 font-mono mb-2">Response (live data)</p>
+            <div className="relative rounded-xl bg-slate-800 overflow-hidden">
+              <div className="px-4 py-2 border-b border-slate-700 text-xs text-slate-500 font-mono">json</div>
+              <pre className="p-4 text-sm text-slate-200 overflow-x-auto font-mono leading-relaxed">
+                <code>{`{
+  "page": 1,
+  "page_size": 1,
+  "total": 2847,
+  "claims": [
+    {
+      "id": "ptd-270001-300002",
+      "claim_id": 300002,
+      "claim_text": "The crystal structure of hen egg-white lysozyme was solved at 1.8 Å resolution",
+      "verdict": "Supported",
+      "confidence_score": 0.94,
+      "document_title": "Crystal structure of lysozyme at 1.8 Å resolution",
+      "evidence_url": "https://www.rcsb.org/structure/1LYZ",
+      "page_url": "https://citation.is/claims/300002",
+      "vertical_domain": "structural_biology"
+    }
+  ]
+}`}</code>
+              </pre>
+              <CopyButton text={`{\n  "page": 1,\n  "page_size": 1,\n  "total": 2847,\n  "claims": [...]\n}`} />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 pt-5 border-t border-slate-700">
+          <p className="text-xs text-slate-500 mb-3 font-semibold uppercase tracking-wider">One-shot claim verification</p>
+          <div className="relative rounded-xl bg-slate-800 overflow-hidden">
+            <pre className="p-4 text-sm text-slate-200 overflow-x-auto font-mono leading-relaxed">
+              <code>{`curl -X POST "https://citation.is/api/public/verify-claim" \\
+  -H "Content-Type: application/json" \\
+  -d '{"claim_text": "Lysozyme has a molecular weight of 14.3 kDa"}'`}</code>
+            </pre>
+            <CopyButton text={`curl -X POST "https://citation.is/api/public/verify-claim" -H "Content-Type: application/json" -d '{"claim_text": "Lysozyme has a molecular weight of 14.3 kDa"}'`} />
+          </div>
+          <div className="relative rounded-xl bg-slate-800 overflow-hidden mt-2">
+            <div className="px-4 py-2 border-b border-slate-700 text-xs text-slate-500 font-mono">json</div>
+            <pre className="p-4 text-sm text-slate-200 overflow-x-auto font-mono leading-relaxed">
+              <code>{`{
+  "claim_text": "Lysozyme has a molecular weight of 14.3 kDa",
+  "verdict": "Supported",
+  "confidence_score": 0.91,
+  "rationale": "UniProt P00720 (LYSC_CHICK) confirms molecular weight 14,313 Da (129 aa)",
+  "evidence_url": "https://www.uniprot.org/uniprot/P00720"
+}`}</code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      {/* Why citation.is vs Perplexity / Semantic Scholar */}
+      <div className="mb-12 p-6 border border-slate-200 rounded-2xl">
+        <h2
+          className="text-xl font-bold text-slate-900 mb-2"
+          style={{ fontFamily: 'Syne, sans-serif' }}
+        >
+          Why not just use Perplexity or Semantic Scholar?
+        </h2>
+        <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+          These are different tools solving different problems.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-slate-50">
+                <th className="text-left px-4 py-3 font-semibold text-slate-700"> </th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-700">Perplexity</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-700">Semantic Scholar</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-700 bg-slate-900 text-white rounded-t-lg">citation.is</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {[
+                ['Unit of output', 'Answer + paper links', 'Paper metadata', 'Typed verdict on a specific claim'],
+                ['Stable PID per claim', '✗', '✗ (paper-level only)', '✓ (claim_id persists across re-evaluations)'],
+                ['Confidence score', '✗', '✗', '✓ (0.0–1.0 per claim)'],
+                ['Contradiction detection', '✗', '✗', '✓ (cross-document graph edges)'],
+                ['Machine-queryable via MCP', '✗', '✗', '✓'],
+                ['Provenance chain', '✗', '✗', '✓ (full audit trail per claim)'],
+                ['Re-evaluation on new evidence', '✗', '✗', '✓ (every 6 hours)'],
+              ].map(([feature, perplexity, semantic, citation]) => (
+                <tr key={feature} className="bg-white">
+                  <td className="px-4 py-3 font-medium text-slate-700 text-xs">{feature}</td>
+                  <td className="px-4 py-3 text-slate-500 text-xs">{perplexity}</td>
+                  <td className="px-4 py-3 text-slate-500 text-xs">{semantic}</td>
+                  <td className="px-4 py-3 text-xs font-semibold text-emerald-700 bg-emerald-50">{citation}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* Base URL */}
       <div className="mb-10">
         <h2

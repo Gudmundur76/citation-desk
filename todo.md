@@ -383,3 +383,14 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 0 TypeScript errors
 - [x] 35/35 tests pass (SKIP_CONTRACT_TESTS=true; contract test skipped — live network)
 - [x] No new proxy routes needed — all procedures use existing /api/external/trpc/:procedure wildcard
+
+## Phase 119 — Critical Review Fixes
+
+- [x] Homepage: add Featured Claims section — 3 live claims with verdict badge, confidence score, PMID link, and claim text
+- [x] Homepage: add "How it works" 3-step pipeline explanation above the CTA
+- [x] Build /methodology page — pipeline disclosure, LLM role, conflict resolution, confidence score meaning, error rate transparency
+- [x] Add Methodology link to Nav.tsx
+- [x] Add Methodology route to App.tsx
+- [x] Developers page: add live "Try it now" section with real curl command + actual JSON response payload
+- [x] Developers page: add "What makes this different from Perplexity/Semantic Scholar" differentiation block
+- [ ] Run tests, save checkpoint, log to memory repo

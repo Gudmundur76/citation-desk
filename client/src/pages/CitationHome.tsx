@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Search, ArrowRight, CheckCircle, AlertCircle, HelpCircle, Minus } from 'lucide-react'
+import { Search, ArrowRight, CheckCircle, AlertCircle, HelpCircle, Minus, FileText, GitMerge, ShieldCheck } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatNumber, domainLabel } from '@/lib/utils'
+import { formatNumber, domainLabel, confidenceColor } from '@/lib/utils'
 
 const VERDICT_ICONS = {
   Supported: CheckCircle,
@@ -19,6 +19,105 @@ const VERDICT_COLORS = {
   Ambiguous: 'text-amber-500',
   'Insufficient Evidence': 'text-slate-400',
   'Out of Scope': 'text-slate-400',
+}
+
+// ─── Featured Claims component ───────────────────────────────────────────────
+
+const VERDICT_BG: Record<string, string> = {
+  Supported: 'bg-emerald-50 border-emerald-200',
+  Refuted: 'bg-red-50 border-red-200',
+  Ambiguous: 'bg-amber-50 border-amber-200',
+  'Insufficient Evidence': 'bg-slate-50 border-slate-200',
+  'Out of Scope': 'bg-slate-50 border-slate-200',
+}
+
+const VERDICT_TEXT: Record<string, string> = {
+  Supported: 'text-emerald-700',
+  Refuted: 'text-red-600',
+  Ambiguous: 'text-amber-600',
+  'Insufficient Evidence': 'text-slate-500',
+  'Out of Scope': 'text-slate-500',
+}
+
+function FeaturedClaims() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['featuredClaims'],
+    queryFn: () => api.registryClaims({ page: 1, page_size: 3, verdict: 'Supported' }),
+    staleTime: 300_000,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="grid sm:grid-cols-3 gap-4">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="border border-slate-200 rounded-xl p-5 animate-pulse space-y-3">
+            <div className="h-3 bg-slate-200 rounded w-20" />
+            <div className="h-4 bg-slate-200 rounded w-full" />
+            <div className="h-4 bg-slate-200 rounded w-3/4" />
+            <div className="h-3 bg-slate-200 rounded w-24 mt-4" />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const claims = data?.claims?.slice(0, 3) ?? []
+
+  if (claims.length === 0) return null
+
+  return (
+    <div className="grid sm:grid-cols-3 gap-4">
+      {claims.map(claim => {
+        const bg = VERDICT_BG[claim.verdict] ?? 'bg-slate-50 border-slate-200'
+        const tc = VERDICT_TEXT[claim.verdict] ?? 'text-slate-500'
+        const conf = claim.confidence_score
+        const confPct = conf !== null ? Math.round(conf * 100) : null
+        const confCls = conf !== null ? confidenceColor(conf) : 'text-slate-400'
+        return (
+          <Link
+            key={claim.id}
+            to={`/claims/${claim.claim_id}`}
+            className={`block border rounded-xl p-5 hover:shadow-md transition-all group ${bg}`}
+          >
+            {/* Verdict + confidence row */}
+            <div className="flex items-center justify-between mb-3">
+              <span className={`text-xs font-bold uppercase tracking-wide ${tc}`}>
+                {claim.verdict}
+              </span>
+              {confPct !== null && (
+                <span className={`text-xs font-mono font-semibold ${confCls}`}>
+                  {confPct}%
+                </span>
+              )}
+            </div>
+
+            {/* Claim text */}
+            <p className="text-sm text-slate-800 leading-relaxed line-clamp-3 mb-4 group-hover:text-slate-900 transition-colors">
+              {claim.claim_text}
+            </p>
+
+            {/* Source + PMID */}
+            <div className="space-y-1">
+              <p className="text-xs text-slate-500 truncate">
+                {claim.document_title}
+              </p>
+              {claim.evidence_url && (
+                <a
+                  href={claim.evidence_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-mono transition-colors"
+                >
+                  <span>PMID / DOI ↗</span>
+                </a>
+              )}
+            </div>
+          </Link>
+        )
+      })}
+    </div>
+  )
 }
 
 export function Home() {
@@ -262,6 +361,87 @@ export function Home() {
               <p className="text-xs text-slate-300">Genomics, Clinical Trials, Nutrition</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Featured Claims — 3 live claims with full provenance */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16" aria-labelledby="featured-claims-heading">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2
+              id="featured-claims-heading"
+              className="text-2xl font-bold text-slate-900"
+              style={{ fontFamily: 'Syne, sans-serif' }}
+            >
+              Live from the Registry
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Real verified claims — each traceable to its source document
+            </p>
+          </div>
+          <Link
+            to="/registry"
+            className="text-sm font-medium text-slate-600 hover:text-slate-900 flex items-center gap-1 transition-colors"
+          >
+            Browse all <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <FeaturedClaims />
+      </section>
+
+      {/* How it works */}
+      <section className="border-t border-slate-100 bg-slate-50 py-16" aria-labelledby="how-it-works-heading">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h2
+            id="how-it-works-heading"
+            className="text-2xl font-bold text-slate-900 mb-2 text-center"
+            style={{ fontFamily: 'Syne, sans-serif' }}
+          >
+            How verification works
+          </h2>
+          <p className="text-sm text-slate-500 text-center mb-10">
+            Every claim passes through a 4-stage autonomous pipeline before receiving a verdict.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              {
+                icon: FileText,
+                step: '01',
+                title: 'Extract',
+                desc: 'Claims are extracted from peer-reviewed documents using a structured LLM pipeline that normalises subject-predicate-object triples.',
+              },
+              {
+                icon: GitMerge,
+                step: '02',
+                title: 'Resolve & Cross-reference',
+                desc: 'Entities are resolved against UniProt, PubChem, NCBI Taxonomy, and PubMed. Contradicting papers are detected and flagged.',
+              },
+              {
+                icon: ShieldCheck,
+                step: '03',
+                title: 'Verdict + Confidence',
+                desc: 'A verdict (Supported / Refuted / Ambiguous / Insufficient Evidence) and a 0–1 confidence score are assigned. Every decision is logged with a full provenance chain.',
+              },
+            ].map(({ icon: Icon, step, title, desc }) => (
+              <div key={step} className="bg-white rounded-xl p-6 border border-slate-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-xs font-mono font-bold text-slate-300">{step}</span>
+                  <Icon className="w-5 h-5 text-slate-700" />
+                </div>
+                <h3 className="font-bold text-slate-900 mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>{title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              to="/methodology"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-2 transition-colors"
+            >
+              Full methodology disclosure →
+            </Link>
+          </div>
         </div>
       </section>
 
