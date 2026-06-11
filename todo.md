@@ -26,7 +26,7 @@
 
 - [x] Write vitest tests for citation API helpers (lib/api.ts)
 - [x] Write vitest tests for CitationCopilot readable context
-- [ ] Add tRPC procedure for audit request submission (Audit page form currently client-only) — deferred
+- [x] Add tRPC procedure for audit request submission — wired via external tRPC proxy to ttruthdesk.claims/api/trpc/auditRequests.submit (api.submitAuditRequest in lib/api.ts, POST proxied through /api/external/trpc/auditRequests.submit)
 - [x] Bind custom domain citation.is + www.citation.is via Manus Settings → Domains (citations.is deferred — separate domain purchase required)
 - [x] Publish to production via Manus Publish button
 - [x] Disable CopilotKit telemetry (set COPILOTKIT_TELEMETRY_DISABLED=true in env)
