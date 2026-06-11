@@ -10,6 +10,7 @@ import { Audit } from '@/pages/Audit'
 import { About } from '@/pages/About'
 import { RegistryPage } from '@/pages/RegistryPage'
 import { ClaimDetail } from '@/pages/ClaimDetail'
+import { MagicLinkDialog } from '@/components/citation/MagicLinkDialog'
 
 function NotFound() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
         </Routes>
       </div>
       <Toaster />
+      <MagicLinkDialog />
     </BrowserRouter>
   )
 }

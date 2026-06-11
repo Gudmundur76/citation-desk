@@ -54,3 +54,18 @@
 - [x] Removed registerCopilotKit import and call from server/_core/index.ts
 - [x] Removed CopilotKit chunk rule and /api/copilotkit proxy from vite.config.ts
 - [x] 16 tests pass, 0 TypeScript errors
+
+## Phase 104 — Remove api.manus.im + Magic-Link Auth
+- [ ] Rewrite sdk.ts: remove OAuthService, getUserInfoWithJwt, exchangeCodeForToken — keep only JWT sign/verify
+- [ ] Remove /api/oauth/callback route (gut oauth.ts)
+- [ ] Add magic_link_tokens table to drizzle schema + apply migration
+- [ ] Add magic-link DB helpers to server/db.ts
+- [ ] Create server/magicLink.ts — POST /api/auth/magic-link/request + GET /api/auth/magic-link/verify
+- [ ] Register magic-link routes in server/_core/index.ts
+- [ ] Create client/src/components/citation/MagicLinkDialog.tsx
+- [ ] Rewrite client/src/const.ts — export openSignInDialog()
+- [ ] Rewrite client/src/main.tsx — use openSignInDialog() on UNAUTHORIZED
+- [ ] Rewrite client/src/_core/hooks/useAuth.ts — use openSignInDialog()
+- [ ] Migrate DashboardLayout.tsx sign-in button to openSignInDialog()
+- [ ] Mount GlobalSignInDialog in App.tsx
+- [ ] Run tests, save checkpoint, write to memory repo

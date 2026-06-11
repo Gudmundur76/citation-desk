@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { registerExternalProxy } from "../externalProxy";
+import { registerMagicLinkRoutes } from "../magicLink";
 import { claimDigestHandler } from "../scheduledClaimDigest";
 
 function isPortAvailable(port: number): Promise<boolean> {
@@ -38,6 +39,7 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+  registerMagicLinkRoutes(app);
   registerExternalProxy(app);
   // Heartbeat scheduled handlers — must be before tRPC and Vite fallthrough
   app.post("/api/scheduled/claimDigest", claimDigestHandler);

@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt, gte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, magicLinkTokens, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -87,6 +87,61 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+// ─── Magic-link token helpers ────────────────────────────────────────────────
+
+export async function createMagicLinkToken(params: {
+  email: string;
+  tokenHash: string;
+  expiresAt: Date;
+}): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(magicLinkTokens).values(params);
+}
+
+export async function findValidMagicLinkToken(tokenHash: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const now = new Date();
+  const rows = await db
+    .select()
+    .from(magicLinkTokens)
+    .where(
+      and(
+        eq(magicLinkTokens.tokenHash, tokenHash),
+        gt(magicLinkTokens.expiresAt, now),
+        sql`${magicLinkTokens.usedAt} IS NULL`
+      )
+    )
+    .limit(1);
+  return rows[0];
+}
+
+export async function markMagicLinkUsed(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(magicLinkTokens)
+    .set({ usedAt: new Date() })
+    .where(eq(magicLinkTokens.id, id));
+}
+
+export async function countRecentMagicLinks(email: string, windowMs: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const since = new Date(Date.now() - windowMs);
+  const rows = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(magicLinkTokens)
+    .where(
+      and(
+        eq(magicLinkTokens.email, email),
+        gte(magicLinkTokens.createdAt, since)
+      )
+    );
+  return Number(rows[0]?.count ?? 0);
 }
 
 // TODO: add feature queries here as your schema grows.
