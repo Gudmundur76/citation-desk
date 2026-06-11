@@ -2,10 +2,14 @@
  * ConfidenceSparkline — tiny inline SVG sparkline showing confidence score history.
  * Renders a polyline with a dot at the latest value and a colour-coded endpoint.
  */
-import type { ConfidenceTrendPoint } from '@/lib/api'
+// Accept either the full ConfidenceTrendPoint or a minimal {score, recordedAt} shape
+export interface SparklinePoint {
+  score: number
+  recordedAt: string
+}
 
 interface Props {
-  points: ConfidenceTrendPoint[]
+  points: SparklinePoint[]
   width?: number
   height?: number
 }

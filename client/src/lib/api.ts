@@ -213,6 +213,38 @@ export interface ProvenanceChain {
   }
 }
 
+// ─── Entity timeline types (Phase C3) ──────────────────────────────────────
+
+export interface EntityTimelineEvent {
+  claimId: number
+  claimText: string
+  verdict: string
+  confidenceScore: number | null
+  verdictRationale: string | null
+  claimCreatedAt: string
+  documentId: number
+  documentTitle: string
+  verticalDomain: string
+  pubYear: number | null
+}
+
+export interface EntityTimeline {
+  events: EntityTimelineEvent[]
+  entity: {
+    id: number
+    canonicalName: string
+    entityType: string
+  } | null
+  summary: {
+    totalEvents: number
+    verdictDistribution: Record<string, number>
+    averageConfidence: number | null
+    confidenceTrend: 'improving' | 'declining' | 'stable'
+    earliestYear: number | null
+    latestYear: number | null
+  } | null
+}
+
 // ─── Similarity types (Phase C1) ────────────────────────────────────────────
 
 export interface SimilarClaim {
@@ -371,6 +403,12 @@ export const api = {
   /** Full provenance chain for a single claim. */
   claimProvenanceChain: (claimId: number) =>
     get<ProvenanceChain>('provenance.getChain', { claimId }),
+
+  // ─── Phase C3: Entity profile procedures ───────────────────────────────────
+
+  /** Evidence timeline for an entity by slug (all claims mentioning it, across time). */
+  timelineForEntity: (entitySlug: string, limit?: number) =>
+    get<EntityTimeline>('timeline.forEntity', { entitySlug, limit: limit ?? 50 }),
 
   // ─── Public REST API ───────────────────────────────────────────────────────────
 

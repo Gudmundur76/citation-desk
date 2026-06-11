@@ -428,3 +428,11 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Add cooccurrenceForEntity method to api.ts
 - [x] 35/35 tests pass, 0 TypeScript errors
 - [x] Save checkpoint, update memory repo
+
+## Phase C3 — Entity Profile Page (COMPLETE)
+- [x] Add timelineForEntity method to api.ts
+- [x] Add EntityTimeline and EntityTimelineEvent types to api.ts
+- [x] Rewrite EntityPage with confidence sparkline, co-occurrence related entities panel, evidence timeline section
+- [x] Add entity OG meta tags to EntityPage
+- [x] Fix ConfidenceSparkline to accept minimal SparklinePoint type
+- [x] Run tests, save checkpoint, update memory repo
