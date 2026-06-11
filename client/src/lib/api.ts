@@ -196,6 +196,18 @@ export interface ProvenanceChain {
   }
 }
 
+// ─── Similarity types (Phase C1) ────────────────────────────────────────────
+
+export interface SimilarClaim {
+  claimId: number
+  documentId: number
+  documentTitle: string
+  claimText: string
+  verdict: string | null
+  confidenceScore: number | null
+  similarity: number
+}
+
 export interface AuditRequestInput {
   tier: 'starter' | 'diligence' | 'platform_pilot'
   contactName: string
@@ -307,9 +319,13 @@ export const api = {
   provenanceGetChain: (claimId: number) =>
     get<ProvenanceChain>('provenance.getChain', { claimId }),
   similarityFindSimilar: (
-    query: string,
-    opts?: { verticalDomain?: string; limit?: number },
-  ) => get<unknown>('similarity.findSimilar', { query, ...opts }),
+    queryText: string,
+    opts?: { threshold?: number; topK?: number },
+  ) => get<SimilarClaim[]>('similarity.findSimilar', { queryText, ...opts }),
+  similarityFindSimilarToId: (
+    claimId: number,
+    opts?: { threshold?: number; topK?: number },
+  ) => get<SimilarClaim[]>('similarity.findSimilarToId', { claimId, ...opts }),
   cooccurrenceTop: (opts?: { verticalDomain?: string; limit?: number }) =>
     get<unknown>('cooccurrence.top', opts ?? {}),
   submitAuditRequest: (input: AuditRequestInput) =>

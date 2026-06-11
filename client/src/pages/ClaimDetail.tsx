@@ -35,6 +35,7 @@ import { CitationsPanel } from '@/components/citation/CitationsPanel'
 import { ConfidenceSparkline } from '@/components/citation/ConfidenceSparkline'
 import { EvidenceTimeline } from '@/components/citation/EvidenceTimeline'
 import { ProvenanceAuditTrail } from '@/components/citation/ProvenanceAuditTrail'
+import { SimilarClaims } from '@/components/citation/SimilarClaims'
 import { domainLabel, confidenceColor, confidenceLabel } from '@/lib/utils'
 import type { PublicClaimDetail } from '@/lib/api'
 
@@ -73,15 +74,43 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
       document.head.appendChild(script)
     })
 
-    // Update page title for SEO
+    // Update page title and OG meta tags for SEO
     const shortText =
       claim.claim_text.length > 80
         ? claim.claim_text.slice(0, 80).trimEnd() + '…'
         : claim.claim_text
     document.title = `${claim.verdict}: ${shortText} — citation.is`
 
+    // OG / Twitter meta tags
+    const setMeta = (property: string, content: string) => {
+      let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"],meta[name="${property}"]`)
+      if (!el) {
+        el = document.createElement('meta')
+        if (property.startsWith('og:') || property.startsWith('article:')) {
+          el.setAttribute('property', property)
+        } else {
+          el.setAttribute('name', property)
+        }
+        el.dataset.citationMeta = 'true'
+        document.head.appendChild(el)
+      }
+      el.setAttribute('content', content)
+    }
+    const desc = claim.verdict_rationale
+      ? claim.verdict_rationale.slice(0, 160)
+      : `${claim.verdict} — ${shortText}`
+    setMeta('og:title', `${claim.verdict}: ${shortText} — citation.is`)
+    setMeta('og:description', desc)
+    setMeta('og:url', `https://citation.is/claims/${claim.claim_id}`)
+    setMeta('og:type', 'article')
+    setMeta('og:site_name', 'citation.is')
+    setMeta('twitter:card', 'summary')
+    setMeta('twitter:title', `${claim.verdict}: ${shortText}`)
+    setMeta('twitter:description', desc)
+
     return () => {
       document.querySelectorAll('script[data-citation-jsonld]').forEach((el) => el.remove())
+      document.querySelectorAll('meta[data-citation-meta]').forEach((el) => el.remove())
       document.title = 'Citation Desk'
     }
   }, [claim])
@@ -395,12 +424,7 @@ export function ClaimDetail() {
             Back to Registry
           </Link>
 
-          <Link
-            to={`/search?q=${encodeURIComponent(claim.claim_text.slice(0, 60))}`}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            Find similar claims
-          </Link>
+
 
           <Link
             to="/audit"
@@ -409,6 +433,9 @@ export function ClaimDetail() {
             Request an audit
           </Link>
         </div>
+
+        {/* ── Similar claims ── */}
+        <SimilarClaims claimId={claim.claim_id} claimText={claim.claim_text} />
 
         {/* ── Claim ID footer ── */}
         <p className="mt-6 text-xs text-slate-300 font-mono">

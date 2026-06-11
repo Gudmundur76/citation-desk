@@ -393,4 +393,18 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Add Methodology route to App.tsx
 - [x] Developers page: add live "Try it now" section with real curl command + actual JSON response payload
 - [x] Developers page: add "What makes this different from Perplexity/Semantic Scholar" differentiation block
-- [ ] Run tests, save checkpoint, log to memory repo
+- [x] Run tests, save checkpoint, log to memory repo
+
+## Phase C1 — Full Claim Detail Page
+
+- [ ] Add `claimDetailById` API method to api.ts (GET /api/v2/claims/:id via proxy)
+- [ ] Add `similarityFindSimilarToId` API method to api.ts (tRPC similarity.findSimilarToId)
+- [ ] Add proxy route for GET /api/v2/claims/:id in externalProxy.ts
+- [ ] Rewrite ClaimDetail.tsx: verdict hero with composite truth label, full claim text, rationale, evidence links (PDB/PMID/UniProt), claim type badge, document provenance
+- [ ] Add confidence sparkline section using confidenceTrend.forClaim (already in api.ts)
+- [ ] Add evidence timeline section using timeline.forClaim (already in api.ts)
+- [ ] Add provenance audit trail section using provenance.getChain (already in api.ts)
+- [ ] Add similar claims section using similarity.findSimilarToId
+- [ ] Add ClaimReview JSON-LD structured data injected into <head> for SEO (Phase C4)
+- [ ] Add og:title, og:description, og:image meta tags per claim page
+- [ ] Run tests, save checkpoint, update memory repo
