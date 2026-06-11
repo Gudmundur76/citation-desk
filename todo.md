@@ -263,3 +263,34 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 27/27 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 114 to memory repo
+
+## Phase 115 — Unified Dev Environment + API Contract
+
+### API Contract Snapshot Test (citation-desk)
+- [x] Create server/apiContract.test.ts — validates ttruthdesk.claims response shape against ClaimRecord schema
+- [x] Snapshot the GlobalClaimsRegistry shape (fields: $schema, standard, generated_at, license, attribution, count, claims[])
+- [x] Snapshot the ClaimRecord shape (fields: id, value, label, claim_type, extracted_value, verdict, verdict_rationale, manually_reviewed, evidence_checked_at, source_refs[], page_anchors[], date_observed)
+- [x] Test runs in CI against live ttruthdesk.claims (skipped if SKIP_CONTRACT_TESTS=true)
+
+### Environment Configuration
+- [x] Add .env.development.example with TTRUTHDESK_BASE_URL=http://localhost:4000 and SKIP_CONTRACT_TESTS=true
+- [x] Update server/externalProxy.ts to read TTRUTHDESK_BASE_URL from env (falls back to https://ttruthdesk.claims)
+
+### GitHub Actions CI (citation-desk)
+- [x] Create .github/workflows/ci.yml — runs pnpm test + contract test on every push/PR to main
+- [x] Contract test job: runs against live ttruthdesk.claims, fails loudly if response shape changes
+- [x] Drive staleness check: mirrors ttruthdesk-platform CI (warns if manus-persistent-drive > 48h stale)
+
+### docker-compose.dev.yml (monorepo dev)
+- [x] Create docker-compose.dev.yml at /home/ubuntu/dev-environment/ — orchestrates both repos in one command
+- [x] backend service: ttruthdesk-platform on port 4000
+- [x] frontend service: citation-desk on port 3000, TTRUTHDESK_BASE_URL=http://backend:4000
+- [x] shared .env.dev file with all required secrets (template only, no real values)
+
+### DEV_SETUP.md
+- [x] Write DEV_SETUP.md covering: prerequisites, clone all 3 repos, docker-compose up, run tests, how to add a new API endpoint (contract-first workflow)
+
+### Verification
+- [x] 35/35 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 115 to memory repo

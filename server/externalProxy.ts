@@ -17,7 +17,7 @@
  */
 import type { Express, Request, Response } from 'express'
 
-const UPSTREAM_BASE = 'https://ttruthdesk.claims'
+const UPSTREAM_BASE = process.env.TTRUTHDESK_BASE_URL ?? 'https://ttruthdesk.claims'
 const UPSTREAM_TRPC = `${UPSTREAM_BASE}/api/trpc`
 const UPSTREAM_PUBLIC = `${UPSTREAM_BASE}/api/public`
 
