@@ -1,0 +1,47 @@
+# citation.is
+
+> The open registry of verified scientific claims. Every claim is cross-referenced against authoritative databases and assigned a structured verdict. CC BY 4.0.
+
+citation.is is a public scientific data registry that stores, indexes, and exposes verified claims extracted from peer-reviewed literature and preprints. Each claim is linked to its source document, assigned a verification verdict (Supported, Refuted, Inconclusive, or Needs Context), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed.
+
+The registry is fully open — no authentication required. All data is available via REST API, MCP (Model Context Protocol), OAI-PMH, and bulk download.
+
+## Key pages
+
+- [Home](https://citation.is/) — Search and browse verified claims
+- [Registry](https://citation.is/registry) — Full paginated claim registry with filters
+- [Search](https://citation.is/search) — Full-text and semantic search across all claims
+- [Verticals](https://citation.is/verticals) — Domain-specific claim collections (structural biology, salmon biotech, etc.)
+- [Leaderboard](https://citation.is/leaderboard) — Most-cited papers and top-verified sources
+- [Developers](https://citation.is/developers) — REST API docs, MCP integration guide, code examples
+- [About](https://citation.is/about) — Mission, methodology, and data provenance
+
+## Data access
+
+- REST API: `GET https://citation.is/api/external/public/claims` — paginated JSON list of all verified claims
+- Search: `GET https://citation.is/api/external/public/claims?q={query}` — full-text search
+- Verify: `POST https://citation.is/api/public/verify-claim` — submit a claim for verification
+- OpenAPI spec: `GET https://citation.is/openapi.json`
+- MCP endpoint: `GET https://citation.is/mcp` (Model Context Protocol)
+- MCP server card: `GET https://citation.is/.well-known/mcp/server-card.json`
+- OAI-PMH: `GET https://citation.is/oai?verb=ListRecords&metadataPrefix=oai_dc`
+- Bulk download: `GET https://citation.is/api/public/claims.json`
+- Knowledge graph: `GET https://citation.is/api/public/graph.json`
+
+## Agent skills
+
+- Search claims: `GET https://citation.is/api/external/public/claims?q={query}&verdict={verdict}`
+- Verify a claim: `POST https://citation.is/api/public/verify-claim` with `{"claim": "..."}`
+- Agent skills index: `GET https://citation.is/.well-known/agent-skills/index.json`
+
+## Authentication
+
+No authentication required. All endpoints are publicly accessible. See `/auth.md` for the full agent authentication guide.
+
+## License
+
+All data is published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Attribution: citation.is.
+
+## Contact
+
+For questions about the registry, data quality, or API access, see the [Developers](https://citation.is/developers) page.

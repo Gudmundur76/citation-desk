@@ -3,15 +3,111 @@
 
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Citation Desk</title>    
-    <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+
+    <!-- Primary meta -->
+    <title>citation.is — Open Registry of Verified Scientific Claims</title>
+    <meta name="description" content="Search and verify 3,900+ scientific claims from structural biology, salmon biotech, and more. Every claim is cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed. Open data, CC BY 4.0." />
+    <meta name="keywords" content="scientific claims, claim verification, open science, structured data, protein biology, biotech, PubMed, UniProt" />
+    <meta name="author" content="citation.is" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://citation.is/" />
+    <meta property="og:title" content="citation.is — Open Registry of Verified Scientific Claims" />
+    <meta property="og:description" content="Search and verify 3,900+ scientific claims from structural biology, salmon biotech, and more. Open data, CC BY 4.0." />
+    <meta property="og:site_name" content="citation.is" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="citation.is — Open Registry of Verified Scientific Claims" />
+    <meta name="twitter:description" content="Search and verify 3,900+ scientific claims. Open data, CC BY 4.0." />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://citation.is/" />
+
+    <!-- Agent discovery -->
+    <link rel="alternate" type="text/markdown" href="/api/md" title="Markdown summary" />
+    <link rel="service-desc" type="application/vnd.oai.openapi+json;version=3.0" href="/openapi.json" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    THIS IS THE END OF A COMMENT BLOCK, BLOCK TO BE DELETED -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD: DataCatalog (primary schema for a scientific data registry) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DataCatalog",
+      "@id": "https://citation.is/#datacatalog",
+      "name": "citation.is",
+      "description": "Open registry of verified scientific claims. Every claim is cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed. CC BY 4.0.",
+      "url": "https://citation.is/",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Organization",
+        "name": "citation.is",
+        "url": "https://citation.is/"
+      },
+      "dataset": {
+        "@type": "Dataset",
+        "name": "Verified Scientific Claims",
+        "description": "Structured dataset of verified scientific claims with verdicts (Supported, Refuted, Inconclusive, Needs Context), source documents, and cross-references to authoritative biological databases.",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://citation.is/registry",
+        "distribution": [
+          {
+            "@type": "DataDownload",
+            "encodingFormat": "application/json",
+            "contentUrl": "https://citation.is/api/public/claims.json"
+          },
+          {
+            "@type": "DataDownload",
+            "encodingFormat": "application/xml",
+            "contentUrl": "https://citation.is/oai?verb=ListRecords&metadataPrefix=oai_dc",
+            "description": "OAI-PMH Dublin Core feed"
+          }
+        ],
+        "keywords": ["scientific claims", "claim verification", "structural biology", "biotech", "open science", "UniProt", "PubChem", "PubMed"]
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: WebSite with SearchAction -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://citation.is/#website",
+      "name": "citation.is",
+      "url": "https://citation.is/",
+      "description": "Open registry of verified scientific claims",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://citation.is/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://citation.is/#organization",
+      "name": "citation.is",
+      "url": "https://citation.is/",
+      "description": "Open registry of verified scientific claims",
+      "sameAs": [
+        "https://citation.is/about"
+      ]
+    }
+    </script>
   </head>
 
   <body>

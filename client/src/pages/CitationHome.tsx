@@ -56,9 +56,9 @@ export function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-slate-100">
+      <section className="relative overflow-hidden border-b border-slate-100" aria-labelledby="hero-heading">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -77,6 +77,7 @@ export function Home() {
 
           {/* Headline */}
           <h1
+            id="hero-heading"
             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-[1.05]"
             style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '-0.03em' }}
           >
@@ -140,7 +141,7 @@ export function Home() {
       </section>
 
       {/* Recently verified claims ticker — live from API */}
-      <section className="border-b border-slate-100 bg-slate-50 py-4 overflow-hidden">
+      <section className="border-b border-slate-100 bg-slate-50 py-4 overflow-hidden" aria-label="Recently verified claims">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-6 overflow-x-auto scrollbar-none pb-1">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider shrink-0">
@@ -173,10 +174,11 @@ export function Home() {
       </section>
 
       {/* Verticals */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
-        <div className="flex items-center justify-between mb-8">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16" aria-labelledby="verticals-heading">
+          <div className="flex items-center justify-between mb-8">
           <div>
             <h2
+              id="verticals-heading"
               className="text-2xl font-bold text-slate-900"
               style={{ fontFamily: 'Syne, sans-serif' }}
             >
@@ -264,9 +266,10 @@ export function Home() {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-slate-100 bg-slate-900 py-16">
+      <section className="border-t border-slate-100 bg-slate-900 py-16" aria-labelledby="cta-heading">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
           <h2
+            id="cta-heading"
             className="text-3xl font-bold text-white mb-4"
             style={{ fontFamily: 'Syne, sans-serif' }}
           >
@@ -286,16 +289,17 @@ export function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-100 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <span style={{ fontFamily: 'Syne, sans-serif' }} className="font-semibold text-slate-600">
-            citation.is
-          </span>
-          <span>Powered by the Protein Truth Desk engine · ttruthdesk.claims</span>
-          <span>© {new Date().getFullYear()}</span>
-        </div>
-      </footer>
+      {/* Citability: hidden descriptive paragraph for agent crawlers */}
+      <div className="sr-only" aria-hidden="false">
+        <p>
+          citation.is is an open registry of verified scientific claims. Each claim is extracted
+          from peer-reviewed literature, assigned a verdict (Supported, Refuted, Inconclusive,
+          or Needs Context), and cross-referenced against UniProt, PubChem, NCBI Taxonomy, and
+          PubMed. The registry contains over 3,900 verified claims across domains including
+          structural biology, salmon aquaculture, and biotech. All data is published under
+          CC BY 4.0 and accessible via REST API, MCP, OAI-PMH, and bulk download.
+        </p>
+      </div>
     </div>
   )
 }

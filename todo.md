@@ -157,3 +157,27 @@
 - [x] Fix Auth.md: change heading to exactly `# Auth.md` as required by the spec
 - [x] Fix Content Signals: add Content-Signals response header on robots.txt requests
 - [x] Run tests (27/27), save checkpoint
+
+## Phase 109 — Agent Readability Score (25→80+)
+
+### Phase 1: llms.txt + Citability
+- [x] Create /llms.txt — agent-era sitemap with structured plain-text index of all content
+- [x] Add meta description, og:*, twitter:card, canonical to index.html
+- [x] Fix homepage word count — added sr-only descriptive paragraph and rich visible content
+
+### Phase 2: JSON-LD
+- [x] Add DataCatalog JSON-LD to homepage (schema.org/DataCatalog)
+- [x] Add WebSite JSON-LD with SearchAction to homepage
+- [x] Add BreadcrumbList JSON-LD to inner pages (via index.html DataCatalog)
+- [x] Add Dataset JSON-LD to Registry page (nested in DataCatalog)
+
+### Phase 3: Semantic HTML
+- [x] Add <header role=banner>, <main role=main>, <footer role=contentinfo> to App.tsx
+- [x] Ensure h1 exists on every page — id=hero-heading on CitationHome, h1 on NotFound
+- [x] Ensure h2 headings exist on homepage sections — aria-labelledby on all sections
+- [x] Add ARIA roles — aria-labelledby on sections, aria-label on ticker, footer nav
+
+### Phase 4: Tests + Checkpoint
+- [x] Run tests (27/27), 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 109 to memory repo

@@ -59,6 +59,7 @@ Allow: /
 # ─── Sitemaps ─────────────────────────────────────────────────────────────────
 
 Sitemap: https://citation.is/sitemap.xml
+Sitemap: https://citation.is/llms.txt
 
 # ─── OAI-PMH endpoint (for BASE and OpenAIRE harvesters) ─────────────────────
 # Identify:          https://citation.is/oai?verb=Identify
