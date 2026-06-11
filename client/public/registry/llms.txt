@@ -1,0 +1,30 @@
+# citation.is — Registry
+
+> The open registry of verified scientific claims. 3,900+ claims cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed. CC BY 4.0.
+
+## What is in the registry?
+
+Each entry in the registry is a structured scientific claim with:
+- **Claim text** — the assertion as extracted from the source document
+- **Verdict** — Supported, Refuted, Inconclusive, or Needs Context
+- **Confidence score** — 0 to 1, reflecting strength of evidence
+- **Source** — title, URL, and DOI of the originating publication
+- **Entities** — resolved against UniProt (proteins), PubChem (compounds), NCBI Taxonomy (organisms), PubMed (publications)
+- **Vertical** — research domain (structural biology, salmon biotech, etc.)
+
+## Access the registry
+
+- [JSON download](https://citation.is/api/public/claims.json) — All claims as structured JSON
+- [OAI-PMH](https://citation.is/oai?verb=ListRecords&metadataPrefix=oai_dc) — Dublin Core feed for harvesters
+- [Full corpus](https://citation.is/llms-full.txt) — All claims as markdown (for LLM ingestion)
+- [RSS feed](https://citation.is/rss.xml) — Recently verified claims
+
+## Statistics
+
+- 3,900+ verified claims (as of June 2026)
+- Cross-referenced against 4 authoritative databases
+- Updated continuously as new documents are processed
+
+## Licensing
+
+CC BY 4.0. Cite as: citation.is (2026). Open Registry of Verified Scientific Claims. https://citation.is/

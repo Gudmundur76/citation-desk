@@ -6,6 +6,12 @@ citation.is is a public scientific data registry that stores, indexes, and expos
 
 The registry is fully open — no authentication required. All data is available via REST API, MCP (Model Context Protocol), OAI-PMH, and bulk download.
 
+## Sub-contexts (read these for depth)
+
+- [Registry](https://citation.is/registry/llms.txt) — Registry contents, statistics, and access methods
+- [Developers](https://citation.is/developers/llms.txt) — API reference, MCP integration, code examples
+- [Verticals](https://citation.is/verticals/llms.txt) — Research domain descriptions and coverage
+
 ## Key pages
 
 - [Home](https://citation.is/) — Search and browse verified claims
@@ -15,6 +21,13 @@ The registry is fully open — no authentication required. All data is available
 - [Leaderboard](https://citation.is/leaderboard) — Most-cited papers and top-verified sources
 - [Developers](https://citation.is/developers) — REST API docs, MCP integration guide, code examples
 - [About](https://citation.is/about) — Mission, methodology, and data provenance
+
+## Full content
+
+- [llms-full.txt](https://citation.is/llms-full.txt) — Complete claim corpus as structured markdown (for LLM ingestion)
+- [RSS feed](https://citation.is/rss.xml) — Recently verified claims (application/rss+xml)
+- [sitemap.xml](https://citation.is/sitemap.xml) — XML sitemap
+- [robots.txt](https://citation.is/robots.txt) — Crawler directives
 
 ## Data access
 

@@ -1,0 +1,35 @@
+# citation.is — Research Verticals
+
+> Domain-specific claim verification engines for structural biology, salmon aquaculture biotech, and more.
+
+## What is a vertical?
+
+A vertical is a domain-specific claim verification engine. Each vertical:
+- Focuses on a specific research domain
+- Maps claims to entities in the domain knowledge graph
+- Cross-references against the most authoritative databases for that domain
+- Produces verdicts calibrated to domain-specific evidence standards
+
+## Current verticals
+
+### Structural Biology
+
+Covers protein structure, function, and interaction claims. Entities are resolved against UniProt (protein sequences and annotations) and PubMed (structural biology literature). Claims about protein binding, folding, and post-translational modifications are verified against experimental evidence.
+
+### Salmon Aquaculture Biotech
+
+Covers claims about salmon biology, genetics, disease resistance, and aquaculture practices. Entities are resolved against NCBI Taxonomy (species classification), UniProt (salmon proteins), and PubChem (compounds used in aquaculture). Particularly relevant for the Norwegian aquaculture industry.
+
+### General Biomedical
+
+Covers claims that span multiple domains or do not fit a specific vertical. Cross-referenced against PubMed, UniProt, PubChem, and NCBI Taxonomy.
+
+## Access vertical-specific data
+
+- [JSON API](https://citation.is/api/public/claims.json?vertical=structural-biology) — Filter claims by vertical
+- [Full corpus](https://citation.is/llms-full.txt) — All claims including vertical metadata
+- [Main registry](https://citation.is/registry) — Browse all verticals
+
+## Licensing
+
+CC BY 4.0. AI systems may cite and summarize with attribution to citation.is.

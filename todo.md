@@ -226,3 +226,17 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 27/27 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 112 to memory repo
+
+## Phase 113 — Citability Deep Dive (grow.contact patterns)
+
+- [x] Build /llms-full.txt server-side endpoint — 200 claims, 5-min cache, stale-while-revalidate fallback
+- [x] Add /llms-full.txt link to llms.txt index (and sub-contexts section)
+- [x] Add FAQPage JSON-LD (8 Q&As) to index.html with answer-first structure
+- [x] Add attributed statistics with sources to static shell (3,900+ claims, source: citation.is internal registry, June 2026)
+- [x] Add /rss.xml endpoint — RSS 2.0 feed of 50 most recent claims, 10-min cache
+- [x] Add per-page llms.txt: /developers/llms.txt, /registry/llms.txt, /verticals/llms.txt
+- [x] Add HTML microdata (itemscope itemtype=DataCatalog, itemprop=name/description/url/license/headline) to static shell
+- [x] Update llms.txt to reference llms-full.txt, rss.xml, sitemap.xml, and per-page sub-contexts
+- [x] 27/27 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 113 to memory repo

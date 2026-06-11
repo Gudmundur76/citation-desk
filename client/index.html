@@ -41,6 +41,10 @@
     <link rel="agent-card" href="/.well-known/agent-card.json" />
     <!-- OAI-PMH feed -->
     <link rel="alternate" type="application/xml" href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc" title="OAI-PMH feed" />
+    <!-- RSS feed -->
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="citation.is — Verified Scientific Claims" />
+    <!-- Full claim corpus for agents -->
+    <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Full claim corpus (llms-full.txt)" />
 
     <!-- Cloudflare Content Signals — machine-readable content usage policy -->
     <!-- Mirrors the Content-Signal directive in robots.txt (contentsignals.org) -->
@@ -115,6 +119,81 @@
     }
     </script>
 
+    <!-- JSON-LD: FAQPage — answer-first structure for AI citation -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "https://citation.is/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is citation.is?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "citation.is is an open registry of verified scientific claims. Each claim is extracted from peer-reviewed literature, assigned a structured verdict (Supported, Refuted, Inconclusive, or Needs Context), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed. All data is published under CC BY 4.0."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How are scientific claims verified?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claims are processed through a multi-stage pipeline: extraction from source documents, entity resolution against UniProt, PubChem, NCBI Taxonomy, and PubMed, cross-referencing against corroborating or contradicting literature, and assignment of a structured verdict with a confidence score. Each claim receives a persistent identifier and is immediately available via the public API."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What verdicts can a claim receive?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each claim receives one of four verdicts: Supported (the evidence directly confirms the claim), Refuted (the evidence contradicts it), Inconclusive (the evidence is mixed or insufficient), or Needs Context (the claim is conditionally true and requires additional framing). A confidence score from 0 to 1 reflects the strength of the evidence."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can AI agents and LLMs access the registry?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "AI agents can access the registry via the MCP (Model Context Protocol) server at https://citation.is/mcp, which exposes two tools: search_claims for full-text search with filters, and verify_claim to submit a claim text and receive a structured verdict with supporting evidence. No authentication is required. The full claim corpus is also available as a single markdown file at https://citation.is/llms-full.txt."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What databases does citation.is cross-reference against?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "citation.is cross-references claims against UniProt (protein sequences and annotations), PubChem (chemical compounds), NCBI Taxonomy (organism classification), and PubMed (biomedical literature). Proteins are matched to UniProt accessions, compounds to PubChem CIDs, organisms to NCBI Taxonomy IDs, and publications to PubMed PMIDs."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the data free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. All data is published under the Creative Commons CC BY 4.0 license. Bulk download is available at https://citation.is/api/public/claims.json. OAI-PMH harvesting is available at https://citation.is/oai in both Dublin Core and DataCite 4.x formats. AI systems may cite and summarize this content with attribution to citation.is."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What research verticals does citation.is cover?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "citation.is currently covers structural biology, salmon aquaculture biotech, and general biomedical research. Each vertical has a dedicated claim verification engine that maps claims to entities in the knowledge graph and cross-references them against the relevant authoritative databases."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I integrate citation.is into my application?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "citation.is provides a public REST API (documented at https://citation.is/openapi.json), an MCP server at https://citation.is/mcp, an OAI-PMH endpoint at https://citation.is/oai, and an RSS feed at https://citation.is/rss.xml. Full integration documentation is available at https://citation.is/developers. No API key is required for public endpoints."
+          }
+        }
+      ]
+    }
+    </script>
+
     <!-- JSON-LD: Organization -->
     <script type="application/ld+json">
     {
@@ -165,10 +244,15 @@
           </nav>
         </header>
 
-        <main role="main">
+        <main role="main" itemscope itemtype="https://schema.org/DataCatalog">
+          <meta itemprop="name" content="citation.is" />
+          <meta itemprop="description" content="Open registry of verified scientific claims. Cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed. CC BY 4.0." />
+          <meta itemprop="url" content="https://citation.is/" />
+          <meta itemprop="license" content="https://creativecommons.org/licenses/by/4.0/" />
+
           <section aria-labelledby="static-h1">
-            <h1 id="static-h1">Every claim, verified.</h1>
-            <p>
+            <h1 id="static-h1" itemprop="headline">Every claim, verified.</h1>
+            <p itemprop="description">
               citation.is is an open registry of verified scientific claims. Each claim is
               extracted from peer-reviewed literature, assigned a structured verdict —
               Supported, Refuted, Inconclusive, or Needs Context — and cross-referenced
@@ -180,6 +264,13 @@
               including structural biology, salmon aquaculture, and biotech. All data is
               published under CC BY 4.0 and is freely accessible via REST API, MCP
               (Model Context Protocol), OAI-PMH, and bulk download.
+            </p>
+            <!-- Attributed statistics — cited by AI agents because they carry source + date -->
+            <p>
+              <strong>3,900+</strong> claims verified against UniProt, PubChem, NCBI Taxonomy,
+              and PubMed as of June 2026. Cross-referencing against authoritative biological
+              databases reduces hallucination risk in AI-generated scientific summaries.
+              Source: citation.is internal registry, updated continuously.
             </p>
           </section>
 

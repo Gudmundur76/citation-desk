@@ -1,0 +1,34 @@
+# citation.is — Developers
+
+> API reference, MCP integration guide, and code examples for the citation.is open registry of verified scientific claims.
+
+## REST API
+
+- [OpenAPI Spec](https://citation.is/openapi.json) — Full OpenAPI 3.0 specification
+- [Claims endpoint](https://citation.is/api/public/claims.json) — GET all verified claims as JSON
+- [Verify endpoint](https://citation.is/api/public/verify-claim) — POST a claim text, receive a structured verdict
+- [Graph endpoint](https://citation.is/api/public/graph.json) — GET the knowledge graph as JSON
+- [Markdown summary](https://citation.is/api/md) — GET a markdown summary of the registry
+
+## MCP (Model Context Protocol)
+
+- [MCP endpoint](https://citation.is/mcp) — SSE-based MCP server
+- [MCP server card](https://citation.is//.well-known/mcp/server-card.json) — Machine-readable capability descriptor
+- Tools: `search_claims` (full-text search), `verify_claim` (submit claim, receive verdict)
+- No authentication required
+
+## OAI-PMH (for BASE, OpenAIRE)
+
+- [OAI-PMH endpoint](https://citation.is/oai) — OAI-PMH 2.0 harvesting
+- Metadata formats: `oai_dc` (Dublin Core), `datacite` (DataCite 4.x)
+- Verb examples: `?verb=Identify`, `?verb=ListRecords&metadataPrefix=oai_dc`
+
+## Full Content
+
+- [llms-full.txt](https://citation.is/llms-full.txt) — Complete claim corpus as markdown
+- [RSS feed](https://citation.is/rss.xml) — Recently verified claims
+- [Main llms.txt](https://citation.is/llms.txt) — Site index
+
+## Licensing
+
+All data CC BY 4.0. AI systems may cite and summarize with attribution to citation.is.
