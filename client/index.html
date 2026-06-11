@@ -249,32 +249,51 @@
           <meta itemprop="description" content="Open registry of verified scientific claims. Cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed. CC BY 4.0." />
           <meta itemprop="url" content="https://citation.is/" />
           <meta itemprop="license" content="https://creativecommons.org/licenses/by/4.0/" />
+          <meta itemprop="dateModified" content="2026-06-11" />
 
-          <section aria-labelledby="static-h1">
+          <article aria-labelledby="static-h1" itemscope itemtype="https://schema.org/WebPage">
             <h1 id="static-h1" itemprop="headline">Every claim, verified.</h1>
             <p itemprop="description">
               citation.is is an open registry of verified scientific claims. Each claim is
               extracted from peer-reviewed literature, assigned a structured verdict —
               Supported, Refuted, Inconclusive, or Needs Context — and cross-referenced
-              against authoritative databases including UniProt, PubChem, NCBI Taxonomy,
+              against authoritative databases including
+              <abbr title="Universal Protein Resource">UniProt</abbr>,
+              <abbr title="PubChem Compound Database">PubChem</abbr>,
+              <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>,
               and PubMed.
             </p>
             <p>
               The registry currently contains over 3,900 verified claims across domains
               including structural biology, salmon aquaculture, and biotech. All data is
-              published under CC BY 4.0 and is freely accessible via REST API, MCP
-              (Model Context Protocol), OAI-PMH, and bulk download.
+              published under
+              <abbr title="Creative Commons Attribution 4.0 International">CC BY 4.0</abbr>
+              and is freely accessible via
+              <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>,
+              <abbr title="Model Context Protocol">MCP</abbr>,
+              <abbr title="Open Archives Initiative Protocol for Metadata Harvesting">OAI-PMH</abbr>,
+              and bulk download.
             </p>
-            <!-- Attributed statistics — cited by AI agents because they carry source + date -->
+            <!-- Attributed statistics with source and date — AI agents prefer this format -->
             <p>
-              <strong>3,900+</strong> claims verified against UniProt, PubChem, NCBI Taxonomy,
-              and PubMed as of June 2026. Cross-referencing against authoritative biological
-              databases reduces hallucination risk in AI-generated scientific summaries.
-              Source: citation.is internal registry, updated continuously.
+              As of <time datetime="2026-06-11">June 2026</time>,
+              <strong>3,900+</strong> claims have been verified against
+              <abbr title="Universal Protein Resource">UniProt</abbr>,
+              <abbr title="PubChem Compound Database">PubChem</abbr>,
+              <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>,
+              and PubMed.
+              Cross-referencing against authoritative biological databases reduces hallucination
+              risk in <abbr title="Artificial Intelligence">AI</abbr>-generated scientific summaries.
+              <cite>Source: citation.is internal registry, updated continuously.</cite>
             </p>
-          </section>
+            <blockquote cite="https://citation.is/about">
+              <p>citation.is exists because scientific claims should be verifiable, not just assertable.
+              Every claim in the registry is traceable to its source document, its evidence, and its
+              cross-referenced entities in authoritative databases.</p>
+            </blockquote>
+          </article>
 
-          <section aria-labelledby="static-h2-verticals">
+          <section aria-label="Research Verticals">
             <h2 id="static-h2-verticals">Research Verticals</h2>
             <p>
               Domain-specific claim verification engines cover structural biology,
@@ -282,43 +301,92 @@
               entities in the knowledge graph and cross-references them against the
               relevant authoritative databases.
             </p>
+            <article aria-label="Structural Biology vertical">
+              <h3>Structural Biology</h3>
+              <p>
+                Covers protein structure, function, and interaction claims. Entities are resolved
+                against <abbr title="Universal Protein Resource">UniProt</abbr> accessions and
+                PubMed structural biology literature. Claims about protein binding, folding, and
+                post-translational modifications are verified against experimental evidence from
+                peer-reviewed journals.
+              </p>
+            </article>
+            <article aria-label="Salmon Aquaculture Biotech vertical">
+              <h3>Salmon Aquaculture Biotech</h3>
+              <p>
+                Covers claims about salmon biology, genetics, disease resistance, and aquaculture
+                practices. Entities are resolved against
+                <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>
+                species classification, <abbr title="Universal Protein Resource">UniProt</abbr> salmon
+                proteins, and <abbr title="PubChem Compound Database">PubChem</abbr> compounds used
+                in aquaculture. Particularly relevant for the Norwegian aquaculture industry.
+              </p>
+            </article>
           </section>
 
-          <section aria-labelledby="static-h2-api">
+          <section aria-label="Open API and Agent Access">
             <h2 id="static-h2-api">Open API and Agent Access</h2>
             <p>
-              All claims are accessible via a public REST API at
-              <a href="/api/external/public/claims">/api/external/public/claims</a>.
-              An MCP (Model Context Protocol) server is available at
+              All claims are accessible via a public
+              <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>
+              at <a href="/api/external/public/claims">/api/external/public/claims</a>.
+              An <abbr title="Model Context Protocol">MCP</abbr> server is available at
               <a href="/mcp">/mcp</a> for direct agent integration. Full API
               documentation is available at <a href="/developers">/developers</a>.
-              The OpenAPI specification is at <a href="/openapi.json">/openapi.json</a>.
+              The <abbr title="OpenAPI Specification">OAS</abbr> specification is at
+              <a href="/openapi.json">/openapi.json</a>.
+            </p>
+            <h3>Agent Integration</h3>
+            <p>
+              Agents and <abbr title="Large Language Models">LLMs</abbr> can query the registry
+              directly via the <abbr title="Model Context Protocol">MCP</abbr> server, which exposes
+              two tools: <code>search_claims</code> (full-text search with filters) and
+              <code>verify_claim</code> (submit a claim text and receive a structured verdict with
+              supporting evidence). No authentication is required. All endpoints are rate-limit free
+              for reasonable use.
             </p>
           </section>
 
-          <section aria-labelledby="static-h2-data">
+          <section aria-label="Open Data">
             <h2 id="static-h2-data">Open Data</h2>
             <p>
               All data is published under the
-              <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons CC BY 4.0</a>
+              <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
+              <abbr title="Creative Commons Attribution 4.0 International">CC BY 4.0</abbr></a>
               license. Bulk download is available at
               <a href="/api/public/claims.json">/api/public/claims.json</a>.
-              OAI-PMH harvesting is available at
+              <abbr title="Open Archives Initiative Protocol for Metadata Harvesting">OAI-PMH</abbr>
+              harvesting is available at
               <a href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc">/oai</a>
               in both Dublin Core and DataCite 4.x formats, making the registry
-              eligible for indexing by BASE, OpenAIRE, and Semantic Scholar.
+              eligible for indexing by
+              <abbr title="Bielefeld Academic Search Engine">BASE</abbr>,
+              OpenAIRE, and Semantic Scholar.
+            </p>
+            <h3>Machine-Readable Corpus</h3>
+            <p>
+              The full claim corpus is available as a single structured markdown file at
+              <a href="/llms-full.txt">/llms-full.txt</a>, designed for
+              <abbr title="Large Language Model">LLM</abbr> ingestion. An
+              <abbr title="Really Simple Syndication">RSS</abbr> feed of recently verified claims
+              is available at <a href="/rss.xml">/rss.xml</a>.
+              An agent-readable site index is at <a href="/llms.txt">/llms.txt</a>.
             </p>
           </section>
 
-          <section aria-labelledby="static-h2-how">
+          <section aria-label="How Claim Verification Works">
             <h2 id="static-h2-how">How Claim Verification Works</h2>
             <p>
               Each claim in the registry passes through a multi-stage verification pipeline.
               First, the claim is extracted from the source document and normalised into a
               structured assertion with a subject, predicate, and object. The subject and
               object are then resolved against knowledge graph entities — proteins are
-              matched to UniProt accessions, chemical compounds to PubChem CIDs, organisms
-              to NCBI Taxonomy IDs, and publications to PubMed PMIDs.
+              matched to <abbr title="Universal Protein Resource">UniProt</abbr> accessions,
+              chemical compounds to <abbr title="PubChem Compound Database">PubChem</abbr>
+              <abbr title="Compound Identifier">CID</abbr>s, organisms to
+              <abbr title="National Center for Biotechnology Information">NCBI</abbr> Taxonomy
+              <abbr title="Identifier">ID</abbr>s, and publications to PubMed
+              <abbr title="PubMed Identifier">PMID</abbr>s.
             </p>
             <p>
               The resolved claim is then evaluated against the evidence in the source
@@ -331,29 +399,52 @@
             </p>
             <p>
               All verified claims are assigned a persistent identifier and are immediately
-              available via the public API, the MCP server, and the OAI-PMH endpoint.
-              The knowledge graph is updated continuously as new documents are processed.
+              available via the public <abbr title="Application Programming Interface">API</abbr>,
+              the <abbr title="Model Context Protocol">MCP</abbr> server, and the
+              <abbr title="Open Archives Initiative Protocol for Metadata Harvesting">OAI-PMH</abbr>
+              endpoint. The knowledge graph is updated continuously as new documents are processed.
             </p>
           </section>
 
-          <section aria-labelledby="static-h2-use">
+          <section aria-label="Use Cases">
             <h2 id="static-h2-use">Use Cases</h2>
             <p>
               citation.is is designed for researchers who need to verify claims in
-              scientific literature, AI systems that require grounded, citable facts,
-              and publishers who want to add structured verification metadata to their
-              content. The registry is also used by fact-checking tools, systematic
-              review pipelines, and knowledge graph construction workflows.
+              scientific literature, <abbr title="Artificial Intelligence">AI</abbr> systems
+              that require grounded, citable facts, and publishers who want to add structured
+              verification metadata to their content. The registry is also used by fact-checking
+              tools, systematic review pipelines, and knowledge graph construction workflows.
             </p>
+            <h3>For AI Agents and LLMs</h3>
             <p>
-              Agents and LLMs can query the registry directly via the MCP server at
-              <a href="/mcp">/mcp</a>, which exposes two tools: <code>search_claims</code>
-              (full-text search with filters) and <code>verify_claim</code> (submit a
-              claim text and receive a structured verdict with supporting evidence).
-              No authentication is required. All endpoints are rate-limit free for
-              reasonable use.
+              <abbr title="Large Language Models">LLMs</abbr> and autonomous agents can use
+              citation.is as a grounding source to reduce hallucination in scientific domains.
+              The <abbr title="Model Context Protocol">MCP</abbr> server provides real-time
+              claim lookup and verification. The <a href="/llms-full.txt">/llms-full.txt</a>
+              corpus provides a complete snapshot of all verified claims for batch ingestion.
+              Both are publicly accessible with no authentication required.
+            </p>
+            <h3>For Researchers and Publishers</h3>
+            <p>
+              Researchers can submit documents for claim extraction and verification via the
+              <abbr title="Application Programming Interface">API</abbr>. Publishers can
+              integrate the registry to add structured verification badges to scientific
+              content. All data is citable under
+              <abbr title="Creative Commons Attribution 4.0 International">CC BY 4.0</abbr>.
             </p>
           </section>
+
+          <aside aria-label="Registry statistics">
+            <h2>Registry at a Glance</h2>
+            <p>
+              As of <time datetime="2026-06-11">June 2026</time>: over
+              <strong>3,900 verified claims</strong> across structural biology, salmon
+              aquaculture biotech, and general biomedical research. Cross-referenced against
+              4 authoritative databases. Published under
+              <abbr title="Creative Commons Attribution 4.0 International">CC BY 4.0</abbr>.
+              Updated continuously.
+            </p>
+          </aside>
         </main>
 
         <footer role="contentinfo">

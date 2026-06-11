@@ -240,3 +240,26 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 27/27 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 113 to memory repo
+
+## Phase 114 — Semantic HTML 100 + Citability 100
+
+### Semantic HTML (88 → 100)
+- [x] Add <article> wrapper around each claim section in static shell (3 article elements)
+- [x] Add <time datetime="2026-06-11"> elements (2 time elements)
+- [x] Add <cite> element for source attribution (used cite instead of address — more semantically correct for source citations)
+- [x] Add aria-label to all <section> elements (all 5 sections now have aria-label)
+- [x] Add <h3> headings inside sections (6 h3 elements: Structural Biology, Salmon Aquaculture, Agent Integration, Machine-Readable Corpus, For AI Agents, For Researchers)
+- [x] Navigation uses <nav> with <a> links — no role=list needed (nav landmark is sufficient)
+- [x] Add <abbr> tags for 40 acronym instances (UniProt, PubChem, NCBI, MCP, OAI-PMH, REST API, CC BY 4.0, LLM, AI, CID, PMID, OAS, RSS)
+
+### Citability (90 → 100)
+- [x] Word count increased from 534 to 819 (scanner sees 819 words)
+- [x] Add attributed statistics with <time datetime> and <cite> source attribution
+- [x] Add <blockquote cite="https://citation.is/about"> with mission statement
+- [x] Add <cite> element: 'Source: citation.is internal registry, updated continuously.'
+- [x] All statistics attributed with source and date
+
+### Verification
+- [x] 27/27 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 114 to memory repo
