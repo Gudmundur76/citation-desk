@@ -206,3 +206,12 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 27/27 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 110 to memory repo
+
+## Phase 111 — Agent Readability Round 3 (82→90+)
+
+- [x] Add HTML <link> tags in <head> for all agent-discovery relations (md, openapi, api-catalog, mcp, agent-skills, oai-pmh) — 4 agent link tags confirmed in raw HTML
+- [x] Add Content-Signals <meta name="content-signals" content="open-access,data,science,cc-by-4.0"> in <head>
+- [x] Expanded static shell word count from 237 to 489 (added How Verification Works + Use Cases sections)
+- [x] 27/27 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 111 to memory repo

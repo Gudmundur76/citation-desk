@@ -26,9 +26,17 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://citation.is/" />
 
-    <!-- Agent discovery -->
+    <!-- Agent discovery — HTML link tags survive CDN/Cloudflare unlike HTTP response headers -->
     <link rel="alternate" type="text/markdown" href="/api/md" title="Markdown summary" />
     <link rel="service-desc" type="application/vnd.oai.openapi+json;version=3.0" href="/openapi.json" />
+    <link rel="https://mcp.so/spec/server-card" href="/.well-known/mcp/server-card.json" />
+    <link rel="https://www.iana.org/assignments/link-relations/api-catalog" href="/.well-known/api-catalog" />
+    <link rel="https://agentprotocol.ai/skills" href="/.well-known/agent-skills/index.json" />
+    <link rel="alternate" type="application/xml" href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc" title="OAI-PMH feed" />
+
+    <!-- Content signals — tells crawlers this is an open-access data resource -->
+    <meta name="content-signals" content="open-access,data,science,cc-by-4.0" />
+    <meta name="robots" content="index, follow" />
 
     <!-- DNS prefetch + preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -199,6 +207,51 @@
               <a href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc">/oai</a>
               in both Dublin Core and DataCite 4.x formats, making the registry
               eligible for indexing by BASE, OpenAIRE, and Semantic Scholar.
+            </p>
+          </section>
+
+          <section aria-labelledby="static-h2-how">
+            <h2 id="static-h2-how">How Claim Verification Works</h2>
+            <p>
+              Each claim in the registry passes through a multi-stage verification pipeline.
+              First, the claim is extracted from the source document and normalised into a
+              structured assertion with a subject, predicate, and object. The subject and
+              object are then resolved against knowledge graph entities — proteins are
+              matched to UniProt accessions, chemical compounds to PubChem CIDs, organisms
+              to NCBI Taxonomy IDs, and publications to PubMed PMIDs.
+            </p>
+            <p>
+              The resolved claim is then evaluated against the evidence in the source
+              document and any corroborating or contradicting literature. The final verdict
+              is one of four values: <strong>Supported</strong> (the evidence directly
+              confirms the claim), <strong>Refuted</strong> (the evidence contradicts it),
+              <strong>Inconclusive</strong> (the evidence is mixed or insufficient), or
+              <strong>Needs Context</strong> (the claim is conditionally true and requires
+              additional framing to be interpreted correctly).
+            </p>
+            <p>
+              All verified claims are assigned a persistent identifier and are immediately
+              available via the public API, the MCP server, and the OAI-PMH endpoint.
+              The knowledge graph is updated continuously as new documents are processed.
+            </p>
+          </section>
+
+          <section aria-labelledby="static-h2-use">
+            <h2 id="static-h2-use">Use Cases</h2>
+            <p>
+              citation.is is designed for researchers who need to verify claims in
+              scientific literature, AI systems that require grounded, citable facts,
+              and publishers who want to add structured verification metadata to their
+              content. The registry is also used by fact-checking tools, systematic
+              review pipelines, and knowledge graph construction workflows.
+            </p>
+            <p>
+              Agents and LLMs can query the registry directly via the MCP server at
+              <a href="/mcp">/mcp</a>, which exposes two tools: <code>search_claims</code>
+              (full-text search with filters) and <code>verify_claim</code> (submit a
+              claim text and receive a structured verdict with supporting evidence).
+              No authentication is required. All endpoints are rate-limit free for
+              reasonable use.
             </p>
           </section>
         </main>
