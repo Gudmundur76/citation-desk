@@ -157,7 +157,7 @@ export function EntityPage() {
 
   const kgUrl = `https://ttruthdesk.claims/entity/${entityType}/${encodeURIComponent(entityName)}`
 
-  // OG meta tags
+  // OG meta tags + canonical link
   useEffect(() => {
     const title = `${entityName} — citation.is`
     const desc = summary
@@ -177,8 +177,21 @@ export function EntityPage() {
     setMeta('og:description', desc)
     setMeta('og:type', 'website')
     setMeta('og:site_name', 'citation.is')
-    return () => { document.title = 'citation.is' }
-  }, [entityName, summary])
+    // Canonical link
+    const canonicalUrl = `https://citation.is/entity/${entityType}/${encodeURIComponent(entityName)}`
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    const createdCanonical = !canonical
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonical)
+    }
+    canonical.setAttribute('href', canonicalUrl)
+    return () => {
+      document.title = 'citation.is'
+      if (createdCanonical) canonical?.remove()
+    }
+  }, [entityName, entityType, summary])
 
   if (isLoading) {
     return (

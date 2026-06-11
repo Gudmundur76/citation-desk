@@ -59,6 +59,8 @@ Allow: /
 # ─── Sitemaps ─────────────────────────────────────────────────────────────────
 
 Sitemap: https://citation.is/sitemap.xml
+Sitemap: https://citation.is/sitemap-pages.xml
+Sitemap: https://citation.is/sitemap-claims.xml
 Sitemap: https://citation.is/llms.txt
 
 # ─── Cloudflare Content Signals Policy ──────────────────────────────────────

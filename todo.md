@@ -436,3 +436,12 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Add entity OG meta tags to EntityPage
 - [x] Fix ConfidenceSparkline to accept minimal SparklinePoint type
 - [x] Run tests, save checkpoint, update memory repo
+
+## Phase C4 — SEO & Structured Data (COMPLETE)
+- [x] Build ClaimReview schema.org JSON-LD client-side in JsonLdHead (reviewer, itemReviewed, reviewRating, url, datePublished)
+- [x] Add canonical link tag injection to ClaimDetail and EntityPage (with proper cleanup on unmount)
+- [x] Build dynamic /sitemap.xml server endpoint (sitemap index) + /sitemap-pages.xml + /sitemap-claims.xml
+- [x] Claims sitemap fetches all claim IDs from public REST API with 30-min in-memory cache
+- [x] Update robots.txt to reference all three sitemaps
+- [x] Fix TypeScript errors: replaced claim.source_url with claim.evidence_url in ClaimReview JSON-LD
+- [x] Run TypeScript check (0 errors) and tests (35/35 pass), save checkpoint, update memory repo

@@ -17,6 +17,7 @@ import { claimDigestHandler } from "../scheduledClaimDigest";
 import { warmupHandler } from "../warmup";
 import { registerLlmsFullTxt } from "../llmsFullTxt";
 import { registerRssFeed } from "../rssFeed";
+import { registerSitemapGenerator } from "../sitemapGenerator";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -76,6 +77,7 @@ async function startServer() {
   registerOaiPmh(app);
   registerLlmsFullTxt(app);
   registerRssFeed(app);
+  registerSitemapGenerator(app);
   registerAgentHeaders(app);
   // Heartbeat scheduled handlers — must be before tRPC and Vite fallthrough
   app.post("/api/scheduled/claimDigest", claimDigestHandler);

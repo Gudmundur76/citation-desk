@@ -57,16 +57,75 @@ function VerdictIcon({ verdict, className }: { verdict: string; className?: stri
   }
 }
 
+// ─── Verdict → schema.org rating mapping ─────────────────────────────────────
+
+function verdictToRating(verdict: string) {
+  switch (verdict) {
+    case 'Supported':   return { ratingValue: 5, bestRating: 5, worstRating: 1, alternateName: 'True' }
+    case 'Refuted':     return { ratingValue: 1, bestRating: 5, worstRating: 1, alternateName: 'False' }
+    case 'Ambiguous':   return { ratingValue: 3, bestRating: 5, worstRating: 1, alternateName: 'Mixture' }
+    default:            return { ratingValue: 2, bestRating: 5, worstRating: 1, alternateName: 'Unverified' }
+  }
+}
+
 // ─── JSON-LD injector ─────────────────────────────────────────────────────────
 
 function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
   useEffect(() => {
-    if (!claim.jsonld?.length) return
+    // Remove any previously injected scripts
+    document.querySelectorAll('script[data-citation-jsonld]').forEach((el) => el.remove())
 
-    const existing = document.querySelectorAll('script[data-citation-jsonld]')
-    existing.forEach((el) => el.remove())
+    const claimUrl = `https://citation.is/claims/${claim.claim_id}`
+    const rating = verdictToRating(claim.verdict)
 
-    claim.jsonld.forEach((schema, idx) => {
+    // 1. ClaimReview (schema.org)
+    const claimReview = {
+      '@context': 'https://schema.org',
+      '@type': 'ClaimReview',
+      url: claimUrl,
+      datePublished: claim.created_at
+        ? new Date(claim.created_at).toISOString().slice(0, 10)
+        : new Date().toISOString().slice(0, 10),
+      author: {
+        '@type': 'Organization',
+        name: 'citation.is',
+        url: 'https://citation.is',
+        description: 'Automated scientific claim verification registry powered by ttruthdesk.claims',
+      },
+      claimReviewed: claim.claim_text,
+      itemReviewed: {
+        '@type': 'Claim',
+        ...(claim.evidence_url ? {
+          appearance: { '@type': 'Article', url: claim.evidence_url, name: claim.document_title ?? undefined },
+        } : {}),
+        ...(claim.document_title ? {
+          author: { '@type': 'CreativeWork', name: claim.document_title },
+        } : {}),
+      },
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: rating.ratingValue,
+        bestRating: rating.bestRating,
+        worstRating: rating.worstRating,
+        alternateName: rating.alternateName,
+      },
+      ...(claim.verdict_rationale ? { reviewBody: claim.verdict_rationale } : {}),
+    }
+
+    // 2. BreadcrumbList
+    const breadcrumb = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Registry', item: 'https://citation.is/registry' },
+        { '@type': 'ListItem', position: 2, name: claim.claim_text.slice(0, 60), item: claimUrl },
+      ],
+    }
+
+    // 3. Upstream JSON-LD (if any)
+    const schemas: unknown[] = [claimReview, breadcrumb, ...(claim.jsonld ?? [])]
+
+    schemas.forEach((schema, idx) => {
       const script = document.createElement('script')
       script.type = 'application/ld+json'
       script.dataset.citationJsonld = String(idx)
@@ -80,6 +139,17 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
         ? claim.claim_text.slice(0, 80).trimEnd() + '…'
         : claim.claim_text
     document.title = `${claim.verdict}: ${shortText} — citation.is`
+
+    // Canonical link tag
+    const canonicalUrl = `https://citation.is/claims/${claim.claim_id}`
+    let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    const createdCanonical = !canonical
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonical)
+    }
+    canonical.setAttribute('href', canonicalUrl)
 
     // OG / Twitter meta tags
     const setMeta = (property: string, content: string) => {
@@ -111,6 +181,7 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
     return () => {
       document.querySelectorAll('script[data-citation-jsonld]').forEach((el) => el.remove())
       document.querySelectorAll('meta[data-citation-meta]').forEach((el) => el.remove())
+      if (createdCanonical) canonical?.remove()
       document.title = 'Citation Desk'
     }
   }, [claim])
