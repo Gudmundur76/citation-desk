@@ -45,7 +45,8 @@ export function confidenceColor(score: number): string {
   return 'text-red-500'
 }
 
-export function domainLabel(domain: string): string {
+export function domainLabel(domain: string | null | undefined): string {
+  if (!domain) return 'Unknown'
   const map: Record<string, string> = {
     structural_biology: 'Structural Biology',
     salmon_biotech: 'Salmon Biotech',

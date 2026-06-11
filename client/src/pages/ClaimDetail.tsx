@@ -276,17 +276,19 @@ export function ClaimDetail() {
           />
 
           {/* Domain */}
-          <MetaCard
-            icon={<Dna className="w-4 h-4 text-slate-400" />}
-            label="Research Domain"
-            value={domainLabel(claim.vertical_domain)}
-          />
+          {claim.vertical_domain && (
+            <MetaCard
+              icon={<Dna className="w-4 h-4 text-slate-400" />}
+              label="Research Domain"
+              value={domainLabel(claim.vertical_domain)}
+            />
+          )}
 
           {/* Claim type */}
           <MetaCard
             icon={<Tag className="w-4 h-4 text-slate-400" />}
             label="Claim Type"
-            value={claim.claim_type.replace(/_/g, ' ')}
+            value={claim.claim_type ? claim.claim_type.replace(/_/g, ' ') : 'Unknown'}
           />
 
           {/* Extracted value */}
