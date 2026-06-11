@@ -1,6 +1,5 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { CopilotKit } from '@copilotkit/react-core'
-import { CopilotSidebar } from '@copilotkit/react-ui'
 import '@copilotkit/react-ui/styles.css'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
@@ -15,17 +14,16 @@ import { Audit } from '@/pages/Audit'
 import { About } from '@/pages/About'
 import { RegistryPage } from '@/pages/RegistryPage'
 import { ClaimDetail } from '@/pages/ClaimDetail'
+import { MagicLinkDialog } from '@/components/citation/MagicLinkDialog'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      refetchOnWindowFocus: false,
-    },
-  },
-})
+// Lazy-load the 3.5MB CopilotSidebar so it doesn't block React from mounting.
+// The QueryClientProvider + tRPC.Provider are owned by main.tsx — do NOT add
+// another QueryClientProvider here or tRPC hooks will see two separate caches.
+const CopilotSidebar = lazy(() =>
+  import('@copilotkit/react-ui').then((m) => ({ default: m.CopilotSidebar }))
+)
 
-// Determine the CopilotKit runtime URL — works both in dev and production
+// CopilotKit runtime URL — works both in dev and production
 const COPILOT_RUNTIME_URL =
   (import.meta.env.VITE_COPILOT_RUNTIME_URL as string | undefined) ?? '/api/copilotkit'
 
@@ -48,14 +46,24 @@ function NotFound() {
 function AppRoutes() {
   const location = useLocation()
   return (
-    <CopilotSidebar
-      defaultOpen={false}
-      labels={{
-        title: 'citation.is Assistant',
-        initial:
-          'Ask me about scientific claims, research verticals, or request an audit. I have access to live data from the knowledge base.',
-      }}
-      instructions={`You are the citation.is scientific claim verification assistant. 
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white">
+          <Nav />
+          <div className="flex items-center justify-center h-64">
+            <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin" />
+          </div>
+        </div>
+      }
+    >
+      <CopilotSidebar
+        defaultOpen={false}
+        labels={{
+          title: 'citation.is Assistant',
+          initial:
+            'Ask me about scientific claims, research verticals, or request an audit. I have access to live data from the knowledge base.',
+        }}
+        instructions={`You are the citation.is scientific claim verification assistant. 
 You help users understand scientific claims, find evidence, and navigate the knowledge base.
 You have access to live data about:
 - Global stats (total documents, claims, supported verdicts)
@@ -65,36 +73,50 @@ You have access to live data about:
 Always be precise and cite specific numbers when available. 
 If a user asks to search for something, suggest they use the search bar or tell them what you found in the readable context.
 Current page: ${location.pathname}`}
-    >
-      <CitationCopilot />
-      <div className="min-h-screen bg-white">
-        <Nav />
-        <Routes>
-          <Route path="/" element={<CitationHome />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/verticals" element={<Verticals />} />
-          <Route path="/verticals/:domain" element={<VerticalDetail />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/audit" element={<Audit />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/registry" element={<RegistryPage />} />
-          <Route path="/claims/:id" element={<ClaimDetail />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </CopilotSidebar>
+      >
+        <CitationCopilot />
+        <div className="min-h-screen bg-white">
+          <Nav />
+          <Routes>
+            <Route path="/" element={<CitationHome />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/verticals" element={<Verticals />} />
+            <Route path="/verticals/:domain" element={<VerticalDetail />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/audit" element={<Audit />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/registry" element={<RegistryPage />} />
+            <Route path="/claims/:id" element={<ClaimDetail />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </CopilotSidebar>
+    </Suspense>
   )
+}
+
+// Global sign-in dialog — opened by dispatching a 'td:open-sign-in' CustomEvent.
+// Mounted outside BrowserRouter so it's always available regardless of route.
+function GlobalSignInDialog() {
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setOpen(true)
+    window.addEventListener('td:open-sign-in', handler)
+    return () => window.removeEventListener('td:open-sign-in', handler)
+  }, [])
+
+  return <MagicLinkDialog open={open} onOpenChange={setOpen} />
 }
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CopilotKit runtimeUrl={COPILOT_RUNTIME_URL}>
-        <BrowserRouter>
-          <AppRoutes />
-          <Toaster />
-        </BrowserRouter>
-      </CopilotKit>
-    </QueryClientProvider>
+    <CopilotKit runtimeUrl={COPILOT_RUNTIME_URL}>
+      <BrowserRouter>
+        <AppRoutes />
+        <GlobalSignInDialog />
+        <Toaster />
+      </BrowserRouter>
+    </CopilotKit>
   )
 }

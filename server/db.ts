@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, InsertMagicLinkToken, magicLinkTokens, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,48 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ─── Magic-link token helpers ────────────────────────────────────────────────
+
+export async function createMagicLinkToken(data: InsertMagicLinkToken): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(magicLinkTokens).values(data);
+}
+
+export async function findValidMagicLinkToken(tokenHash: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db
+    .select()
+    .from(magicLinkTokens)
+    .where(
+      and(
+        eq(magicLinkTokens.tokenHash, tokenHash),
+        isNull(magicLinkTokens.usedAt),
+        gt(magicLinkTokens.expiresAt, new Date()),
+      )
+    )
+    .limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function markMagicLinkTokenUsed(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db
+    .update(magicLinkTokens)
+    .set({ usedAt: new Date() })
+    .where(eq(magicLinkTokens.id, id));
+}
+
+/** Count tokens created for this email in the last windowMs milliseconds (rate limiting) */
+export async function countRecentMagicLinkRequests(email: string, windowMs: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  const since = new Date(Date.now() - windowMs);
+  const result = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(magicLinkTokens)
+    .where(and(eq(magicLinkTokens.email, email), gt(magicLinkTokens.createdAt, since)));
+  return Number(result[0]?.count ?? 0);
+}
