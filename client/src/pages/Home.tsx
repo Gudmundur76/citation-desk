@@ -1,6 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { getLoginUrl } from "@/const";
 import { Streamdown } from 'streamdown';
 
 /**

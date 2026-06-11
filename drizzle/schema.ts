@@ -78,21 +78,3 @@ export const scheduledJobs = mysqlTable("scheduledJobs", {
 
 export type ScheduledJob = typeof scheduledJobs.$inferSelect;
 export type InsertScheduledJob = typeof scheduledJobs.$inferInsert;
-
-/**
- * Magic-link authentication tokens.
- * tokenHash: SHA-256 of the raw token (never store raw token).
- * usedAt: set on first use — subsequent uses are rejected.
- * Rate limit: max 5 tokens per email per 10 minutes.
- */
-export const magicLinkTokens = mysqlTable("magic_link_tokens", {
-  id: int("id").autoincrement().primaryKey(),
-  email: varchar("email", { length: 320 }).notNull(),
-  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  usedAt: timestamp("usedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type MagicLinkToken = typeof magicLinkTokens.$inferSelect;
-export type InsertMagicLinkToken = typeof magicLinkTokens.$inferInsert;
