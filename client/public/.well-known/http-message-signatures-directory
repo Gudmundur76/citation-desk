@@ -4,6 +4,7 @@
   "site": "https://citation.is",
   "bot_access": "open",
   "authentication_required": false,
+  "keys": [],
   "supported_algorithms": [],
   "contact": "admin@citation.is",
   "policy_url": "https://citation.is/robots.txt",

@@ -149,3 +149,11 @@
 - [x] 16/16 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 107 to memory repo
+
+## Phase 108 — Agent-Readiness Fixes (Round 2)
+
+- [x] Fix Link headers: writeHead interception so headers survive all response paths including Vite/sendFile
+- [x] Fix Web Bot Auth: add empty `keys` array to /.well-known/http-message-signatures-directory
+- [x] Fix Auth.md: change heading to exactly `# Auth.md` as required by the spec
+- [x] Fix Content Signals: add Content-Signals response header on robots.txt requests
+- [x] Run tests (27/27), save checkpoint

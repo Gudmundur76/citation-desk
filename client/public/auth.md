@@ -1,4 +1,6 @@
-# citation.is — Agent Authentication Guide
+# Auth.md
+
+> citation.is — Agent Authentication Guide
 
 **No authentication required.** citation.is is a fully open scientific data registry. All endpoints are publicly accessible without API keys, tokens, or registration.
 

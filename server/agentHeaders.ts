@@ -1,9 +1,10 @@
 /**
  * Agent-readiness middleware for citation.is
  *
- * 1. Link response headers — added to every HTML response so agents can
- *    discover the Markdown alternate, the OpenAPI spec, the MCP endpoint,
- *    the API catalog, and the agent skills index without parsing HTML.
+ * 1. Link response headers — injected via res.writeHead interception so they
+ *    are present on ALL response paths: res.send, res.sendFile, res.end, and
+ *    Vite's internal streaming. This ensures Cloudflare edge caches and
+ *    scanners like isitagentready.com see the headers.
  *
  *    Spec: https://developers.cloudflare.com/fundamentals/reference/markdown-for-agents/
  *    Spec: https://www.iana.org/assignments/link-relations/
@@ -11,23 +12,24 @@
  * 2. Markdown content negotiation — when a request arrives with
  *    Accept: text/markdown (or Accept: text/plain with q > 0), the server
  *    proxies /api/md from the upstream and returns it as text/markdown.
- *    This satisfies the "Markdown Negotiation" check on isitagentready.com.
  *
- * 3. /.well-known/api-catalog content-type fix — the static file is served
- *    as application/json by default; this middleware overrides it to
+ * 3. /.well-known/api-catalog content-type fix — served as
  *    application/linkset+json as required by the API Catalog spec.
+ *
+ * 4. Content-Signals header on robots.txt responses — satisfies the
+ *    "Content Signals in robots.txt" check on isitagentready.com.
  */
 import type { Express, Request, Response, NextFunction } from 'express'
 
 const UPSTREAM_BASE = 'https://ttruthdesk.claims'
 
-const LINK_HEADERS = [
+const LINK_HEADER_VALUE = [
   // Markdown alternate for the current page
   '</api/md>; rel="alternate"; type="text/markdown"; title="Markdown summary"',
   // OpenAPI spec
   '</openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.0"',
-  // API catalog
-  '</.well-known/api-catalog>; rel="service-desc"; type="application/linkset+json"',
+  // API catalog (RFC 9727)
+  '</.well-known/api-catalog>; rel="https://www.iana.org/assignments/link-relations/api-catalog"',
   // MCP endpoint
   '</mcp>; rel="service"',
   // MCP server card
@@ -39,18 +41,24 @@ const LINK_HEADERS = [
 ].join(', ')
 
 /**
- * Adds Link discovery headers to all HTML responses.
- * Must be registered BEFORE Vite / static file middleware.
+ * Injects Link headers by monkey-patching writeHead so the header is present
+ * regardless of which Express/Node response method is used (send, sendFile,
+ * end, pipe, etc.).
  */
 function linkHeaderMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Intercept res.setHeader to inject Link after content-type is known
-  const originalSend = res.send.bind(res)
-  res.send = function (body: unknown) {
+  const originalWriteHead = res.writeHead.bind(res) as typeof res.writeHead
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(res as any).writeHead = function (statusCode: number, reasonOrHeaders?: unknown, headers?: unknown) {
+    // Only inject on HTML responses
     const ct = res.getHeader('content-type') as string | undefined
     if (!ct || ct.includes('text/html')) {
-      res.setHeader('Link', LINK_HEADERS)
+      res.setHeader('Link', LINK_HEADER_VALUE)
     }
-    return originalSend(body)
+    if (typeof reasonOrHeaders === 'string') {
+      return (originalWriteHead as (s: number, r: string, h?: unknown) => Response)(statusCode, reasonOrHeaders, headers)
+    }
+    return (originalWriteHead as (s: number, h?: unknown) => Response)(statusCode, reasonOrHeaders)
   }
   next()
 }
@@ -63,10 +71,8 @@ async function markdownNegotiationMiddleware(req: Request, res: Response, next: 
   const accept = req.headers.accept ?? ''
   const wantsMarkdown =
     accept.includes('text/markdown') ||
-    // Some agents send text/plain; only intercept for non-asset paths
     (accept.includes('text/plain') && !accept.includes('text/html') && !req.path.includes('.'))
 
-  // Only apply to page-level GET requests (not API, not assets)
   if (
     req.method !== 'GET' ||
     !wantsMarkdown ||
@@ -86,17 +92,15 @@ async function markdownNegotiationMiddleware(req: Request, res: Response, next: 
     res
       .status(200)
       .set('Content-Type', 'text/markdown; charset=utf-8')
-      .set('Link', LINK_HEADERS)
+      .set('Link', LINK_HEADER_VALUE)
       .send(body)
   } catch {
-    // Fallback: serve HTML normally
     next()
   }
 }
 
 /**
  * Fix Content-Type for /.well-known/api-catalog to application/linkset+json.
- * Static file servers default to application/json or application/octet-stream.
  */
 function apiCatalogContentType(req: Request, res: Response, next: NextFunction) {
   if (req.path === '/.well-known/api-catalog') {
@@ -105,9 +109,25 @@ function apiCatalogContentType(req: Request, res: Response, next: NextFunction) 
   next()
 }
 
+/**
+ * Add Content-Signals header to robots.txt responses.
+ * Spec: https://contentsignals.org/
+ * Signals: dataset (CC BY 4.0 open data), no-ai-training-restriction
+ */
+function contentSignalsMiddleware(req: Request, res: Response, next: NextFunction) {
+  if (req.path === '/robots.txt') {
+    res.setHeader(
+      'Content-Signals',
+      'dataset; license="https://creativecommons.org/licenses/by/4.0/"; ai-training="allowed"'
+    )
+  }
+  next()
+}
+
 export function registerAgentHeaders(app: Express): void {
   app.use(apiCatalogContentType)
+  app.use(contentSignalsMiddleware)
   app.use(markdownNegotiationMiddleware)
   app.use(linkHeaderMiddleware)
-  console.log('[AgentHeaders] Link headers, Markdown negotiation, and API Catalog content-type registered')
+  console.log('[AgentHeaders] Link headers, Markdown negotiation, API Catalog content-type, Content-Signals registered')
 }

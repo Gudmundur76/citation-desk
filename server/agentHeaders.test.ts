@@ -95,6 +95,13 @@ describe('Link header middleware', () => {
     expect(res.headers['link']).toContain('mcp')
   })
 
+  it('Link header is present on root / path', async () => {
+    const res = await request(app).get('/')
+    expect(res.headers['link']).toBeDefined()
+    expect(res.headers['link']).toContain('api-catalog')
+    expect(res.headers['link']).toContain('agent-skills')
+  })
+
   it('Link header includes OpenAPI spec reference', async () => {
     const res = await request(app).get('/')
     expect(res.headers['link']).toContain('openapi.json')
