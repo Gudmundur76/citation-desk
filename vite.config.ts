@@ -170,8 +170,6 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // CopilotKit — largest single dependency
-          if (id.includes('node_modules/@copilotkit')) return 'copilotkit'
           // Recharts + D3 — charting
           if (id.includes('node_modules/recharts') || id.includes('node_modules/d3')) return 'charts'
           // React core
@@ -191,10 +189,6 @@ export default defineConfig({
   server: {
     host: true,
     proxy: {
-      '/api/copilotkit': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
     },
     allowedHosts: [
       ".manuspre.computer",

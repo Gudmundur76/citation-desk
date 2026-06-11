@@ -45,3 +45,12 @@
 - [x] Add PublicClaim / PublicClaimDetail types + registryClaims / claimById to lib/api.ts
 - [x] Write Vitest tests for proxy endpoints (registry.proxy.test.ts) — 6 tests pass
 - [x] All 26 tests pass, 0 TypeScript errors
+
+## CopilotKit Removal (Phase 101)
+- [x] Removed @copilotkit/react-core, @copilotkit/react-ui, @copilotkit/runtime packages
+- [x] Deleted client/src/components/citation/CitationCopilot.tsx
+- [x] Deleted server/copilotkit.ts and server/citationCopilot.test.ts
+- [x] Rewrote App.tsx — no CopilotKit providers, no lazy sidebar, clean BrowserRouter-only structure
+- [x] Removed registerCopilotKit import and call from server/_core/index.ts
+- [x] Removed CopilotKit chunk rule and /api/copilotkit proxy from vite.config.ts
+- [x] 16 tests pass, 0 TypeScript errors
