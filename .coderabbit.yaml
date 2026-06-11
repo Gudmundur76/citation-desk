@@ -1,0 +1,61 @@
+# CodeRabbit configuration for citation-desk
+# https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: "en-US"
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+
+  # Enforce full product delivery — block skeleton code
+  path_instructions:
+    - path: "client/src/**/*.tsx"
+      instructions: |
+        Review for:
+        1. No stub/placeholder functions returning hardcoded values
+        2. All loading, error, and empty states handled
+        3. No TODO comments left in production code
+        4. TypeScript types are explicit — no `any` without justification
+        5. All tRPC calls have proper error handling
+        6. Accessibility: interactive elements have aria labels
+        7. No nested anchor tags (<a> inside <Link> or another <a>)
+        8. All useEffect hooks have proper cleanup functions
+
+    - path: "server/**/*.ts"
+      instructions: |
+        Review for:
+        1. No stub/placeholder implementations
+        2. All database queries have error handling
+        3. No hardcoded secrets or API keys
+        4. Input validation on all public procedures
+        5. No N+1 query patterns
+        6. All async functions have try/catch or proper error propagation
+        7. Test coverage exists for new procedures
+
+    - path: "**/*.test.ts"
+      instructions: |
+        Review for:
+        1. Tests actually assert behavior, not just that functions exist
+        2. No skipped tests without explanation
+        3. No hardcoded test data that will expire (dates, IDs)
+        4. Edge cases covered (empty, null, error states)
+
+  finishing_touches:
+    docstrings:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+code_generation:
+  docstrings:
+    language: "en-US"
