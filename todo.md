@@ -56,19 +56,19 @@
 - [x] 16 tests pass, 0 TypeScript errors
 
 ## Phase 104 — Remove api.manus.im + Magic-Link Auth
-- [ ] Rewrite sdk.ts: remove OAuthService, getUserInfoWithJwt, exchangeCodeForToken — keep only JWT sign/verify
-- [ ] Remove /api/oauth/callback route (gut oauth.ts)
-- [ ] Add magic_link_tokens table to drizzle schema + apply migration
-- [ ] Add magic-link DB helpers to server/db.ts
-- [ ] Create server/magicLink.ts — POST /api/auth/magic-link/request + GET /api/auth/magic-link/verify
-- [ ] Register magic-link routes in server/_core/index.ts
-- [ ] Create client/src/components/citation/MagicLinkDialog.tsx
-- [ ] Rewrite client/src/const.ts — export openSignInDialog()
-- [ ] Rewrite client/src/main.tsx — use openSignInDialog() on UNAUTHORIZED
-- [ ] Rewrite client/src/_core/hooks/useAuth.ts — use openSignInDialog()
-- [ ] Migrate DashboardLayout.tsx sign-in button to openSignInDialog()
-- [ ] Mount GlobalSignInDialog in App.tsx
-- [ ] Run tests, save checkpoint, write to memory repo
+- [x] Rewrite sdk.ts: remove OAuthService, getUserInfoWithJwt, exchangeCodeForToken — keep only JWT sign/verify
+- [x] Remove /api/oauth/callback route (gut oauth.ts)
+- [x] Add magic_link_tokens table to drizzle schema + apply migration
+- [x] Add magic-link DB helpers to server/db.ts
+- [x] Create server/magicLink.ts — POST /api/auth/magic-link/request + GET /api/auth/magic-link/verify
+- [x] Register magic-link routes in server/_core/index.ts
+- [x] Create client/src/components/citation/MagicLinkDialog.tsx (then removed in Phase 105)
+- [x] Rewrite client/src/const.ts — export openSignInDialog() (then removed in Phase 105)
+- [x] Rewrite client/src/main.tsx — use openSignInDialog() on UNAUTHORIZED (then removed in Phase 105)
+- [x] Rewrite client/src/_core/hooks/useAuth.ts — use openSignInDialog() (then removed in Phase 105)
+- [x] Migrate DashboardLayout.tsx sign-in button to openSignInDialog() (then removed in Phase 105)
+- [x] Mount GlobalSignInDialog in App.tsx (then removed in Phase 105)
+- [x] Run tests, save checkpoint, write to memory repo
 
 ## Phase 105 — Remove Sign-In + Build Missing Public Pages
 
@@ -104,3 +104,30 @@
 - [x] All tests pass, 0 TypeScript errors (16/16)
 - [x] Save checkpoint
 - [x] Write Phase 105 to memory repo
+
+## Phase 106 — Science Visibility: OpenAIRE / BASE / re3data / Common Crawl
+
+### Technical prerequisites (all live on citation.is)
+- [x] OAI-PMH 2.0 endpoint at /oai (server/oaiPmh.ts) — Identify, ListMetadataFormats, ListSets, ListIdentifiers, ListRecords, GetRecord
+- [x] oai_dc (Dublin Core) metadata format
+- [x] datacite (DataCite 4.x) metadata format — required by OpenAIRE
+- [x] Six domain sets: claims, structural_biology, salmon_biotech, genomics, clinical_trials, nutrition
+- [x] robots.txt — explicitly allows CCBot, GPTBot, ClaudeBot, Google-Extended, BaseBot, SemanticScholarBot, PerplexityBot
+- [x] sitemap.xml — covers all key routes + OAI-PMH endpoint URLs + machine-readable data endpoints
+- [x] /.well-known/opendata.json — Schema.org DataCatalog descriptor for structured discovery
+- [x] Register OAI-PMH in server/_core/index.ts
+
+### Submission guide
+- [x] Write docs/science-visibility-registration-guide.md with step-by-step instructions for re3data, BASE, OpenAIRE, and Common Crawl
+
+### Tests and delivery
+- [x] 16/16 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 106 to memory repo
+
+### Manual steps remaining (owner action required)
+- [ ] Submit to re3data.org at https://www.re3data.org/suggest
+- [ ] Submit to BASE at https://www.base-search.net/about/en/suggest.php
+- [ ] Register with OpenAIRE at https://provide.openaire.eu (after re3data DOI received)
+- [ ] (Future) Mint real DOIs via DataCite for each claim record
+- [ ] (Future) Apply for CoreTrustSeal certification

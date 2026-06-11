@@ -1,0 +1,73 @@
+{
+  "@context": "https://schema.org",
+  "@type": "DataCatalog",
+  "name": "citation.is — Verified Scientific Claims Registry",
+  "description": "A public registry of 3,900+ verified scientific claims from structural biology, salmon biotechnology, genomics, and related life-science domains. Each claim is cross-referenced against authoritative databases (PDB, UniProt, NCBI, PubMed) by the Protein Truth Desk pipeline.",
+  "url": "https://citation.is",
+  "identifier": "https://citation.is",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": {
+    "@type": "Organization",
+    "name": "citation.is",
+    "url": "https://citation.is"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "citation.is",
+    "url": "https://citation.is"
+  },
+  "datePublished": "2024-01-01",
+  "dateModified": "2026-06-11",
+  "inLanguage": "en",
+  "keywords": [
+    "scientific claims",
+    "claim verification",
+    "structural biology",
+    "salmon biotechnology",
+    "genomics",
+    "life sciences",
+    "open data",
+    "knowledge graph",
+    "ClaimReview",
+    "fact checking"
+  ],
+  "subjectOf": {
+    "@type": "CreativeWork",
+    "name": "OpenAIRE Guidelines for Data Archives",
+    "url": "https://guidelines.openaire.eu/en/latest/data/"
+  },
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://citation.is/api/public/claims.json",
+      "name": "Full claims registry (JSON)"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "contentUrl": "https://citation.is/api/public/graph.json",
+      "name": "Knowledge graph (JSON)"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/xml",
+      "contentUrl": "https://citation.is/oai?verb=ListRecords&metadataPrefix=oai_dc",
+      "name": "OAI-PMH Dublin Core records"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/xml",
+      "contentUrl": "https://citation.is/oai?verb=ListRecords&metadataPrefix=datacite",
+      "name": "OAI-PMH DataCite records"
+    }
+  ],
+  "accessMode": "textual",
+  "accessModeSufficient": ["textual"],
+  "conditionsOfAccess": "Open access — no registration required",
+  "isAccessibleForFree": true,
+  "oaiPmhEndpoint": "https://citation.is/oai",
+  "apiEndpoint": "https://citation.is/api/external/public/claims",
+  "openApiSpec": "https://citation.is/openapi.json",
+  "mcpEndpoint": "https://citation.is/mcp"
+}

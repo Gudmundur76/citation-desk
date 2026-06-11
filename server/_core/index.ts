@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { registerExternalProxy } from "../externalProxy";
+import { registerOaiPmh } from "../oaiPmh";
 import { registerMagicLinkRoutes } from "../magicLink";
 import { claimDigestHandler } from "../scheduledClaimDigest";
 
@@ -41,6 +42,7 @@ async function startServer() {
   registerOAuthRoutes(app);
   registerMagicLinkRoutes(app);
   registerExternalProxy(app);
+  registerOaiPmh(app);
   // Heartbeat scheduled handlers — must be before tRPC and Vite fallthrough
   app.post("/api/scheduled/claimDigest", claimDigestHandler);
   // tRPC API

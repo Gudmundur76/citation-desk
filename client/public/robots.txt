@@ -1,0 +1,66 @@
+# citation.is — robots.txt
+# This registry is CC BY 4.0 licensed and welcomes all academic and AI crawlers.
+
+# ─── Allow all academic and AI crawlers ──────────────────────────────────────
+
+# Common Crawl (feeds most LLM training corpora)
+User-agent: CCBot
+Allow: /
+
+# OpenAI / ChatGPT training and browsing
+User-agent: GPTBot
+Allow: /
+
+# OpenAI ChatGPT browsing plugin
+User-agent: ChatGPT-User
+Allow: /
+
+# Google Extended (Gemini, Bard training)
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic Claude training
+User-agent: ClaudeBot
+Allow: /
+
+# Meta AI training
+User-agent: FacebookBot
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# BASE (Bielefeld Academic Search Engine) — OAI-PMH harvester
+User-agent: BaseBot
+Allow: /
+
+# Semantic Scholar
+User-agent: SemanticScholarBot
+Allow: /
+
+# Internet Archive
+User-agent: ia_archiver
+Allow: /
+
+# ─── Default: allow everything ───────────────────────────────────────────────
+
+User-agent: *
+Allow: /
+
+# ─── Sitemaps ─────────────────────────────────────────────────────────────────
+
+Sitemap: https://citation.is/sitemap.xml
+
+# ─── OAI-PMH endpoint (for BASE and OpenAIRE harvesters) ─────────────────────
+# Identify:          https://citation.is/oai?verb=Identify
+# ListRecords (DC):  https://citation.is/oai?verb=ListRecords&metadataPrefix=oai_dc
+# ListRecords (DC4): https://citation.is/oai?verb=ListRecords&metadataPrefix=datacite
