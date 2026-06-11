@@ -69,3 +69,38 @@
 - [ ] Migrate DashboardLayout.tsx sign-in button to openSignInDialog()
 - [ ] Mount GlobalSignInDialog in App.tsx
 - [ ] Run tests, save checkpoint, write to memory repo
+
+## Phase 105 — Remove Sign-In + Build Missing Public Pages
+
+### Auth cleanup (citation.is is fully public — no sign-in needed)
+- [x] Remove Sign In button from Nav.tsx
+- [x] Remove MagicLinkDialog import and mount from App.tsx
+- [x] Remove openSignInDialog() import and UNAUTHORIZED handler from main.tsx
+- [x] Remove redirectOnUnauthenticated / openSignInDialog() from useAuth.ts
+- [x] Remove openSignInDialog() and getLoginUrl() from const.ts
+- [x] Delete MagicLinkDialog.tsx (no longer needed)
+
+### Proxy routes for missing public endpoints
+- [x] Add POST /api/public/verify-claim proxy in externalProxy.ts
+- [x] Add GET /api/public/claims.json proxy in externalProxy.ts
+- [x] Add GET /api/public/graph.json proxy in externalProxy.ts
+- [x] Add GET /api/md proxy in externalProxy.ts
+- [x] Add GET /openapi.json proxy in externalProxy.ts
+- [x] Add GET /.well-known/mcp.json proxy in externalProxy.ts
+- [x] Add GET /mcp proxy in externalProxy.ts
+
+### New public pages
+- [x] Build /audit/:id page — audit report detail
+- [x] Build /entity/:type/:name page — knowledge graph entity
+- [x] Build /developers page — API docs and MCP documentation
+- [x] Register new routes in App.tsx
+- [x] Add Developers link to Nav.tsx
+
+### Homepage improvements
+- [x] Replace SAMPLE_CLAIMS with live recently verified claims from /api/external/public/claims
+- [x] Show live total claim count from public API
+
+### Tests and delivery
+- [x] All tests pass, 0 TypeScript errors (16/16)
+- [x] Save checkpoint
+- [x] Write Phase 105 to memory repo

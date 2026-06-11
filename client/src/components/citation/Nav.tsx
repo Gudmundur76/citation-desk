@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Search, BarChart2, BookOpen, Trophy, FileText, Database } from 'lucide-react'
+import { Search, BarChart2, BookOpen, Trophy, FileText, Database, Code2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -7,6 +7,7 @@ const links = [
   { to: '/registry', label: 'Registry', icon: Database },
   { to: '/verticals', label: 'Verticals', icon: BarChart2 },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { to: '/developers', label: 'Developers', icon: Code2 },
   { to: '/about', label: 'About', icon: BookOpen },
   { to: '/audit', label: 'Request Audit', icon: FileText },
 ]
@@ -32,13 +33,13 @@ export function Nav() {
         </Link>
 
         {/* Nav links */}
-        <nav className="flex items-center gap-0.5">
+        <nav className="flex items-center gap-0.5 overflow-x-auto scrollbar-none">
           {links.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
               to={to}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors shrink-0',
                 pathname === to || pathname.startsWith(to + '/')
                   ? 'bg-slate-100 text-slate-900'
                   : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50',

@@ -1,21 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { Search, ArrowRight, CheckCircle, AlertCircle, HelpCircle, Minus } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatNumber, domainLabel } from '@/lib/utils'
-
-const SAMPLE_CLAIMS = [
-  { text: 'The crystal structure of lysozyme was solved at 1.8 Å resolution (PDB: 1LYZ)', verdict: 'Supported' },
-  { text: 'Astaxanthin exhibits potent antioxidant activity exceeding vitamin C by 6000×', verdict: 'Ambiguous' },
-  { text: 'Beta-lactamase confers resistance to penicillin-class antibiotics', verdict: 'Supported' },
-]
 
 const VERDICT_ICONS = {
   Supported: CheckCircle,
   Refuted: AlertCircle,
   Ambiguous: HelpCircle,
   'Insufficient Evidence': Minus,
+  'Out of Scope': Minus,
 }
 
 const VERDICT_COLORS = {
@@ -23,6 +18,7 @@ const VERDICT_COLORS = {
   Refuted: 'text-red-500',
   Ambiguous: 'text-amber-500',
   'Insufficient Evidence': 'text-slate-400',
+  'Out of Scope': 'text-slate-400',
 }
 
 export function Home() {
@@ -40,6 +36,17 @@ export function Home() {
     queryFn: () => api.verticalStats(),
     staleTime: 60_000,
   })
+
+  // Live recently verified claims from the public registry
+  const { data: recentClaimsData } = useQuery({
+    queryKey: ['recentClaims'],
+    queryFn: () => api.registryClaims({ page: 1, page_size: 8 }),
+    staleTime: 120_000,
+  })
+  const recentClaims = recentClaimsData?.claims ?? []
+
+  // Live total from the public registry (most accurate count)
+  const liveTotal = recentClaimsData?.total
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault()
@@ -78,8 +85,14 @@ export function Home() {
           </h1>
 
           <p className="text-lg text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
-            Search 3,900+ verified scientific claims from structural biology, salmon biotech,
-            and more — each cross-referenced against authoritative databases.
+            Search{' '}
+            {liveTotal ? (
+              <span className="font-semibold text-slate-700">{formatNumber(liveTotal)}+</span>
+            ) : (
+              '3,900+'
+            )}{' '}
+            verified scientific claims from structural biology, salmon biotech, and more — each
+            cross-referenced against authoritative databases.
           </p>
 
           {/* Search bar */}
@@ -108,7 +121,7 @@ export function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
             {[
               { label: 'Documents', value: stats?.totalDocuments },
-              { label: 'Claims', value: stats?.totalClaims },
+              { label: 'Claims', value: liveTotal ?? stats?.totalClaims },
               { label: 'Supported', value: stats?.supportedVerdicts },
               { label: 'Sources', value: stats?.verifiedSources },
             ].map(({ label, value }) => (
@@ -126,23 +139,35 @@ export function Home() {
         </div>
       </section>
 
-      {/* Sample claims ticker */}
+      {/* Recently verified claims ticker — live from API */}
       <section className="border-b border-slate-100 bg-slate-50 py-4 overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-6 overflow-x-auto scrollbar-none pb-1">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider shrink-0">
               Recent
             </span>
-            {SAMPLE_CLAIMS.map((c, i) => {
-              const Icon = VERDICT_ICONS[c.verdict as keyof typeof VERDICT_ICONS] ?? Minus
-              const color = VERDICT_COLORS[c.verdict as keyof typeof VERDICT_COLORS] ?? 'text-slate-400'
-              return (
-                <div key={i} className="flex items-center gap-2 shrink-0">
-                  <Icon className={`w-3.5 h-3.5 shrink-0 ${color}`} />
-                  <span className="text-xs text-slate-600 max-w-xs truncate">{c.text}</span>
-                </div>
-              )
-            })}
+            {recentClaims.length > 0
+              ? recentClaims.map(c => {
+                  const Icon = VERDICT_ICONS[c.verdict as keyof typeof VERDICT_ICONS] ?? Minus
+                  const color = VERDICT_COLORS[c.verdict as keyof typeof VERDICT_COLORS] ?? 'text-slate-400'
+                  return (
+                    <Link
+                      key={c.id}
+                      to={`/claims/${c.claim_id}`}
+                      className="flex items-center gap-2 shrink-0 hover:opacity-80 transition-opacity"
+                    >
+                      <Icon className={`w-3.5 h-3.5 shrink-0 ${color}`} />
+                      <span className="text-xs text-slate-600 max-w-xs truncate">{c.claim_text}</span>
+                    </Link>
+                  )
+                })
+              : // Skeleton placeholders while loading
+                [...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-2 shrink-0 animate-pulse">
+                    <div className="w-3.5 h-3.5 rounded-full bg-slate-200" />
+                    <div className="h-3 bg-slate-200 rounded w-48" />
+                  </div>
+                ))}
           </div>
         </div>
       </section>

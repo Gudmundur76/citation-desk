@@ -10,7 +10,9 @@ import { Audit } from '@/pages/Audit'
 import { About } from '@/pages/About'
 import { RegistryPage } from '@/pages/RegistryPage'
 import { ClaimDetail } from '@/pages/ClaimDetail'
-import { MagicLinkDialog } from '@/components/citation/MagicLinkDialog'
+import { AuditDetail } from '@/pages/AuditDetail'
+import { EntityPage } from '@/pages/EntityPage'
+import { Developers } from '@/pages/Developers'
 
 function NotFound() {
   return (
@@ -40,14 +42,16 @@ export default function App() {
           <Route path="/verticals/:domain" element={<VerticalDetail />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/audit" element={<Audit />} />
+          <Route path="/audit/:id" element={<AuditDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/registry" element={<RegistryPage />} />
           <Route path="/claims/:id" element={<ClaimDetail />} />
+          <Route path="/entity/:type/:name" element={<EntityPage />} />
+          <Route path="/developers" element={<Developers />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       <Toaster />
-      <MagicLinkDialog />
     </BrowserRouter>
   )
 }
