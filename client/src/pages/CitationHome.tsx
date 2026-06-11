@@ -102,15 +102,15 @@ function FeaturedClaims() {
                 {claim.document_title}
               </p>
               {claim.evidence_url && (
-                <a
-                  href={claim.evidence_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={e => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-mono transition-colors"
+                <span
+                  role="link"
+                  tabIndex={0}
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); window.open(claim.evidence_url!, '_blank', 'noopener,noreferrer') }}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); window.open(claim.evidence_url!, '_blank', 'noopener,noreferrer') } }}
+                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-mono transition-colors cursor-pointer"
                 >
-                  <span>PMID / DOI ↗</span>
-                </a>
+                  PMID / DOI ↗
+                </span>
               )}
             </div>
           </Link>

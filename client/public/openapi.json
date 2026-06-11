@@ -1,0 +1,273 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Citation.is API",
+    "version": "1.1.0",
+    "description": "Public API for the citation.is open registry of verified scientific claims. Supports claim search, individual claim retrieval, real-time claim verification, entity lookup, and bulk data export. All endpoints are unauthenticated and rate-limited to 60 requests/minute.",
+    "contact": {
+      "name": "Citation.is",
+      "url": "https://citation.is/developers"
+    },
+    "license": {
+      "name": "CC BY 4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://citation.is",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/external/public/claims": {
+      "get": {
+        "operationId": "listClaims",
+        "summary": "List verified claims",
+        "description": "Returns a paginated list of all verified scientific claims. Filterable by verdict, vertical domain, entity name, and date range.",
+        "tags": ["Claims"],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 }, "description": "Page number (1-indexed)" },
+          { "name": "page_size", "in": "query", "schema": { "type": "integer", "default": 20, "maximum": 100 }, "description": "Results per page" },
+          { "name": "verdict", "in": "query", "schema": { "type": "string", "enum": ["Supported", "Contradicted", "Insufficient Evidence", "Partially Supported"] }, "description": "Filter by verdict" },
+          { "name": "vertical", "in": "query", "schema": { "type": "string" }, "description": "Filter by research vertical (e.g. salmon_biotech, structural_biology)" },
+          { "name": "q", "in": "query", "schema": { "type": "string" }, "description": "Full-text search query" },
+          { "name": "updated_since", "in": "query", "schema": { "type": "string", "format": "date" }, "description": "Filter claims updated after this date (YYYY-MM-DD)" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated claims list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClaimsResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/external/public/claims/{id}": {
+      "get": {
+        "operationId": "getClaim",
+        "summary": "Get a single claim",
+        "description": "Returns full detail for a single verified claim including verdict rationale, evidence URL, confidence score, and provenance.",
+        "tags": ["Claims"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" }, "description": "Claim ID (e.g. ptd-270001-300002)" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Claim detail",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Claim" }
+              }
+            }
+          },
+          "404": { "description": "Claim not found" }
+        }
+      }
+    },
+    "/api/public/verify-claim": {
+      "post": {
+        "operationId": "verifyClaim",
+        "summary": "Verify a scientific claim",
+        "description": "Verifies a single scientific claim in real-time against PubMed, UniProt, PubChem, and PDB. Returns a verdict, confidence score, rationale, and evidence URL. Rate-limited to 30 requests/minute.",
+        "tags": ["Verification"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VerifyClaimRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification result",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/VerifyClaimResponse" }
+              }
+            }
+          },
+          "429": { "description": "Rate limit exceeded" }
+        }
+      }
+    },
+    "/api/external/public/stats": {
+      "get": {
+        "operationId": "getStats",
+        "summary": "Platform statistics",
+        "description": "Returns aggregate statistics: total claims, verdict distribution, vertical coverage.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "Platform statistics object" }
+        }
+      }
+    },
+    "/api/external/public/verticals": {
+      "get": {
+        "operationId": "listVerticals",
+        "summary": "List research verticals",
+        "description": "Returns all active research verticals with claim counts and support rates.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "Array of vertical objects" }
+        }
+      }
+    },
+    "/api/external/public/leaderboard": {
+      "get": {
+        "operationId": "getLeaderboard",
+        "summary": "Entity leaderboard",
+        "description": "Returns top entities ranked by claim count and support rate.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "Array of entity ranking objects" }
+        }
+      }
+    },
+    "/api/external/public/contradictions": {
+      "get": {
+        "operationId": "listContradictions",
+        "summary": "Cross-document contradictions",
+        "description": "Returns pairs of claims where two sources directly contradict each other.",
+        "tags": ["Analysis"],
+        "responses": {
+          "200": { "description": "Array of contradiction objects" }
+        }
+      }
+    },
+    "/llms.txt": {
+      "get": {
+        "operationId": "getLlmsTxt",
+        "summary": "LLM index",
+        "description": "Plain-text index of all content for LLM context injection.",
+        "tags": ["Machine-Readable"],
+        "responses": {
+          "200": { "description": "Plain text index", "content": { "text/plain": {} } }
+        }
+      }
+    },
+    "/llms-full.txt": {
+      "get": {
+        "operationId": "getLlmsFullTxt",
+        "summary": "Full LLM corpus",
+        "description": "Complete machine-readable registry of all verified claims as structured markdown. Refreshed every 5 minutes.",
+        "tags": ["Machine-Readable"],
+        "responses": {
+          "200": { "description": "Full claim corpus in markdown", "content": { "text/plain": {} } }
+        }
+      }
+    },
+    "/rss.xml": {
+      "get": {
+        "operationId": "getRssFeed",
+        "summary": "RSS feed",
+        "description": "RSS 2.0 feed of the 50 most recently verified claims.",
+        "tags": ["Machine-Readable"],
+        "responses": {
+          "200": { "description": "RSS 2.0 feed", "content": { "application/rss+xml": {} } }
+        }
+      }
+    },
+    "/oai": {
+      "get": {
+        "operationId": "oaiPmh",
+        "summary": "OAI-PMH harvesting endpoint",
+        "description": "OAI-PMH 2.0 endpoint for academic harvesters (OpenAIRE, BASE, re3data). Supports Identify, ListMetadataFormats, ListSets, ListRecords, GetRecord verbs.",
+        "tags": ["Machine-Readable"],
+        "parameters": [
+          { "name": "verb", "in": "query", "required": true, "schema": { "type": "string", "enum": ["Identify", "ListMetadataFormats", "ListSets", "ListRecords", "ListIdentifiers", "GetRecord"] } }
+        ],
+        "responses": {
+          "200": { "description": "OAI-PMH XML response", "content": { "text/xml": {} } }
+        }
+      }
+    },
+    "/.well-known/agent-card.json": {
+      "get": {
+        "operationId": "getAgentCard",
+        "summary": "A2A Agent Card",
+        "description": "Agent-to-agent discovery card following the A2A protocol.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "A2A agent card JSON" }
+        }
+      }
+    },
+    "/.well-known/mcp/server-card.json": {
+      "get": {
+        "operationId": "getMcpServerCard",
+        "summary": "MCP Server Card",
+        "description": "Model Context Protocol server card for agent integration.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": { "description": "MCP server card JSON" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Claim": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Unique claim ID (e.g. ptd-270001-300002)" },
+          "claim_id": { "type": "integer" },
+          "claim_text": { "type": "string", "description": "The full text of the scientific claim" },
+          "verdict": {
+            "type": "string",
+            "enum": ["Supported", "Contradicted", "Insufficient Evidence", "Partially Supported"],
+            "description": "The epistemic verdict assigned by the verification pipeline"
+          },
+          "confidence_score": { "type": "number", "minimum": 0, "maximum": 1, "description": "Confidence score (0.0–1.0)" },
+          "verdict_rationale": { "type": "string", "description": "Human-readable explanation of the verdict" },
+          "evidence_url": { "type": "string", "format": "uri", "description": "URL of the primary evidence source" },
+          "document_title": { "type": "string", "description": "Title of the source document" },
+          "vertical_domain": { "type": "string", "description": "Research vertical (e.g. salmon_biotech)" },
+          "claim_type": { "type": "string", "description": "Type of claim (e.g. protein_name, organism, general_molecular)" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "ClaimsResponse": {
+        "type": "object",
+        "properties": {
+          "claims": { "type": "array", "items": { "$ref": "#/components/schemas/Claim" } },
+          "total": { "type": "integer", "description": "Total number of matching claims" },
+          "page": { "type": "integer" },
+          "page_size": { "type": "integer" },
+          "total_pages": { "type": "integer" }
+        }
+      },
+      "VerifyClaimRequest": {
+        "type": "object",
+        "required": ["claim"],
+        "properties": {
+          "claim": { "type": "string", "description": "The scientific claim text to verify" },
+          "vertical": {
+            "type": "string",
+            "enum": ["structural_biology", "salmon_biotech", "protein_supplement", "creatine_ergogenics", "gut_microbiome", "collagen_peptides", "plant_based_protein", "sports_nutrition_rct", "uniprot", "clinical_trials"],
+            "description": "Optional: restrict verification to a specific research domain"
+          }
+        }
+      },
+      "VerifyClaimResponse": {
+        "type": "object",
+        "properties": {
+          "ok": { "type": "boolean" },
+          "claim": { "type": "string" },
+          "verdict": { "type": "string", "enum": ["Supported", "Contradicted", "Insufficient Evidence", "Partially Supported"] },
+          "rationale": { "type": "string" },
+          "evidenceUrl": { "type": "string", "format": "uri" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "vertical": { "type": "string" },
+          "apiVersion": { "type": "string" },
+          "processedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

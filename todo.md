@@ -469,3 +469,10 @@ in index.html that the crawler sees immediately, while React still mounts into #
 
 ### Tests and delivery
 - [x] Run TypeScript check and tests, save checkpoint, update memory repo
+
+## Audit Fixes (2026-06-11)
+- [ ] Fix llms-full.txt: serving stale 200-claim snapshot — rewrite to query live paginated API
+- [ ] Fix openapi.json: replace proxied ttruthdesk.claims spec with citation.is-branded static spec
+- [ ] Fix /developers page internal error
+- [ ] Fix /mcp timeout (add timeout + error handling in proxy)
+- [ ] Fix null claim_text in llms-full.txt (filter out claims with no text)

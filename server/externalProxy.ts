@@ -139,9 +139,12 @@ export function registerExternalProxy(app: Express): void {
     await proxyGet(`${UPSTREAM_BASE}/api/md`, req, res)
   })
 
-  // GET /openapi.json — OpenAPI spec
-  app.get('/openapi.json', async (req: Request, res: Response) => {
-    await proxyGet(`${UPSTREAM_BASE}/openapi.json`, req, res)
+  // GET /openapi.json — Serve citation.is-branded OpenAPI spec (static file)
+  app.get('/openapi.json', (_req: Request, res: Response) => {
+    res
+      .set('Content-Type', 'application/json')
+      .set('Cache-Control', 'public, max-age=3600')
+      .sendFile('openapi.json', { root: process.cwd() + '/client/public' })
   })
 
   // GET /.well-known/mcp.json — MCP tool card
@@ -149,9 +152,23 @@ export function registerExternalProxy(app: Express): void {
     await proxyGet(`${UPSTREAM_BASE}/.well-known/mcp.json`, req, res)
   })
 
-  // GET /mcp — MCP endpoint
+  // GET /mcp — MCP endpoint (with timeout to avoid hanging)
   app.get('/mcp', async (req: Request, res: Response) => {
-    await proxyGet(`${UPSTREAM_BASE}/mcp`, req, res)
+    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+    const url = `${UPSTREAM_BASE}/mcp${qs}`
+    try {
+      const upstream = await fetch(url, {
+        headers: { Accept: req.headers.accept ?? 'application/json' },
+        signal: AbortSignal.timeout(10_000),
+      })
+      const body = await upstream.text()
+      res.status(upstream.status)
+        .set('Content-Type', upstream.headers.get('content-type') ?? 'application/json')
+        .send(body)
+    } catch (err) {
+      console.error('[ExternalProxy] /mcp error:', err)
+      res.status(503).json({ error: 'mcp_unavailable', message: 'MCP endpoint temporarily unavailable. Try again in a few seconds.' })
+    }
   })
 
   console.log('[ExternalProxy] Proxy mounted: /api/external/trpc/*, /api/external/public/*, /api/public/verify-claim, /api/public/claims.json, /api/public/graph.json, /api/md, /openapi.json, /.well-known/mcp.json, /mcp → ttruthdesk.claims')
