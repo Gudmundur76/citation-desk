@@ -1,0 +1,13 @@
+{
+  "issuer": "https://citation.is",
+  "authorization_endpoint": null,
+  "token_endpoint": null,
+  "response_types_supported": [],
+  "grant_types_supported": [],
+  "scopes_supported": [],
+  "token_endpoint_auth_methods_supported": [],
+  "description": "citation.is is a fully public, open-access registry. No OAuth authorization is required. All API endpoints are accessible without authentication. This document is provided for agent discovery compatibility.",
+  "access_policy": "open",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "contact": "https://citation.is/developers"
+}

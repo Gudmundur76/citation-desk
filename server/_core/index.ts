@@ -14,6 +14,7 @@ import { registerOaiPmh } from "../oaiPmh";
 import { registerAgentHeaders } from "../agentHeaders";
 import { registerMagicLinkRoutes } from "../magicLink";
 import { claimDigestHandler } from "../scheduledClaimDigest";
+import { warmupHandler } from "../warmup";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -74,6 +75,7 @@ async function startServer() {
   registerAgentHeaders(app);
   // Heartbeat scheduled handlers — must be before tRPC and Vite fallthrough
   app.post("/api/scheduled/claimDigest", claimDigestHandler);
+  app.post("/api/scheduled/warmup", warmupHandler);
   // tRPC API
   app.use(
     "/api/trpc",

@@ -215,3 +215,14 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 27/27 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 111 to memory repo
+
+## Phase 112 — Warm-up Cron + Protocol Discovery + Agent Auth
+
+- [x] Read periodic-updates.md skill to understand Heartbeat cron setup
+- [x] Add Heartbeat warm-up cron job: task_uid=DUf7As35VvLZHpBnWtv2YH, fires every 5 minutes
+- [x] Fix Protocol Discovery: Content-Signal directive added to robots.txt (contentsignals.org spec), Link rel values corrected (mcp-server-card, agent-skills, agent-card), A2A agent-card.json created
+- [x] Fix Agent Auth: /.well-known/oauth-authorization-server and /.well-known/openapi.json created
+- [x] Add agent_auth: /.well-known/agent-card.json (A2A agent card) created and linked
+- [x] 27/27 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 112 to memory repo

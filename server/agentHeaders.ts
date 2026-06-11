@@ -24,18 +24,18 @@ import type { Express, Request, Response, NextFunction } from 'express'
 const UPSTREAM_BASE = 'https://ttruthdesk.claims'
 
 const LINK_HEADER_VALUE = [
-  // Markdown alternate for the current page
+  // Markdown alternate (RFC 9110 content negotiation)
   '</api/md>; rel="alternate"; type="text/markdown"; title="Markdown summary"',
-  // OpenAPI spec
+  // OpenAPI spec (IANA service-desc)
   '</openapi.json>; rel="service-desc"; type="application/vnd.oai.openapi+json;version=3.0"',
   // API catalog (RFC 9727)
   '</.well-known/api-catalog>; rel="https://www.iana.org/assignments/link-relations/api-catalog"',
-  // MCP endpoint
-  '</mcp>; rel="service"',
-  // MCP server card
-  '</.well-known/mcp/server-card.json>; rel="describedby"; type="application/json"',
-  // Agent skills index
-  '</.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+  // MCP server card (SEP-1649)
+  '</.well-known/mcp/server-card.json>; rel="mcp-server-card"',
+  // Agent skills index (Cloudflare Agent Skills Discovery RFC)
+  '</.well-known/agent-skills/index.json>; rel="agent-skills"',
+  // A2A agent card
+  '</.well-known/agent-card.json>; rel="agent-card"',
   // OAI-PMH
   '</oai>; rel="alternate"; type="application/xml"; title="OAI-PMH endpoint"',
 ].join(', ')

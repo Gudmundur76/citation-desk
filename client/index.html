@@ -27,15 +27,24 @@
     <link rel="canonical" href="https://citation.is/" />
 
     <!-- Agent discovery — HTML link tags survive CDN/Cloudflare unlike HTTP response headers -->
+    <!-- Markdown alternate (RFC 9110 content negotiation) -->
     <link rel="alternate" type="text/markdown" href="/api/md" title="Markdown summary" />
+    <!-- OpenAPI spec (IANA service-desc) -->
     <link rel="service-desc" type="application/vnd.oai.openapi+json;version=3.0" href="/openapi.json" />
-    <link rel="https://mcp.so/spec/server-card" href="/.well-known/mcp/server-card.json" />
+    <!-- API catalog (RFC 9727) -->
     <link rel="https://www.iana.org/assignments/link-relations/api-catalog" href="/.well-known/api-catalog" />
-    <link rel="https://agentprotocol.ai/skills" href="/.well-known/agent-skills/index.json" />
+    <!-- MCP server card (SEP-1649) -->
+    <link rel="mcp-server-card" href="/.well-known/mcp/server-card.json" />
+    <!-- Agent skills index (Cloudflare Agent Skills Discovery RFC) -->
+    <link rel="agent-skills" href="/.well-known/agent-skills/index.json" />
+    <!-- A2A agent card (Agent2Agent protocol) -->
+    <link rel="agent-card" href="/.well-known/agent-card.json" />
+    <!-- OAI-PMH feed -->
     <link rel="alternate" type="application/xml" href="/oai?verb=ListRecords&amp;metadataPrefix=oai_dc" title="OAI-PMH feed" />
 
-    <!-- Content signals — tells crawlers this is an open-access data resource -->
-    <meta name="content-signals" content="open-access,data,science,cc-by-4.0" />
+    <!-- Cloudflare Content Signals — machine-readable content usage policy -->
+    <!-- Mirrors the Content-Signal directive in robots.txt (contentsignals.org) -->
+    <meta name="content-signal" content="search=yes, ai-train=yes, ai-input=yes" />
     <meta name="robots" content="index, follow" />
 
     <!-- DNS prefetch + preconnect for performance -->

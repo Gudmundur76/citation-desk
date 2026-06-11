@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "name": "citation.is",
+  "description": "Open registry of verified scientific claims. Search 3,900+ claims from structural biology, salmon biotech, and more. Every claim is cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed.",
+  "url": "https://citation.is/",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "citation.is",
+    "url": "https://citation.is/"
+  },
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "authentication": {
+    "schemes": ["none"],
+    "description": "No authentication required. All endpoints are publicly accessible."
+  },
+  "defaultInputModes": ["text/plain"],
+  "defaultOutputModes": ["application/json", "text/markdown"],
+  "skills": [
+    {
+      "id": "search-claims",
+      "name": "Search Scientific Claims",
+      "description": "Search the registry for verified scientific claims by keyword, entity name, or claim text. Returns structured claim objects with verdict, evidence, and entity links.",
+      "tags": ["science", "claims", "verification", "search"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["application/json"],
+      "examples": [
+        "Search for claims about PCNA protein",
+        "Find verified claims mentioning salmon lice",
+        "What claims exist about Ivermectin?"
+      ]
+    },
+    {
+      "id": "verify-claim",
+      "name": "Verify a Scientific Claim",
+      "description": "Submit a scientific claim text for verification against the registry and authoritative databases. Returns a verdict (SUPPORTED, REFUTED, UNVERIFIED) with evidence.",
+      "tags": ["science", "verification", "fact-check"],
+      "inputModes": ["text/plain"],
+      "outputModes": ["application/json"],
+      "examples": [
+        "Verify: PCNA forms a homotrimeric ring structure",
+        "Is it true that salmon lice develop resistance to Ivermectin?"
+      ]
+    }
+  ],
+  "endpoints": {
+    "mcp": "https://citation.is/mcp",
+    "openapi": "https://citation.is/openapi.json",
+    "apiCatalog": "https://citation.is/.well-known/api-catalog",
+    "agentSkills": "https://citation.is/.well-known/agent-skills/index.json",
+    "mcpServerCard": "https://citation.is/.well-known/mcp/server-card.json",
+    "oaiPmh": "https://citation.is/oai",
+    "llmsTxt": "https://citation.is/llms.txt"
+  },
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "contentSignals": {
+    "search": "yes",
+    "aiTrain": "yes",
+    "aiInput": "yes"
+  }
+}

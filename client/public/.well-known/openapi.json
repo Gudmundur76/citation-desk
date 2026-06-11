@@ -1,0 +1,7 @@
+{
+  "openapi_url": "https://citation.is/openapi.json",
+  "description": "OpenAPI 3.0 specification for the citation.is public API. Describes all endpoints for searching, verifying, and retrieving scientific claims.",
+  "version": "1.0.0",
+  "authentication": "none",
+  "license": "https://creativecommons.org/licenses/by/4.0/"
+}
