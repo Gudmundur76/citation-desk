@@ -68,6 +68,7 @@ export interface ClaimResult {
   documentTitle: string
   verticalDomain: string
   relevanceScore?: number
+  citations?: CitationRecord[]
 }
 
 export interface SearchResult {
@@ -92,6 +93,22 @@ export interface LeaderboardEntry {
   recentCitations: number
   trend: 'up' | 'down' | 'stable'
   trendDelta: number
+}
+
+// ─── Co-occurrence types ────────────────────────────────────────────────────
+
+export interface CooccurrenceNode {
+  id: number
+  canonicalName: string
+  entityType: string
+  weight: number
+}
+
+export interface CooccurrenceEdge {
+  source: number
+  target: number
+  weight: number
+  count: number
 }
 
 // ─── Citation types (Phase 96) ──────────────────────────────────────────────
@@ -326,8 +343,10 @@ export const api = {
     claimId: number,
     opts?: { threshold?: number; topK?: number },
   ) => get<SimilarClaim[]>('similarity.findSimilarToId', { claimId, ...opts }),
-  cooccurrenceTop: (opts?: { verticalDomain?: string; limit?: number }) =>
-    get<unknown>('cooccurrence.top', opts ?? {}),
+  cooccurrenceTop: (opts?: { documentId?: number; limit?: number }) =>
+    get<{ nodes: CooccurrenceNode[]; edges: CooccurrenceEdge[] }>('cooccurrence.top', opts ?? {}),
+  cooccurrenceForEntity: (entityId: number, limit?: number) =>
+    get<{ nodes: CooccurrenceNode[]; edges: CooccurrenceEdge[] }>('cooccurrence.forEntity', { entityId, limit: limit ?? 20 }),
   submitAuditRequest: (input: AuditRequestInput) =>
     post<{ success: boolean; requestId: number }>('auditRequests.submit', input),
 

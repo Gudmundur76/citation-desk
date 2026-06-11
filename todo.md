@@ -408,3 +408,23 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [ ] Add ClaimReview JSON-LD structured data injected into <head> for SEO (Phase C4)
 - [ ] Add og:title, og:description, og:image meta tags per claim page
 - [ ] Run tests, save checkpoint, update memory repo
+
+## Phase C2 — Search Page Enhancements
+
+- [ ] Add citation type badges (VERIFIED/CONTESTED/BEYOND_EVIDENCE/IMPLIED) to ClaimCard
+- [ ] Build faceted filter sidebar: verdict, vertical domain, citation type, confidence range
+- [ ] Wire filter state to search.claims API call
+- [ ] Build entity co-occurrence sidebar using cooccurrence.top procedure
+- [ ] Run TypeScript check and tests, save checkpoint, update memory repo
+
+## Phase C2 — Search Page Enhancements (COMPLETE)
+- [x] Add citation type filter buttons to search filter panel (VERIFIED/CONTESTED/IMPLIED/BEYOND_EVIDENCE)
+- [x] Add confidence range slider to search filter panel (0–90%, step 10)
+- [x] Add citation type badges to ClaimCard (shows top citation type from citations[])
+- [x] Build entity co-occurrence sidebar (trending entities from cooccurrence.top, desktop only)
+- [x] Client-side citation type + confidence filtering on results
+- [x] Active filter chips with individual clear buttons
+- [x] Add CooccurrenceNode + CooccurrenceEdge types to api.ts
+- [x] Add cooccurrenceForEntity method to api.ts
+- [x] 35/35 tests pass, 0 TypeScript errors
+- [x] Save checkpoint, update memory repo
