@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Search, BarChart2, BookOpen, Trophy, FileText, Database, Code2 } from 'lucide-react'
+import { Search, BarChart2, BookOpen, Trophy, FileText, Database, Code2, GitBranch } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const links = [
@@ -7,6 +7,7 @@ const links = [
   { to: '/registry', label: 'Registry', icon: Database },
   { to: '/verticals', label: 'Verticals', icon: BarChart2 },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { to: '/contradictions', label: 'Contradictions', icon: GitBranch },
   { to: '/developers', label: 'Developers', icon: Code2 },
   { to: '/about', label: 'About', icon: BookOpen },
   { to: '/audit', label: 'Request Audit', icon: FileText },

@@ -94,6 +94,108 @@ export interface LeaderboardEntry {
   trendDelta: number
 }
 
+// ─── Citation types (Phase 96) ──────────────────────────────────────────────
+
+export type CitationType = 'VERIFIED' | 'CONTESTED' | 'IMPLIED' | 'BEYOND_EVIDENCE'
+
+export interface CitationRecord {
+  id: number
+  claimId: number
+  documentId: number
+  citationType: CitationType
+  passageText: string | null
+  citationConfidence: number
+  evidenceBoundary: string | null
+  createdAt: string
+}
+
+// ─── Confidence trend types ───────────────────────────────────────────────────
+
+export interface ConfidenceTrendPoint {
+  id: number
+  claimId: number
+  documentId: number
+  score: number
+  trigger: string
+  flags: string[] | null
+  recordedAt: string
+}
+
+export interface ConfidenceTrend {
+  claimId: number
+  points: ConfidenceTrendPoint[]
+  latest: ConfidenceTrendPoint | null
+}
+
+// ─── Contradiction types (Phase 107) ─────────────────────────────────────────
+
+export type ContradictionSeverity = 'HIGH' | 'MEDIUM' | 'LOW'
+
+export interface ContradictionEntry {
+  id: number
+  sourceEntityId: number
+  targetEntityId: number
+  sourceEntity?: { id: number; canonicalName: string; entityType: string } | null
+  targetEntity?: { id: number; canonicalName: string; entityType: string } | null
+  relationType: string
+  edgeWeight: number | null
+  evidenceDocumentId: number | null
+  createdAt: string
+}
+
+// ─── Timeline types ───────────────────────────────────────────────────────────
+
+export interface TimelineEvent {
+  claimId: number
+  claimText: string
+  verdict: string
+  confidenceScore: number | null
+  verdictRationale: string | null
+  documentId: number
+  documentTitle: string
+  verticalDomain: string
+  publicationYear: number | null
+  claimCreatedAt: string
+}
+
+export interface ClaimTimeline {
+  events: TimelineEvent[]
+  summary: {
+    totalEvents: number
+    verdictDistribution: Record<string, number>
+    yearRange: [number, number] | null
+    dominantVerdict: string | null
+  } | null
+}
+
+// ─── Provenance types ─────────────────────────────────────────────────────────
+
+export interface ProvenanceEvent {
+  id: number
+  claimId: number
+  documentId: number
+  eventType: string
+  fromVerdict: string | null
+  toVerdict: string | null
+  fromScore: number | null
+  toScore: number | null
+  trigger: string | null
+  agentId: string | null
+  notes: string | null
+  createdAt: string
+}
+
+export interface ProvenanceChain {
+  chain: ProvenanceEvent[]
+  summary: {
+    totalEvents: number
+    firstVerdict: string | null
+    currentVerdict: string | null
+    humanOverrides: number
+    reEvaluations: number
+  }
+}
+
 export interface AuditRequestInput {
   tier: 'starter' | 'diligence' | 'platform_pilot'
   contactName: string
@@ -190,7 +292,7 @@ export const api = {
       verticalDomain: opts?.verticalDomain,
       verdict: opts?.verdict,
     }),
-  leaderboardTopEntities: (opts?: { verticalDomain?: string; limit?: number }) =>
+  leaderboardTopEntities: (opts?: { verticalDomain?: string; entityType?: string; limit?: number }) =>
     get<LeaderboardEntry[]>('leaderboard.topEntities', opts ?? {}),
   leaderboardVerticalSummary: () =>
     get<unknown>('leaderboard.verticalSummary', {}),
@@ -203,7 +305,7 @@ export const api = {
   timelineForClaim: (claimId: number) =>
     get<unknown>('timeline.forClaim', { claimId }),
   provenanceGetChain: (claimId: number) =>
-    get<unknown>('provenance.getChain', { claimId }),
+    get<ProvenanceChain>('provenance.getChain', { claimId }),
   similarityFindSimilar: (
     query: string,
     opts?: { verticalDomain?: string; limit?: number },
@@ -212,6 +314,28 @@ export const api = {
     get<unknown>('cooccurrence.top', opts ?? {}),
   submitAuditRequest: (input: AuditRequestInput) =>
     post<{ success: boolean; requestId: number }>('auditRequests.submit', input),
+
+  // ─── Phase 118: Citations, Confidence Trend, Contradictions, Timeline, Provenance ───
+
+  /** Fetch all citations for a single claim (passage text + type). */
+  citationsForClaim: (claimId: number) =>
+    get<CitationRecord[]>('citations.forClaim', { claimId }),
+
+  /** Full confidence score history for a claim. */
+  confidenceTrendForClaim: (claimId: number) =>
+    get<ConfidenceTrend>('confidenceTrend.forClaim', { claimId }),
+
+  /** Public contradiction graph relations (semantic_opposite edges). */
+  graphContradictions: () =>
+    get<ContradictionEntry[]>('graph.contradictions'),
+
+  /** Evidence timeline for a claim text across all documents. */
+  timelineForClaimText: (claimText: string, limit = 50) =>
+    get<ClaimTimeline>('timeline.forClaim', { claimText, limit }),
+
+  /** Full provenance chain for a single claim. */
+  claimProvenanceChain: (claimId: number) =>
+    get<ProvenanceChain>('provenance.getChain', { claimId }),
 
   // ─── Public REST API ───────────────────────────────────────────────────────────
 

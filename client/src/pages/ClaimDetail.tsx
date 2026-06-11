@@ -13,7 +13,6 @@
  *
  * Data source: GET /api/external/public/claims/:id (public REST API, proxied server-side)
  */
-import { useQuery } from '@tanstack/react-query'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import {
@@ -29,8 +28,13 @@ import {
   Tag,
   Dna,
 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { VerdictBadge } from '@/components/citation/VerdictBadge'
+import { CitationsPanel } from '@/components/citation/CitationsPanel'
+import { ConfidenceSparkline } from '@/components/citation/ConfidenceSparkline'
+import { EvidenceTimeline } from '@/components/citation/EvidenceTimeline'
+import { ProvenanceAuditTrail } from '@/components/citation/ProvenanceAuditTrail'
 import { domainLabel, confidenceColor, confidenceLabel } from '@/lib/utils'
 import type { PublicClaimDetail } from '@/lib/api'
 
@@ -84,6 +88,24 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
 
   return null
 }
+
+// ─── Confidence trend sparkline (inline) ─────────────────────────────────────
+
+function ConfidenceTrendInline({ claimId }: { claimId: number }) {
+  const { data } = useQuery({
+    queryKey: ['confidenceTrend', claimId],
+    queryFn: () => api.confidenceTrendForClaim(claimId),
+    staleTime: 10 * 60_000,
+    retry: 1,
+  })
+  if (!data?.points || data.points.length < 2) return null
+  return (
+    <span className="inline-flex items-center gap-1 ml-1" title="Confidence trend">
+      <ConfidenceSparkline points={data.points} />
+    </span>
+  )
+}
+
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -199,7 +221,7 @@ export function ClaimDetail() {
         {/* ── Verdict hero ── */}
         <div className="flex items-start gap-4 mb-6">
           <VerdictIcon verdict={claim.verdict} className="w-8 h-8 shrink-0 mt-0.5" />
-          <div>
+          <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <VerdictBadge verdict={claim.verdict} size="md" />
               {conf !== null && (
@@ -210,6 +232,7 @@ export function ClaimDetail() {
                   </span>
                 </span>
               )}
+              <ConfidenceTrendInline claimId={claim.claim_id} />
             </div>
             <p className="text-xs text-slate-400">
               Claim #{claim.claim_id} · Last updated {updatedDate}
@@ -229,6 +252,9 @@ export function ClaimDetail() {
             <p className="text-base text-slate-700 leading-relaxed">{claim.claim_text}</p>
           </blockquote>
         </div>
+
+        {/* ── Source Citations (Priority 1) ── */}
+        <CitationsPanel claimId={claim.claim_id} />
 
         {/* ── Verdict rationale ── */}
         {claim.verdict_rationale && (
@@ -318,6 +344,12 @@ export function ClaimDetail() {
             value={createdDate}
           />
         </div>
+
+        {/* ── Evidence Timeline (Priority 4) ── */}
+        <EvidenceTimeline claimText={claim.claim_text} currentClaimId={claim.claim_id} />
+
+        {/* ── Provenance Audit Trail (Priority 5) ── */}
+        <ProvenanceAuditTrail claimId={claim.claim_id} />
 
         {/* ── External links ── */}
         <div className="mb-6">

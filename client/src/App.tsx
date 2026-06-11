@@ -13,6 +13,7 @@ import { ClaimDetail } from '@/pages/ClaimDetail'
 import { AuditDetail } from '@/pages/AuditDetail'
 import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
+import { Contradictions } from '@/pages/Contradictions'
 
 function NotFound() {
   return (
@@ -83,6 +84,7 @@ export default function App() {
             <Route path="/claims/:id" element={<ClaimDetail />} />
             <Route path="/entity/:type/:name" element={<EntityPage />} />
             <Route path="/developers" element={<Developers />} />
+            <Route path="/contradictions" element={<Contradictions />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

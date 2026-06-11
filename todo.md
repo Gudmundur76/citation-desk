@@ -294,3 +294,92 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 35/35 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
 - [x] Write Phase 115 to memory repo
+
+## Phase 118 — New Frontend Features (citation.is)
+
+### Priority 1 — Passage Citations Panel on ClaimDetail
+- [ ] Add CitationRecord type to api.ts
+- [ ] Add api.citationsForClaim() via confidenceTrend.latest + citations tRPC
+- [ ] Build CitationsPanel component on ClaimDetail showing VERIFIED/CONTESTED/BEYOND_EVIDENCE passages
+- [ ] Add CitationTypeBadge component
+
+### Priority 2 — Confidence Sparkline on ClaimDetail
+- [ ] Add ConfidenceTrendPoint type to api.ts
+- [ ] Add api.confidenceTrendForClaim() call
+- [ ] Build inline ConfidenceSparkline SVG component showing score history
+- [ ] Integrate sparkline into ClaimDetail verdict hero section
+
+### Priority 3 — Contradictions Feed page /contradictions
+- [ ] Add ContradictionEntry type to api.ts
+- [ ] Add api.graphContradictions() call
+- [ ] Build Contradictions.tsx page with severity badges and claim pair links
+- [ ] Add /contradictions route to App.tsx
+- [ ] Add Contradictions nav item to Nav.tsx
+- [ ] Add contradiction count badge to ClaimDetail if claim is involved
+
+### Priority 4 — Evidence Timeline on ClaimDetail
+- [ ] Add TimelineEvent type to api.ts
+- [ ] Add api.timelineForClaim() typed call
+- [ ] Build EvidenceTimeline component showing cross-document verdict evolution
+- [ ] Integrate into ClaimDetail below rationale
+
+### Priority 5 — Provenance Audit Trail on ClaimDetail
+- [ ] Add ProvenanceEvent type to api.ts
+- [ ] Add api.provenanceGetChain() typed call
+- [ ] Build ProvenanceAuditTrail collapsible component
+- [ ] Integrate into ClaimDetail as collapsible section
+
+### Priority 6 — Leaderboard entity type filter + velocity
+- [ ] Add entity type filter tabs to Leaderboard.tsx
+- [ ] Add velocity indicator (30d vs 60d) to leaderboard rows
+
+### Infrastructure
+- [ ] Write vitest tests for new api.ts functions
+- [ ] Save checkpoint and push to GitHub
+- [ ] Log Phase 118 to manus-persistent-drive
+
+## Phase 118 — New Frontend Features (Backend Phase 96-107 Integration)
+
+### Priority 1: Passage Citations Panel (ClaimDetail)
+- [x] Add CitationRecord + CitationType types to lib/api.ts
+- [x] Add api.citationsForClaim() to lib/api.ts
+- [x] Create CitationTypeBadge component (VERIFIED / CONTESTED / IMPLIED / BEYOND_EVIDENCE)
+- [x] Create CitationsPanel component — shows passage text + type + confidence per citation
+- [x] Inject CitationsPanel into ClaimDetail (after claim text, before rationale)
+
+### Priority 2: Confidence Sparkline (ClaimDetail)
+- [x] Add ConfidenceTrendPoint + ConfidenceTrend types to lib/api.ts
+- [x] Add api.confidenceTrendForClaim() to lib/api.ts
+- [x] Create ConfidenceSparkline SVG component (GPU-only: transform + opacity)
+- [x] Create ConfidenceTrendInline helper component
+- [x] Inject sparkline into verdict hero row in ClaimDetail
+
+### Priority 3: Contradictions Page (/contradictions)
+- [x] Add ContradictionEntry type to lib/api.ts
+- [x] Add api.graphContradictions() to lib/api.ts
+- [x] Create Contradictions.tsx page — entity pairs with severity badges
+- [x] Add /contradictions route to App.tsx
+- [x] Add Contradictions nav link to Nav.tsx
+
+### Priority 4: Evidence Timeline (ClaimDetail)
+- [x] Add TimelineEvent + ClaimTimeline types to lib/api.ts
+- [x] Add api.timelineForClaimText() to lib/api.ts
+- [x] Create EvidenceTimeline component — cross-document verdict history
+- [x] Inject EvidenceTimeline into ClaimDetail (after metadata grid)
+
+### Priority 5: Provenance Audit Trail (ClaimDetail)
+- [x] Add ProvenanceEvent + ProvenanceChain types to lib/api.ts
+- [x] Add api.claimProvenanceChain() to lib/api.ts
+- [x] Create ProvenanceAuditTrail collapsible component
+- [x] Inject ProvenanceAuditTrail into ClaimDetail (after evidence timeline)
+
+### Priority 6: Trending Entities Leaderboard
+- [x] Add entityType filter to leaderboardTopEntities() API call
+- [x] Rewrite Leaderboard.tsx — entity type filter tabs (All/Proteins/Methods/Organisms/Authors/Concepts/Documents)
+- [x] Add TrendingSection — top 5 movers with 30-day delta
+- [x] Add velocity bar (30d/total ratio) to leaderboard rows
+
+### Tests and delivery
+- [x] 0 TypeScript errors
+- [x] 35/35 tests pass (SKIP_CONTRACT_TESTS=true; contract test skipped — live network)
+- [x] No new proxy routes needed — all procedures use existing /api/external/trpc/:procedure wildcard
