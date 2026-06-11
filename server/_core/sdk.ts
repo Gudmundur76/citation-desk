@@ -279,7 +279,9 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, sync from OAuth server automatically
+    // If user not in DB, attempt to sync from OAuth server.
+    // If the OAuth server is unreachable (e.g. ENOTFOUND api.manus.im on Cloud Run),
+    // treat the session as unauthenticated rather than crashing the request.
     if (!user) {
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
@@ -292,8 +294,19 @@ class SDKServer {
         });
         user = await db.getUserByOpenId(userInfo.openId);
       } catch (error) {
-        console.error("[Auth] Failed to sync user from OAuth:", error);
-        throw ForbiddenError("Failed to sync user info");
+        const msg = String(error);
+        const isNetworkError =
+          msg.includes('ENOTFOUND') ||
+          msg.includes('ECONNREFUSED') ||
+          msg.includes('EAI_AGAIN') ||
+          msg.includes('Failed host lookup');
+        if (isNetworkError) {
+          // OAuth server unreachable — treat as unauthenticated, do not crash
+          console.warn('[Auth] OAuth server unreachable, treating session as unauthenticated:', msg.split('\n')[0]);
+          throw ForbiddenError('OAuth server unreachable');
+        }
+        console.error('[Auth] Failed to sync user from OAuth:', error);
+        throw ForbiddenError('Failed to sync user info');
       }
     }
 
