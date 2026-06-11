@@ -123,11 +123,29 @@
 ### Tests and delivery
 - [x] 16/16 tests pass, 0 TypeScript errors
 - [x] Save checkpoint
-- [x] Write Phase 106 to memory repo
+- [x] Write Phase 106 to memory repo (pushed to Gudmundur76/manus-persistent-drive)
 
 ### Manual steps remaining (owner action required)
-- [ ] Submit to re3data.org at https://www.re3data.org/suggest
-- [ ] Submit to BASE at https://www.base-search.net/about/en/suggest.php
-- [ ] Register with OpenAIRE at https://provide.openaire.eu (after re3data DOI received)
-- [ ] (Future) Mint real DOIs via DataCite for each claim record
-- [ ] (Future) Apply for CoreTrustSeal certification
+- [ ] [OWNER ACTION] Submit to re3data.org at https://www.re3data.org/suggest
+- [ ] [OWNER ACTION] Submit to BASE at https://www.base-search.net/about/en/suggest.php
+- [ ] [OWNER ACTION] Register with OpenAIRE at https://provide.openaire.eu (after re3data DOI received)
+- [ ] [FUTURE] Mint real DOIs via DataCite for each claim record
+- [ ] [FUTURE] Apply for CoreTrustSeal certification
+
+## Phase 107 — Agent-Readiness (isitagentready.com)
+
+### Static well-known files
+- [x] /.well-known/mcp/server-card.json — MCP Server Card
+- [x] /.well-known/api-catalog — API Catalog (application/linkset+json)
+- [x] /.well-known/agent-skills/index.json — Agent Skills index
+- [x] /.well-known/http-message-signatures-directory — Web Bot Auth directory
+- [x] /auth.md — agent authentication description
+
+### Server-side middleware
+- [x] Add Link response header to all HTML responses pointing to /api/md (markdown alternate)
+- [x] Add Markdown content negotiation: serve /api/md content when Accept: text/markdown
+
+### Tests and delivery
+- [x] 16/16 tests pass, 0 TypeScript errors
+- [x] Save checkpoint
+- [x] Write Phase 107 to memory repo

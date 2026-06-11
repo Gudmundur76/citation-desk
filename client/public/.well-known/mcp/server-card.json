@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "name": "citation.is",
+  "description": "Verified scientific claims registry. Search, retrieve, and verify claims from structural biology, salmon biotechnology, genomics, and related life-science domains. Each claim is cross-referenced against authoritative databases (PDB, UniProt, NCBI, PubMed).",
+  "url": "https://citation.is",
+  "mcp_endpoint": "https://citation.is/mcp",
+  "mcp_discovery": "https://citation.is/.well-known/mcp.json",
+  "contact": {
+    "email": "admin@citation.is",
+    "url": "https://citation.is/developers"
+  },
+  "capabilities": [
+    "search_claims",
+    "get_claim",
+    "verify_claim",
+    "list_verticals",
+    "get_knowledge_graph"
+  ],
+  "authentication": {
+    "required": false,
+    "description": "No authentication required. All endpoints are publicly accessible."
+  },
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "openapi": "https://citation.is/openapi.json",
+  "api_catalog": "https://citation.is/.well-known/api-catalog",
+  "agent_skills": "https://citation.is/.well-known/agent-skills/index.json",
+  "oai_pmh": "https://citation.is/oai",
+  "data_exports": {
+    "claims_json": "https://citation.is/api/public/claims.json",
+    "graph_json": "https://citation.is/api/public/graph.json",
+    "markdown_summary": "https://citation.is/api/md"
+  },
+  "categories": [
+    "science",
+    "life_sciences",
+    "structural_biology",
+    "genomics",
+    "fact_checking",
+    "research_data"
+  ]
+}

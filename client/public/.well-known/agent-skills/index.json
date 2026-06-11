@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "skills": [
+    {
+      "id": "citation-is-search",
+      "name": "Search Verified Scientific Claims",
+      "description": "Search citation.is for verified scientific claims from structural biology, salmon biotechnology, genomics, and related life-science domains. Each claim is cross-referenced against PDB, UniProt, NCBI, and PubMed.",
+      "version": "1.0.0",
+      "url": "https://citation.is",
+      "api_endpoint": "https://citation.is/api/external/public/claims",
+      "mcp_endpoint": "https://citation.is/mcp",
+      "openapi": "https://citation.is/openapi.json",
+      "authentication": {
+        "required": false
+      },
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Free-text search query for claims, proteins, methods, or organisms"
+          },
+          "vertical": {
+            "type": "string",
+            "description": "Domain filter: structural_biology, salmon_biotech, genomics, clinical_trials, nutrition"
+          },
+          "verdict": {
+            "type": "string",
+            "description": "Filter by verdict: supported, refuted, inconclusive"
+          }
+        }
+      },
+      "categories": ["science", "fact_checking", "life_sciences", "research"],
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "id": "citation-is-verify",
+      "name": "Verify a Scientific Claim",
+      "description": "Submit a scientific claim text to the citation.is verification pipeline. Returns a verdict (supported/refuted/inconclusive), confidence score, and evidence references from authoritative databases.",
+      "version": "1.0.0",
+      "url": "https://citation.is",
+      "api_endpoint": "https://citation.is/api/public/verify-claim",
+      "method": "POST",
+      "authentication": {
+        "required": false
+      },
+      "input_schema": {
+        "type": "object",
+        "required": ["claim_text"],
+        "properties": {
+          "claim_text": {
+            "type": "string",
+            "description": "The scientific claim to verify"
+          }
+        }
+      },
+      "categories": ["science", "fact_checking", "life_sciences"],
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ]
+}

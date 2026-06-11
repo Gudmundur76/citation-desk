@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "description": "citation.is Web Bot Auth directory. This site does not require bot authentication — all endpoints are publicly accessible. This document is provided for compatibility with Web Bot Auth (RFC draft) discovery.",
+  "site": "https://citation.is",
+  "bot_access": "open",
+  "authentication_required": false,
+  "supported_algorithms": [],
+  "contact": "admin@citation.is",
+  "policy_url": "https://citation.is/robots.txt",
+  "note": "citation.is is an open scientific data registry. All crawlers, agents, and bots are welcome. No signing or authentication is required to access any endpoint."
+}

@@ -1,0 +1,62 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://citation.is",
+      "https://www.iana.org/assignments/link-relations/service-desc": [
+        {
+          "href": "https://citation.is/openapi.json",
+          "type": "application/vnd.oai.openapi+json;version=3.0"
+        }
+      ],
+      "https://www.iana.org/assignments/link-relations/service-doc": [
+        {
+          "href": "https://citation.is/developers",
+          "type": "text/html"
+        }
+      ],
+      "https://www.iana.org/assignments/link-relations/describedby": [
+        {
+          "href": "https://citation.is/.well-known/opendata.json",
+          "type": "application/json"
+        }
+      ],
+      "item": [
+        {
+          "href": "https://citation.is/api/external/public/claims",
+          "type": "application/json",
+          "title": "Claims search and listing endpoint"
+        },
+        {
+          "href": "https://citation.is/api/public/claims.json",
+          "type": "application/json",
+          "title": "Full claims registry export"
+        },
+        {
+          "href": "https://citation.is/api/public/graph.json",
+          "type": "application/json",
+          "title": "Knowledge graph export"
+        },
+        {
+          "href": "https://citation.is/api/public/verify-claim",
+          "type": "application/json",
+          "title": "On-demand claim verification (POST)"
+        },
+        {
+          "href": "https://citation.is/api/md",
+          "type": "text/markdown",
+          "title": "Markdown summary for LLM grounding"
+        },
+        {
+          "href": "https://citation.is/oai",
+          "type": "application/xml",
+          "title": "OAI-PMH 2.0 harvesting endpoint"
+        },
+        {
+          "href": "https://citation.is/mcp",
+          "type": "application/json",
+          "title": "MCP endpoint"
+        }
+      ]
+    }
+  ]
+}
