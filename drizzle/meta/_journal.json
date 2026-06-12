@@ -29,6 +29,20 @@
       "when": 1781139775369,
       "tag": "0003_nifty_johnny_blaze",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1781253282932,
+      "tag": "0004_lyrical_falcon",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1781253523091,
+      "tag": "0005_last_leech",
+      "breakpoints": true
     }
   ]
 }

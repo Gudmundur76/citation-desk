@@ -27,7 +27,12 @@ import {
   FileText,
   Tag,
   Dna,
+  Download,
+  Code2,
+  Copy,
+  Check,
 } from 'lucide-react'
+import { useState as useLocalState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, rewriteUrl } from '@/lib/api'
 import { VerdictBadge } from '@/components/citation/VerdictBadge'
@@ -485,6 +490,9 @@ export function ClaimDetail() {
           </div>
         </div>
 
+        {/* ── PDF Report + Embed ── */}
+        <ClaimExportPanel claim={claim} />
+
         {/* ── Actions ── */}
         <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-100">
           <Link
@@ -494,8 +502,6 @@ export function ClaimDetail() {
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Registry
           </Link>
-
-
 
           <Link
             to="/audit"
@@ -513,6 +519,233 @@ export function ClaimDetail() {
           citation.is/claims/{claim.claim_id} · doc:{claim.document_id}
         </p>
       </div>
+    </div>
+  )
+}
+
+// ─── ClaimExportPanel ───────────────────────────────────────────────────────────
+
+type ExportClaim = {
+  claim_id: number
+  claim_text: string
+  verdict: string
+  confidence_score: number | null
+  verdict_rationale: string | null
+  evidence_url: string | null
+  document_title: string
+  vertical_domain: string | null
+  claim_type: string | null
+  created_at: string
+  updated_at: string
+}
+
+function ClaimExportPanel({ claim }: { claim: ExportClaim }) {
+  const [tab, setTab] = useLocalState<'pdf' | 'embed'>('pdf')
+  const [copied, setCopied] = useLocalState(false)
+  const [pdfLoading, setPdfLoading] = useLocalState(false)
+
+  const claimUrl = `https://citation.is/claims/${claim.claim_id}`
+  const verdictColor = {
+    Supported: '#10b981',
+    Refuted: '#ef4444',
+    Ambiguous: '#f59e0b',
+    'Out of Scope': '#94a3b8',
+  }[claim.verdict] ?? '#94a3b8'
+
+  // SVG embed badge
+  const badgeSvg = [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="24" viewBox="0 0 200 24">`,
+    `  <rect width="200" height="24" rx="4" fill="#f8fafc"/>`,
+    `  <rect width="200" height="24" rx="4" fill="none" stroke="#e2e8f0" stroke-width="1"/>`,
+    `  <rect x="0" y="0" width="80" height="24" rx="4" fill="${verdictColor}"/>`,
+    `  <rect x="76" y="0" width="4" height="24" fill="${verdictColor}"/>`,
+    `  <text x="8" y="16" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="white">${claim.verdict}</text>`,
+    `  <text x="88" y="16" font-family="system-ui,sans-serif" font-size="10" fill="#475569">citation.is/${claim.claim_id}</text>`,
+    `</svg>`,
+  ].join('\n')
+
+  const embedHtml = `<a href="${claimUrl}" target="_blank" rel="noopener noreferrer" title="Verified by citation.is">${badgeSvg}</a>`
+
+  const embedMarkdown = `[![${claim.verdict} — citation.is](https://citation.is/api/public/badge/${claim.claim_id}.svg)](${claimUrl})`
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  async function downloadPdf() {
+    setPdfLoading(true)
+    try {
+      // Build a minimal print-ready HTML document and open it in a new tab
+      // The user can then use browser Print → Save as PDF
+      const conf = claim.confidence_score !== null ? `${(claim.confidence_score * 100).toFixed(0)}%` : 'N/A'
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Claim #${claim.claim_id} — citation.is</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; color: #1e293b; line-height: 1.6; }
+    h1 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; color: white; background: ${verdictColor}; }
+    .meta { font-size: 0.8rem; color: #64748b; margin-bottom: 1.5rem; }
+    blockquote { border-left: 4px solid #e2e8f0; padding-left: 1rem; margin: 0 0 1.5rem; color: #334155; }
+    .section { margin-bottom: 1.25rem; }
+    .label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 0.25rem; }
+    .value { font-size: 0.9rem; }
+    a { color: #3b82f6; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; font-size: 0.75rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <h1>Claim Verification Report</h1>
+  <div class="meta">citation.is · Claim #${claim.claim_id} · Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+  <div class="section">
+    <div class="label">Verdict</div>
+    <span class="badge">${claim.verdict}</span>
+    <span style="margin-left:8px;font-size:0.85rem;color:#64748b">Confidence: ${conf}</span>
+  </div>
+  <div class="section">
+    <div class="label">Claim</div>
+    <blockquote>${claim.claim_text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</blockquote>
+  </div>
+  ${claim.verdict_rationale ? `<div class="section"><div class="label">Verification Rationale</div><div class="value">${claim.verdict_rationale.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div></div>` : ''}
+  ${claim.evidence_url ? `<div class="section"><div class="label">Primary Evidence</div><div class="value"><a href="${claim.evidence_url}">${claim.evidence_url}</a></div></div>` : ''}
+  <div class="section">
+    <div class="label">Source Document</div>
+    <div class="value">${claim.document_title.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+  </div>
+  ${claim.vertical_domain ? `<div class="section"><div class="label">Research Domain</div><div class="value">${claim.vertical_domain}</div></div>` : ''}
+  <footer>
+    Verified by citation.is — <a href="${claimUrl}">${claimUrl}</a><br>
+    This report is provided under CC BY 4.0. Cite as: citation.is/claims/${claim.claim_id}
+  </footer>
+</body>
+</html>`
+
+      const blob = new Blob([html], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const win = window.open(url, '_blank')
+      if (win) {
+        win.onload = () => {
+          setTimeout(() => {
+            win.print()
+            URL.revokeObjectURL(url)
+          }, 500)
+        }
+      }
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
+  return (
+    <div className="mb-6">
+      <h2
+        className="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide"
+        style={{ fontFamily: 'Syne, sans-serif' }}
+      >
+        Export &amp; Embed
+      </h2>
+
+      {/* Tab switcher */}
+      <div className="flex gap-1 mb-4 bg-slate-100 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setTab('pdf')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
+            tab === 'pdf' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Download className="w-3.5 h-3.5" />
+          PDF Report
+        </button>
+        <button
+          onClick={() => setTab('embed')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${
+            tab === 'embed' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Code2 className="w-3.5 h-3.5" />
+          Embed Badge
+        </button>
+      </div>
+
+      {tab === 'pdf' && (
+        <div className="rounded-xl border border-slate-200 p-5">
+          <p className="text-sm text-slate-600 mb-4">
+            Download a print-ready verification report for Claim #{claim.claim_id}.
+            The report includes the verdict, rationale, evidence source, and provenance metadata.
+          </p>
+          <button
+            onClick={downloadPdf}
+            disabled={pdfLoading}
+            className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 disabled:opacity-50 transition-colors"
+          >
+            {pdfLoading ? (
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            {pdfLoading ? 'Preparing…' : 'Download PDF'}
+          </button>
+          <p className="text-xs text-slate-400 mt-3">
+            Opens a print dialog. Choose &ldquo;Save as PDF&rdquo; in your browser.
+            Report is provided under{' '}
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline">
+              CC BY 4.0
+            </a>.
+          </p>
+        </div>
+      )}
+
+      {tab === 'embed' && (
+        <div className="rounded-xl border border-slate-200 p-5 space-y-5">
+          {/* Badge preview */}
+          <div>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Preview</p>
+            <div
+              className="inline-block"
+              dangerouslySetInnerHTML={{ __html: badgeSvg }}
+            />
+          </div>
+
+          {/* HTML snippet */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">HTML</p>
+              <button
+                onClick={() => copyToClipboard(embedHtml)}
+                className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
+            <pre className="text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto text-slate-700 whitespace-pre-wrap break-all">{embedHtml}</pre>
+          </div>
+
+          {/* Markdown snippet */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Markdown</p>
+              <button
+                onClick={() => copyToClipboard(embedMarkdown)}
+                className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <Copy className="w-3 h-3" />
+                Copy
+              </button>
+            </div>
+            <pre className="text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto text-slate-700 whitespace-pre-wrap break-all">{embedMarkdown}</pre>
+          </div>
+
+          <p className="text-xs text-slate-400">
+            Paste the HTML snippet into any webpage or the Markdown into a README to display a live verification badge.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -9,4 +9,8 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
   vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
+  // PayPal checkout
+  paypalClientId: process.env.PAYPAL_CLIENT_ID ?? "",
+  paypalSecret: process.env.PAYPAL_SECRET ?? "",
+  paypalMode: (process.env.PAYPAL_MODE ?? "sandbox") as "sandbox" | "live",
 };

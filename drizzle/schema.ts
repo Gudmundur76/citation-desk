@@ -96,3 +96,51 @@ export const magicLinkTokens = mysqlTable("magic_link_tokens", {
 
 export type MagicLinkToken = typeof magicLinkTokens.$inferSelect;
 export type InsertMagicLinkToken = typeof magicLinkTokens.$inferInsert;
+
+/**
+ * Commercial subscription records.
+ * Created when a PayPal order is created (status=pending),
+ * updated to active when the order is captured.
+ */
+export const userSubscriptions = mysqlTable("user_subscriptions", {
+  id: int("id").autoincrement().primaryKey(),
+  // Email used at checkout (no auth required for citation.is)
+  email: varchar("email", { length: 320 }).notNull(),
+  paypalOrderId: varchar("paypalOrderId", { length: 128 }).notNull().unique(),
+  paypalCaptureId: varchar("paypalCaptureId", { length: 128 }),
+  planTier: mysqlEnum("planTier", ["starter", "diligence", "platform"]).notNull(),
+  status: mysqlEnum("status", ["pending", "active", "cancelled", "refunded"]).notNull().default("pending"),
+  auditsLimit: int("auditsLimit").notNull(),
+  auditsUsed: int("auditsUsed").notNull().default(0),
+  amountUsd: int("amountUsd").notNull(),
+  currency: varchar("currency", { length: 8 }).notNull().default("USD"),
+  activatedAt: timestamp("activatedAt"),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = typeof userSubscriptions.$inferInsert;
+
+/**
+ * API keys for programmatic access to citation.is.
+ * Only the SHA-256 hash is stored — the raw key is shown once at creation.
+ */
+export const apiKeys = mysqlTable("api_keys", {
+  id: int("id").autoincrement().primaryKey(),
+  // Linked to user_subscriptions.email (no auth table in citation-desk)
+  email: varchar("email", { length: 320 }).notNull(),
+  keyHash: varchar("keyHash", { length: 64 }).notNull().unique(),
+  label: varchar("label", { length: 128 }).notNull(),
+  scopes: text("scopes").notNull().default("[\"read\"]"), // JSON array stored as text
+  keyPrefix: varchar("keyPrefix", { length: 16 }).notNull(),
+  lastUsedAt: timestamp("lastUsedAt"),
+  revokedAt: timestamp("revokedAt"),
+  expiresAt: timestamp("expiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApiKey = typeof apiKeys.$inferSelect;
+export type InsertApiKey = typeof apiKeys.$inferInsert;

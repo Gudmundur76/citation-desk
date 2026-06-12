@@ -459,3 +459,38 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Fix /mcp timeout (15s timeout + 504 error response)
 - [x] Fix null claim_text: ttruthdesk db.ts filters claimText < 15 chars from public API
 - [x] CodeRabbit config added to both repos (citation-desk + ttruthdesk-platform)
+
+## CI Fix (2026-06-12) — COMPLETE
+- [x] Create pnpm.yaml with patchedDependencies (wouter@3.7.1) and overrides (nanoid)
+- [x] Remove deprecated pnpm field from package.json
+- [x] Upgrade CI pnpm/action-setup from version 9 to version 10
+- [x] Regenerate pnpm-lock.yaml
+- [x] Push to GitHub (commit 6f15b69)
+
+## Commercial Layer — Phase 120
+
+### Pricing Page (/pricing)
+- [ ] Build Pricing.tsx — 3-tier pricing cards (Starter $1,500, Diligence $5,000, Platform custom)
+- [ ] Add /pricing route to App.tsx
+- [ ] Add Pricing link to Nav.tsx and footer
+- [ ] PayPal checkout flow: create order → capture order → activate subscription
+- [ ] Add tRPC procedures: createPaypalOrder, capturePaypalOrder, getSubscriptionStatus
+- [ ] Add DB helpers for user_subscriptions table
+- [ ] Add PayPal REST API client (server/paypal.ts)
+- [ ] Success page after payment capture
+
+### Customer Dashboard (/dashboard)
+- [ ] Build Dashboard.tsx — subscription status, API key management, audit history
+- [ ] Add /dashboard route to App.tsx
+- [ ] Add Dashboard link to Nav.tsx (authenticated only)
+- [ ] API key generation/revocation UI (backed by ttruthdesk apiKeyService)
+- [ ] Subscription status display (plan, audits used/limit, renewal date)
+
+### ClaimDetail Enhancements
+- [ ] "Download PDF Report" button on ClaimDetail (generates PDF via server)
+- [ ] "Embed this claim" badge section on ClaimDetail (copy-paste iframe/script snippet)
+
+### Tests and delivery
+- [ ] 35/35 tests pass, 0 TypeScript errors
+- [ ] Save checkpoint, push to GitHub
+- [ ] Log Phase 120 to manus-persistent-drive

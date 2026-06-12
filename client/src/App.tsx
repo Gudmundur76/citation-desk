@@ -15,6 +15,8 @@ import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
+import { Pricing } from '@/pages/Pricing'
+import { Dashboard } from '@/pages/Dashboard'
 
 function NotFound() {
   return (
@@ -52,6 +54,7 @@ function SiteFooter() {
           <ul className="flex gap-4 list-none p-0 m-0">
             <li><a href="/about" className="hover:text-slate-600">About</a></li>
             <li><a href="/methodology" className="hover:text-slate-600">Methodology</a></li>
+            <li><a href="/pricing" className="hover:text-slate-600">Pricing</a></li>
             <li><a href="/developers" className="hover:text-slate-600">API</a></li>
             <li><a href="/llms.txt" className="hover:text-slate-600">llms.txt</a></li>
             <li><a href="/openapi.json" className="hover:text-slate-600">OpenAPI</a></li>
@@ -88,6 +91,8 @@ export default function App() {
             <Route path="/developers" element={<Developers />} />
             <Route path="/contradictions" element={<Contradictions />} />
             <Route path="/methodology" element={<Methodology />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
