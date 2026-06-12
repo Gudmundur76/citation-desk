@@ -9,7 +9,7 @@
  *   - Document provenance
  *   - Claim type + extracted value
  *   - ClaimReview JSON-LD injected into <head> for SEO
- *   - Link back to the registry and to the audit on ttruthdesk.claims
+ *   - Link back to the registry and to the audit on citation.is
  *
  * Data source: GET /api/external/public/claims/:id (public REST API, proxied server-side)
  */
@@ -29,7 +29,7 @@ import {
   Dna,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api, rewriteUrl } from '@/lib/api'
 import { VerdictBadge } from '@/components/citation/VerdictBadge'
 import { CitationsPanel } from '@/components/citation/CitationsPanel'
 import { ConfidenceSparkline } from '@/components/citation/ConfidenceSparkline'
@@ -90,7 +90,7 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
         '@type': 'Organization',
         name: 'citation.is',
         url: 'https://citation.is',
-        description: 'Automated scientific claim verification registry powered by ttruthdesk.claims',
+        description: 'Automated scientific claim verification registry — citation.is',
       },
       claimReviewed: claim.claim_text,
       itemReviewed: {
@@ -462,24 +462,24 @@ export function ClaimDetail() {
           <div className="flex flex-wrap gap-2">
             {claim.audit_url && (
               <a
-                href={claim.audit_url}
+                href={rewriteUrl(claim.audit_url) ?? '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-400 hover:text-slate-900 transition-colors"
               >
                 <ExternalLink className="w-3 h-3 shrink-0" />
-                View full audit on Truth Desk
+                View full audit report
               </a>
             )}
             {claim.page_url && (
               <a
-                href={claim.page_url}
+                href={rewriteUrl(claim.page_url) ?? '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-400 hover:text-slate-900 transition-colors"
               >
                 <ExternalLink className="w-3 h-3 shrink-0" />
-                Claim page on Truth Desk
+                Canonical claim page
               </a>
             )}
           </div>

@@ -1,7 +1,7 @@
 /**
  * /audit/:id — Audit report detail page.
  *
- * Fetches the full audit report for a document from the ttruthdesk.claims
+ * Fetches the full audit report for a document from the citation.is
  * public API and renders all verified claims from that document, grouped
  * by verdict. Links back to the registry and to the source document.
  *
@@ -138,7 +138,7 @@ export function AuditDetail() {
     )
   }
 
-  const auditUrl = `https://ttruthdesk.claims/audit/${documentId}`
+  const auditUrl = `/audit/${documentId}`
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
@@ -184,7 +184,7 @@ export function AuditDetail() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-900 transition-colors"
           >
-            View on Truth Desk
+            View audit report
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
@@ -234,16 +234,7 @@ export function AuditDetail() {
       {/* Footer note */}
       <div className="mt-10 pt-6 border-t border-slate-100 text-center">
         <p className="text-xs text-slate-400">
-          Verified by the{' '}
-          <a
-            href="https://ttruthdesk.claims"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-slate-600 transition-colors"
-          >
-            Protein Truth Desk
-          </a>{' '}
-          pipeline · citation.is
+          Verified by the citation.is autonomous verification pipeline.
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'wouter'
+import { Link } from 'react-router-dom'
 import { api, SimilarClaim } from '@/lib/api'
 
 const VERDICT_COLORS: Record<string, string> = {

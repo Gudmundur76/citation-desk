@@ -7,6 +7,24 @@
 const BASE = '/api/external/trpc'
 const PUBLIC_BASE = '/api/external/public'
 
+/**
+ * Rewrite legacy Cloud Run / ttruthdesk.claims URLs to citation.is equivalents.
+ * The backend stores absolute URLs that were generated at deploy time and may
+ * point to the old Cloud Run domain or ttruthdesk.claims instead of citation.is.
+ */
+const LEGACY_ORIGINS = [
+  /https?:\/\/[a-z0-9-]+-[a-z0-9]+-[a-z]{2}\.a\.run\.app/g,  // Cloud Run
+  /https?:\/\/ttruthdesk\.claims/g,
+]
+export function rewriteUrl(url: string | null | undefined): string | null {
+  if (!url) return null
+  let out = url
+  for (const pattern of LEGACY_ORIGINS) {
+    out = out.replace(pattern, 'https://citation.is')
+  }
+  return out
+}
+
 function encode(input: unknown): string {
   return encodeURIComponent(JSON.stringify({ json: input }))
 }

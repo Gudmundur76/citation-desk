@@ -155,7 +155,7 @@ export function EntityPage() {
     .slice(-20)
     .map(e => ({ score: e.confidenceScore as number, recordedAt: e.claimCreatedAt }))
 
-  const kgUrl = `https://ttruthdesk.claims/entity/${entityType}/${encodeURIComponent(entityName)}`
+  const kgUrl = `https://citation.is/entity/${entityType}/${encodeURIComponent(entityName)}`
 
   // OG meta tags + canonical link
   useEffect(() => {
@@ -444,16 +444,7 @@ export function EntityPage() {
       {/* Footer */}
       <div className="mt-10 pt-6 border-t border-slate-100 text-center">
         <p className="text-xs text-slate-400">
-          Knowledge graph powered by{' '}
-          <a
-            href="https://ttruthdesk.claims"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-slate-600 transition-colors"
-          >
-            ttruthdesk.claims
-          </a>{' '}
-          · citation.is
+          Knowledge graph · citation.is
         </p>
       </div>
     </div>

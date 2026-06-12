@@ -39,9 +39,10 @@ export function About() {
             What is citation.is?
           </h1>
           <p className="text-lg text-slate-500 leading-relaxed">
-            citation.is is a public interface for the Protein Truth Desk — an autonomous scientific
-            claim verification engine. It monitors research literature, extracts molecular and
-            biological claims, and validates each one against authoritative databases.
+            citation.is is an autonomous scientific claim verification registry. It monitors research
+            literature, extracts molecular and biological claims, and validates each one against
+            authoritative databases — delivering a permanent, citable record of what the evidence
+            actually says.
           </p>
         </div>
 
@@ -105,18 +106,17 @@ export function About() {
             className="text-lg font-bold mb-2"
             style={{ fontFamily: 'Syne, sans-serif' }}
           >
-            Powered by Protein Truth Desk
+            Verification Engine
           </h2>
           <p className="text-sm text-slate-400 leading-relaxed mb-4">
-            The backend engine runs at{' '}
-            <a href="https://ttruthdesk.claims" target="_blank" rel="noopener noreferrer"
-              className="text-slate-300 underline hover:text-white">
-              ttruthdesk.claims
-            </a>{' '}
-            and exposes a public tRPC API for search, verticals, leaderboard, and claim provenance.
+            The verification engine exposes a full public REST and tRPC API for search, verticals,
+            leaderboard, and claim provenance — all available at{' '}
+            <a href="https://citation.is/developers" className="text-slate-300 underline hover:text-white">
+              citation.is/developers
+            </a>.
           </p>
           <div className="font-mono text-xs text-slate-500 bg-slate-800 rounded-lg px-3 py-2">
-            https://ttruthdesk.claims/api/trpc
+            https://citation.is/api/public/claims
           </div>
         </div>
 

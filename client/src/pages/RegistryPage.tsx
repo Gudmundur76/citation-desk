@@ -1,6 +1,6 @@
 /**
  * /registry — Searchable, filterable, paginated list of all verified claims
- * in the ttruthdesk.claims knowledge base.
+ * in the citation.is knowledge base.
  *
  * Data source: GET /api/external/public/claims (public REST API, proxied server-side)
  * Supports: free-text search, verdict filter, vertical domain filter, page navigation.

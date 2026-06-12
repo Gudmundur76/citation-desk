@@ -297,46 +297,46 @@ in index.html that the crawler sees immediately, while React still mounts into #
 
 ## Phase 118 — New Frontend Features (citation.is)
 
-### Priority 1 — Passage Citations Panel on ClaimDetail
-- [ ] Add CitationRecord type to api.ts
-- [ ] Add api.citationsForClaim() via confidenceTrend.latest + citations tRPC
-- [ ] Build CitationsPanel component on ClaimDetail showing VERIFIED/CONTESTED/BEYOND_EVIDENCE passages
-- [ ] Add CitationTypeBadge component
+### Priority 1 — Passage Citations Panel on ClaimDetail (COMPLETE — see second Phase 118 block)
+- [x] Add CitationRecord type to api.ts
+- [x] Add api.citationsForClaim() via confidenceTrend.latest + citations tRPC
+- [x] Build CitationsPanel component on ClaimDetail showing VERIFIED/CONTESTED/BEYOND_EVIDENCE passages
+- [x] Add CitationTypeBadge component
 
-### Priority 2 — Confidence Sparkline on ClaimDetail
-- [ ] Add ConfidenceTrendPoint type to api.ts
-- [ ] Add api.confidenceTrendForClaim() call
-- [ ] Build inline ConfidenceSparkline SVG component showing score history
-- [ ] Integrate sparkline into ClaimDetail verdict hero section
+### Priority 2 — Confidence Sparkline on ClaimDetail (COMPLETE)
+- [x] Add ConfidenceTrendPoint type to api.ts
+- [x] Add api.confidenceTrendForClaim() call
+- [x] Build inline ConfidenceSparkline SVG component showing score history
+- [x] Integrate sparkline into ClaimDetail verdict hero section
 
-### Priority 3 — Contradictions Feed page /contradictions
-- [ ] Add ContradictionEntry type to api.ts
-- [ ] Add api.graphContradictions() call
-- [ ] Build Contradictions.tsx page with severity badges and claim pair links
-- [ ] Add /contradictions route to App.tsx
-- [ ] Add Contradictions nav item to Nav.tsx
-- [ ] Add contradiction count badge to ClaimDetail if claim is involved
+### Priority 3 — Contradictions Feed page /contradictions (COMPLETE)
+- [x] Add ContradictionEntry type to api.ts
+- [x] Add api.graphContradictions() call
+- [x] Build Contradictions.tsx page with severity badges and claim pair links
+- [x] Add /contradictions route to App.tsx
+- [x] Add Contradictions nav item to Nav.tsx
+- [x] Add contradiction count badge to ClaimDetail if claim is involved
 
-### Priority 4 — Evidence Timeline on ClaimDetail
-- [ ] Add TimelineEvent type to api.ts
-- [ ] Add api.timelineForClaim() typed call
-- [ ] Build EvidenceTimeline component showing cross-document verdict evolution
-- [ ] Integrate into ClaimDetail below rationale
+### Priority 4 — Evidence Timeline on ClaimDetail (COMPLETE)
+- [x] Add TimelineEvent type to api.ts
+- [x] Add api.timelineForClaim() typed call
+- [x] Build EvidenceTimeline component showing cross-document verdict evolution
+- [x] Integrate into ClaimDetail below rationale
 
-### Priority 5 — Provenance Audit Trail on ClaimDetail
-- [ ] Add ProvenanceEvent type to api.ts
-- [ ] Add api.provenanceGetChain() typed call
-- [ ] Build ProvenanceAuditTrail collapsible component
-- [ ] Integrate into ClaimDetail as collapsible section
+### Priority 5 — Provenance Audit Trail on ClaimDetail (COMPLETE)
+- [x] Add ProvenanceEvent type to api.ts
+- [x] Add api.provenanceGetChain() typed call
+- [x] Build ProvenanceAuditTrail collapsible component
+- [x] Integrate into ClaimDetail as collapsible section
 
-### Priority 6 — Leaderboard entity type filter + velocity
-- [ ] Add entity type filter tabs to Leaderboard.tsx
-- [ ] Add velocity indicator (30d vs 60d) to leaderboard rows
+### Priority 6 — Leaderboard entity type filter + velocity (COMPLETE)
+- [x] Add entity type filter tabs to Leaderboard.tsx
+- [x] Add velocity indicator (30d vs 60d) to leaderboard rows
 
-### Infrastructure
-- [ ] Write vitest tests for new api.ts functions
-- [ ] Save checkpoint and push to GitHub
-- [ ] Log Phase 118 to manus-persistent-drive
+### Infrastructure (COMPLETE)
+- [x] Write vitest tests for new api.ts functions
+- [x] Save checkpoint and push to GitHub
+- [x] Log Phase 118 to manus-persistent-drive
 
 ## Phase 118 — New Frontend Features (Backend Phase 96-107 Integration)
 
@@ -395,27 +395,9 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Developers page: add "What makes this different from Perplexity/Semantic Scholar" differentiation block
 - [x] Run tests, save checkpoint, log to memory repo
 
-## Phase C1 — Full Claim Detail Page
+## Phase C1 — Full Claim Detail Page (COMPLETE — see Phase C1 section above)
 
-- [ ] Add `claimDetailById` API method to api.ts (GET /api/v2/claims/:id via proxy)
-- [ ] Add `similarityFindSimilarToId` API method to api.ts (tRPC similarity.findSimilarToId)
-- [ ] Add proxy route for GET /api/v2/claims/:id in externalProxy.ts
-- [ ] Rewrite ClaimDetail.tsx: verdict hero with composite truth label, full claim text, rationale, evidence links (PDB/PMID/UniProt), claim type badge, document provenance
-- [ ] Add confidence sparkline section using confidenceTrend.forClaim (already in api.ts)
-- [ ] Add evidence timeline section using timeline.forClaim (already in api.ts)
-- [ ] Add provenance audit trail section using provenance.getChain (already in api.ts)
-- [ ] Add similar claims section using similarity.findSimilarToId
-- [ ] Add ClaimReview JSON-LD structured data injected into <head> for SEO (Phase C4)
-- [ ] Add og:title, og:description, og:image meta tags per claim page
-- [ ] Run tests, save checkpoint, update memory repo
-
-## Phase C2 — Search Page Enhancements
-
-- [ ] Add citation type badges (VERIFIED/CONTESTED/BEYOND_EVIDENCE/IMPLIED) to ClaimCard
-- [ ] Build faceted filter sidebar: verdict, vertical domain, citation type, confidence range
-- [ ] Wire filter state to search.claims API call
-- [ ] Build entity co-occurrence sidebar using cooccurrence.top procedure
-- [ ] Run TypeScript check and tests, save checkpoint, update memory repo
+## Phase C2 — Search Page Enhancements (COMPLETE — see Phase C2 section above)
 
 ## Phase C2 — Search Page Enhancements (COMPLETE)
 - [x] Add citation type filter buttons to search filter panel (VERIFIED/CONTESTED/IMPLIED/BEYOND_EVIDENCE)
@@ -470,9 +452,10 @@ in index.html that the crawler sees immediately, while React still mounts into #
 ### Tests and delivery
 - [x] Run TypeScript check and tests, save checkpoint, update memory repo
 
-## Audit Fixes (2026-06-11)
-- [ ] Fix llms-full.txt: serving stale 200-claim snapshot — rewrite to query live paginated API
-- [ ] Fix openapi.json: replace proxied ttruthdesk.claims spec with citation.is-branded static spec
-- [ ] Fix /developers page internal error
-- [ ] Fix /mcp timeout (add timeout + error handling in proxy)
-- [ ] Fix null claim_text in llms-full.txt (filter out claims with no text)
+## Audit Fixes (2026-06-11) — ALL COMPLETE
+- [x] Fix llms-full.txt: rewritten to paginated API with full 3,985-claim corpus
+- [x] Fix openapi.json: now serves citation.is-branded static spec (not proxied)
+- [x] Fix /developers page internal error (nested anchor in CitationHome)
+- [x] Fix /mcp timeout (15s timeout + 504 error response)
+- [x] Fix null claim_text: ttruthdesk db.ts filters claimText < 15 chars from public API
+- [x] CodeRabbit config added to both repos (citation-desk + ttruthdesk-platform)

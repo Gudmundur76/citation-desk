@@ -223,16 +223,7 @@ export function Contradictions() {
 
         {/* Footer note */}
         <p className="mt-6 text-xs text-slate-300">
-          Contradictions are detected by the autonomous knowledge graph engine on{' '}
-          <a
-            href="https://ttruthdesk.claims"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-slate-500 underline"
-          >
-            ttruthdesk.claims
-          </a>
-          . Updated continuously.
+          Contradictions are detected by the citation.is autonomous knowledge graph engine. Updated continuously.
         </p>
       </div>
     </div>
