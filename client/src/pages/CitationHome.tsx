@@ -184,6 +184,20 @@ export function Home() {
             <span className="text-slate-400">verified.</span>
           </h1>
 
+          {/* Concise definition — answers "What is citation.is?" for crawlers and users */}
+          <p className="text-base text-slate-700 max-w-2xl mx-auto mb-3 leading-relaxed font-medium">
+            citation.is is an open registry of verified scientific claims. Each claim is extracted
+            from peer-reviewed literature, assigned a verdict — <span className="text-emerald-600">Supported</span>,{' '}
+            <span className="text-red-500">Refuted</span>, <span className="text-amber-500">Ambiguous</span>, or{' '}
+            <span className="text-slate-500">Insufficient Evidence</span> — and cross-referenced
+            against <a href="https://www.uniprot.org" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">UniProt</a>,{' '}
+            <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">PubChem</a>,{' '}
+            <a href="https://www.ncbi.nlm.nih.gov/taxonomy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">NCBI Taxonomy</a>, and{' '}
+            <a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">PubMed</a>.{' '}
+            All data is free under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-900">CC BY 4.0</a>.{' '}
+            <Link to="/about" className="underline underline-offset-2 hover:text-slate-900">Learn more →</Link>
+          </p>
+
           <p className="text-lg text-slate-500 max-w-xl mx-auto mb-10 leading-relaxed">
             Search{' '}
             {liveTotal ? (
@@ -218,7 +232,7 @@ export function Home() {
           </form>
 
           {/* Live stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto" aria-label="Registry statistics as of June 2026">
             {[
               { label: 'Documents', value: stats?.totalDocuments },
               { label: 'Claims', value: liveTotal ?? stats?.totalClaims },
@@ -233,9 +247,13 @@ export function Home() {
                   {value !== undefined ? formatNumber(value) : '—'}
                 </div>
                 <div className="text-xs text-slate-500 font-medium">{label}</div>
+              
               </div>
             ))}
           </div>
+          <p className="text-xs text-slate-400 mt-3 text-center">
+            Source: citation.is registry — updated continuously. As of June 2026.
+          </p>
         </div>
       </section>
 
@@ -281,10 +299,11 @@ export function Home() {
               className="text-2xl font-bold text-slate-900"
               style={{ fontFamily: 'Syne, sans-serif' }}
             >
-              Research Verticals
+              Which research domains does citation.is cover?
             </h2>
             <p className="text-sm text-slate-500 mt-1">
-              Domain-specific claim verification engines
+              Domain-specific claim verification engines — each mapped to authoritative databases.
+              <Link to="/verticals" className="ml-2 underline underline-offset-2 hover:text-slate-700">Browse all verticals →</Link>
             </p>
           </div>
           <button
@@ -398,10 +417,12 @@ export function Home() {
             className="text-2xl font-bold text-slate-900 mb-2 text-center"
             style={{ fontFamily: 'Syne, sans-serif' }}
           >
-            How verification works
+            How does citation.is verify scientific claims?
           </h2>
           <p className="text-sm text-slate-500 text-center mb-10">
             Every claim passes through a 4-stage autonomous pipeline before receiving a verdict.
+            Confidence scores range from 0 (no evidence) to 1 (strong consensus).
+            See the <Link to="/methodology" className="underline underline-offset-2 hover:text-slate-700">full methodology</Link> for thresholds, error rates, and LLM limitations.
           </p>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
@@ -409,19 +430,19 @@ export function Home() {
                 icon: FileText,
                 step: '01',
                 title: 'Extract',
-                desc: 'Claims are extracted from peer-reviewed documents using a structured LLM pipeline that normalises subject-predicate-object triples.',
+                desc: 'Claims are extracted from peer-reviewed documents using a structured LLM pipeline that normalises subject-predicate-object triples. Source: citation.is pipeline, 2025.',
               },
               {
                 icon: GitMerge,
                 step: '02',
                 title: 'Resolve & Cross-reference',
-                desc: 'Entities are resolved against UniProt, PubChem, NCBI Taxonomy, and PubMed. Contradicting papers are detected and flagged.',
+                desc: 'Entities are resolved against UniProt (proteins), PubChem (compounds), NCBI Taxonomy (organisms), and PubMed (literature). Contradicting papers are detected and flagged.',
               },
               {
                 icon: ShieldCheck,
                 step: '03',
                 title: 'Verdict + Confidence',
-                desc: 'A verdict (Supported / Refuted / Ambiguous / Insufficient Evidence) and a 0–1 confidence score are assigned. Every decision is logged with a full provenance chain.',
+                desc: 'A verdict (Supported / Refuted / Ambiguous / Insufficient Evidence) and a 0–1 confidence score are assigned. Scores above 0.8 indicate strong evidence consensus. Full provenance chain is logged.',
               },
             ].map(({ icon: Icon, step, title, desc }) => (
               <div key={step} className="bg-white rounded-xl p-6 border border-slate-200">
@@ -434,12 +455,24 @@ export function Home() {
               </div>
             ))}
           </div>
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/methodology"
               className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-2 transition-colors"
             >
               Full methodology disclosure →
+            </Link>
+            <Link
+              to="/contradictions"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-2 transition-colors"
+            >
+              View contradiction pairs →
+            </Link>
+            <Link
+              to="/developers"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-2 transition-colors"
+            >
+              API & agent access →
             </Link>
           </div>
         </div>

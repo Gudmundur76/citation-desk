@@ -194,6 +194,48 @@
     }
     </script>
 
+    <!-- JSON-LD: HowTo — 4-stage claim verification pipeline -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "@id": "https://citation.is/#howto-verify",
+      "name": "How citation.is verifies scientific claims",
+      "description": "A 4-stage autonomous pipeline that extracts, resolves, cross-references, and assigns a verdict to every scientific claim in the registry.",
+      "totalTime": "PT5M",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Extract",
+          "text": "Claims are extracted from peer-reviewed source documents using a structured LLM pipeline that normalises each claim into a subject-predicate-object triple.",
+          "url": "https://citation.is/methodology#pipeline"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Resolve entities",
+          "text": "Subjects and objects are resolved against authoritative databases: proteins to UniProt accessions, compounds to PubChem CIDs, organisms to NCBI Taxonomy IDs, and publications to PubMed PMIDs.",
+          "url": "https://citation.is/methodology#pipeline"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Cross-reference literature",
+          "text": "The resolved claim is evaluated against evidence in the source document and corroborating or contradicting literature. Contradiction pairs are flagged and available at https://citation.is/contradictions.",
+          "url": "https://citation.is/contradictions"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Assign verdict and confidence score",
+          "text": "A structured verdict (Supported, Refuted, Ambiguous, or Insufficient Evidence) and a 0\u20131 confidence score are assigned. Scores above 0.8 indicate strong evidence consensus. The claim is published with a persistent identifier.",
+          "url": "https://citation.is/methodology#verdicts"
+        }
+      ]
+    }
+    </script>
+
     <!-- JSON-LD: Organization -->
     <script type="application/ld+json">
     {
@@ -254,14 +296,16 @@
           <article aria-labelledby="static-h1" itemscope itemtype="https://schema.org/WebPage">
             <h1 id="static-h1" itemprop="headline">Every claim, verified.</h1>
             <p itemprop="description">
-              citation.is is an open registry of verified scientific claims. Each claim is
-              extracted from peer-reviewed literature, assigned a structured verdict —
+              <strong>citation.is is an open registry of verified scientific claims.</strong>
+              Each claim is extracted from peer-reviewed literature, assigned a structured verdict —
               Supported, Refuted, Inconclusive, or Needs Context — and cross-referenced
               against authoritative databases including
-              <abbr title="Universal Protein Resource">UniProt</abbr>,
-              <abbr title="PubChem Compound Database">PubChem</abbr>,
-              <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>,
-              and PubMed.
+              <a href="https://www.uniprot.org"><abbr title="Universal Protein Resource">UniProt</abbr></a>,
+              <a href="https://pubchem.ncbi.nlm.nih.gov"><abbr title="PubChem Compound Database">PubChem</abbr></a>,
+              <a href="https://www.ncbi.nlm.nih.gov/taxonomy"><abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr></a>,
+              and <a href="https://pubmed.ncbi.nlm.nih.gov">PubMed</a>.
+              All data is published under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+              <a href="/about">Learn more about citation.is →</a>
             </p>
             <p>
               The registry currently contains over 3,900 verified claims across domains
@@ -294,7 +338,7 @@
           </article>
 
           <section aria-label="Research Verticals">
-            <h2 id="static-h2-verticals">Research Verticals</h2>
+            <h2 id="static-h2-verticals">Which research domains does citation.is cover?</h2>
             <p>
               Domain-specific claim verification engines cover structural biology,
               salmon aquaculture biotech, and more. Each vertical maps claims to
@@ -325,7 +369,7 @@
           </section>
 
           <section aria-label="Open API and Agent Access">
-            <h2 id="static-h2-api">Open API and Agent Access</h2>
+            <h2 id="static-h2-api">How can AI agents and developers access citation.is?</h2>
             <p>
               All claims are accessible via a public
               <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>
@@ -375,7 +419,12 @@
           </section>
 
           <section aria-label="How Claim Verification Works">
-            <h2 id="static-h2-how">How Claim Verification Works</h2>
+            <h2 id="static-h2-how">How does citation.is verify scientific claims?</h2>
+            <p>
+              See the <a href="/methodology">full methodology disclosure</a> for pipeline thresholds,
+              error rates, LLM limitations, and provenance standards. Contradiction pairs are
+              catalogued at <a href="/contradictions">/contradictions</a>.
+            </p>
             <p>
               Each claim in the registry passes through a multi-stage verification pipeline.
               First, the claim is extracted from the source document and normalised into a
