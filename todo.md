@@ -470,27 +470,27 @@ in index.html that the crawler sees immediately, while React still mounts into #
 ## Commercial Layer — Phase 120
 
 ### Pricing Page (/pricing)
-- [ ] Build Pricing.tsx — 3-tier pricing cards (Starter $1,500, Diligence $5,000, Platform custom)
-- [ ] Add /pricing route to App.tsx
-- [ ] Add Pricing link to Nav.tsx and footer
-- [ ] PayPal checkout flow: create order → capture order → activate subscription
-- [ ] Add tRPC procedures: createPaypalOrder, capturePaypalOrder, getSubscriptionStatus
-- [ ] Add DB helpers for user_subscriptions table
-- [ ] Add PayPal REST API client (server/paypal.ts)
-- [ ] Success page after payment capture
+- [x] Build Pricing.tsx — 3-tier pricing cards (Starter $1,500, Diligence $5,000, Platform custom)
+- [x] Add /pricing route to App.tsx
+- [x] Add Pricing link to Nav.tsx and footer
+- [x] PayPal checkout flow: create order → capture order → activate subscription
+- [x] Add tRPC procedures: createPaypalOrder, capturePaypalOrder, getSubscriptionStatus
+- [x] Add DB helpers for user_subscriptions table
+- [x] Add PayPal REST API client (server/paypal.ts)
+- [x] Success page after payment capture (inline in Pricing.tsx)
 
 ### Customer Dashboard (/dashboard)
-- [ ] Build Dashboard.tsx — subscription status, API key management, audit history
-- [ ] Add /dashboard route to App.tsx
-- [ ] Add Dashboard link to Nav.tsx (authenticated only)
-- [ ] API key generation/revocation UI (backed by ttruthdesk apiKeyService)
-- [ ] Subscription status display (plan, audits used/limit, renewal date)
+- [x] Build Dashboard.tsx — subscription status, API key management, audit history
+- [x] Add /dashboard route to App.tsx
+- [x] Add Dashboard link to Nav.tsx (authenticated only)
+- [x] API key generation/revocation UI (backed by ttruthdesk apiKeyService)
+- [x] Subscription status display (plan, audits used/limit, renewal date)
 
 ### ClaimDetail Enhancements
-- [ ] "Download PDF Report" button on ClaimDetail (generates PDF via server)
-- [ ] "Embed this claim" badge section on ClaimDetail (copy-paste iframe/script snippet)
+- [x] "Download PDF Report" button on ClaimDetail (browser print-to-PDF)
+- [x] "Embed this claim" badge section on ClaimDetail (SVG + HTML + Markdown snippets)
 
 ### Tests and delivery
-- [ ] 35/35 tests pass, 0 TypeScript errors
-- [ ] Save checkpoint, push to GitHub
-- [ ] Log Phase 120 to manus-persistent-drive
+- [x] 35/35 tests pass, 0 TypeScript errors
+- [x] Save checkpoint, push to GitHub (commit 1193d703)
+- [x] Log Phase 120 to manus-persistent-drive (manus-persistent-drive c0f6ed3)
