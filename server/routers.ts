@@ -236,6 +236,47 @@ export const appRouter = router({
         return { success: true };
       }),
   }),
+
+  /**
+   * Public pipeline status — proxies live stats from ttruthdesk.claims API.
+   * Used by the /status page on citation.is.
+   */
+  status: router({
+    pipeline: publicProcedure.query(async () => {
+      try {
+        const res = await fetch("https://ttruthdesk.claims/api/public/stats", {
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!res.ok) throw new Error(`ttruthdesk stats returned ${res.status}`);
+        const data = (await res.json()) as Record<string, unknown>;
+        return {
+          ok: true,
+          totalClaims: (data.totalClaims as number) ?? 0,
+          verifiedClaims: (data.verifiedClaims as number) ?? 0,
+          totalDocuments: (data.totalDocuments as number) ?? 0,
+          lastIngestAt: (data.lastIngestAt as string | null) ?? null,
+          lastQualityPassAt: (data.lastQualityPassAt as string | null) ?? null,
+          verticals: (data.verticals as string[]) ?? [],
+          siaGeneration: (data.siaGeneration as number) ?? 1,
+          siaUpgradeRate: (data.siaUpgradeRate as number | null) ?? null,
+        };
+      } catch (e) {
+        // Graceful degradation — return zeroes rather than 500
+        console.warn("[status.pipeline] Failed to fetch ttruthdesk stats:", e);
+        return {
+          ok: false,
+          totalClaims: 0,
+          verifiedClaims: 0,
+          totalDocuments: 0,
+          lastIngestAt: null,
+          lastQualityPassAt: null,
+          verticals: [],
+          siaGeneration: 1,
+          siaUpgradeRate: null,
+        };
+      }
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

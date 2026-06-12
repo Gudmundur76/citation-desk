@@ -494,3 +494,24 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] 35/35 tests pass, 0 TypeScript errors
 - [x] Save checkpoint, push to GitHub (commit 1193d703)
 - [x] Log Phase 120 to manus-persistent-drive (manus-persistent-drive c0f6ed3)
+
+## Sprint 2026-06-12 — Tier 1/2/3
+
+### Tier 1 — Fix Failing Scheduled Jobs
+- [ ] Diagnose discovery-loop-daily failure (0/10 runs)
+- [ ] Diagnose quality-pass-nightly failure (0/5 runs)
+- [ ] Diagnose meta-agent-daily failure (0/4 runs)
+- [ ] Diagnose pubmed-decode-weekly failure (0/1 runs)
+- [ ] Fix all four jobs and verify they pass locally
+
+### Tier 2 — Wire citations table into extraction pipeline
+- [ ] Wire claimExtractor to write citation rows after each claim is extracted
+- [ ] Wire passageExtractor to write citation rows with passage provenance
+- [ ] Add DB helper for inserting/querying citations
+- [ ] Add tRPC procedure to expose citations per claim on ClaimDetail
+
+### Tier 3 — Public launch readiness
+- [ ] Build /status page (pipeline health: last run times, claim counts, upgrade rates)
+- [ ] Add SIA proposal viewer to admin Dashboard (pending_review proposals)
+- [ ] Write re3data submission guide (step-by-step instructions for owner)
+- [ ] Checkpoint, push to GitHub

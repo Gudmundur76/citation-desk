@@ -1,16 +1,21 @@
 /**
  * PayPal credentials smoke test.
- * Skipped when PAYPAL_CLIENT_ID is not set (local dev without credentials).
- * Runs in CI only when the secret is injected.
+ * Skipped when PAYPAL_CLIENT_ID is not set, empty, or set to the "DISABLED" sentinel.
+ * Runs in CI only when real credentials are injected.
  */
 import { describe, it, expect } from 'vitest'
 
-const SKIP = !process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET
+const clientId = process.env.PAYPAL_CLIENT_ID ?? ''
+const secret = process.env.PAYPAL_CLIENT_SECRET ?? ''
+const SKIP =
+  !clientId ||
+  !secret ||
+  clientId === 'DISABLED' ||
+  secret === 'DISABLED' ||
+  clientId.length < 10
 
 describe('PayPal credentials', () => {
   it.skipIf(SKIP)('can obtain an access token from PayPal', async () => {
-    const clientId = process.env.PAYPAL_CLIENT_ID!
-    const secret = process.env.PAYPAL_CLIENT_SECRET!
     const mode = process.env.PAYPAL_MODE ?? 'live'
     const base =
       mode === 'sandbox'
