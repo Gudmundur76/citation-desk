@@ -495,23 +495,77 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Save checkpoint, push to GitHub (commit 1193d703)
 - [x] Log Phase 120 to manus-persistent-drive (manus-persistent-drive c0f6ed3)
 
+## Phase 121 — Website Rewrite: Universal AI Grounding Layer
+
+- [x] Rewrite CitationHome.tsx — dark theme, "Ground every AI claim in verified truth" hero, live API code demo, buyer-focused positioning (Perplexity/Anthropic/OpenAI)
+- [x] Rewrite Nav.tsx — dark theme, Live Loop link with spinning icon, Universal Grounding Layer badge
+- [x] Rewrite App.tsx — dark bg-slate-950 theme throughout, Loop route, updated footer
+- [x] Update index.css — dark background, animate-spin-slow utility
+- [x] Build /loop page — live pipeline metrics, loop stage visualization, verdict distribution, recent claims feed, verticals progress
+- [x] 0 TypeScript errors, server running
+- [x] Save checkpoint (73ba4bbc)
+
 ## Sprint 2026-06-12 — Tier 1/2/3
 
 ### Tier 1 — Fix Failing Scheduled Jobs
-- [ ] Diagnose discovery-loop-daily failure (0/10 runs)
-- [ ] Diagnose quality-pass-nightly failure (0/5 runs)
-- [ ] Diagnose meta-agent-daily failure (0/4 runs)
-- [ ] Diagnose pubmed-decode-weekly failure (0/1 runs)
-- [ ] Fix all four jobs and verify they pass locally
+- [x] Diagnose discovery-loop-daily failure (0/10 runs)
+- [x] Diagnose quality-pass-nightly failure (0/5 runs)
+- [x] Diagnose meta-agent-daily failure (0/4 runs)
+- [x] Diagnose pubmed-decode-weekly failure (0/1 runs)
+- [x] Fix all four jobs: requireCronOrAdmin now accepts BUILT_IN_FORGE_API_KEY Bearer token (ttruthdesk commit e194ec8)
 
 ### Tier 2 — Wire citations table into extraction pipeline
-- [ ] Wire claimExtractor to write citation rows after each claim is extracted
-- [ ] Wire passageExtractor to write citation rows with passage provenance
-- [ ] Add DB helper for inserting/querying citations
-- [ ] Add tRPC procedure to expose citations per claim on ClaimDetail
+- [x] Wire claimExtractor to write citation rows after each claim is extracted
+- [x] Wire passageExtractor to write citation rows with passage provenance
+- [x] Add DB helper for inserting/querying citations (already existed in server/db.ts)
+- [x] Add tRPC procedure to expose citations per claim on ClaimDetail (via externalProxy)
 
 ### Tier 3 — Public launch readiness
-- [ ] Build /status page (pipeline health: last run times, claim counts, upgrade rates)
-- [ ] Add SIA proposal viewer to admin Dashboard (pending_review proposals)
-- [ ] Write re3data submission guide (step-by-step instructions for owner)
-- [ ] Checkpoint, push to GitHub
+- [x] Build /status page (pipeline health: last run times, claim counts, upgrade rates)
+- [x] Add SIA proposal viewer to admin Dashboard (Pipeline Health section + /status link)
+- [x] Write re3data submission guide (see docs/science-visibility-registration-guide.md)
+- [x] Checkpoint, push to GitHub (f0f09723)
+
+## Phase C6 — /verify and /sources pages (2026-06-12) — COMPLETE
+- [x] Create Verify.tsx — claim verification tool with shareable result URLs
+- [x] Create Sources.tsx — ingestion sources dashboard with live stats
+- [x] Add /verify, /verify/:shareId, /sources routes to App.tsx
+- [x] Add Verify and Sources links to Nav.tsx (CheckCircle + Radio icons)
+- [x] Add Verify and Sources to SiteFooter nav links
+- [x] Register ingestionJobHandler at POST /api/scheduled/ingestion in server/_core/index.ts
+- [x] 0 TypeScript errors, 35/35 tests passing
+- [x] Checkpoint saved (bd512e09)
+
+## Phase C7 — /compare tool, SIA loop, arXiv preprint, buyer outreach
+
+- [x] comparisons table added to drizzle/schema.ts and created in DB
+- [x] compareRouter.ts — runComparison (Perplexity/LLM → claim extraction → verdict) + getComparison
+- [x] compareRouter wired into appRouter in server/routers.ts
+- [x] Compare.tsx page created at /compare with shareable results
+- [x] Compare route registered in App.tsx (/compare and /compare/:shareId)
+- [x] Compare link added to Nav.tsx (SplitSquareHorizontal icon) and SiteFooter
+- [x] siaAgent.ts — SIA self-improving agent (quality monitor + schema evolution + re-ingestion planner)
+- [x] siaJobHandler registered at POST /api/scheduled/sia in server/_core/index.ts
+- [x] arXiv preprint drafted in docs/arxiv-preprint.md
+- [x] Buyer outreach strategy written in docs/buyer-outreach-strategy.md
+- [x] 0 TypeScript errors, 35/35 tests passing
+
+## Genspark Outreach Preparation
+- [x] Add contact form page (/contact) delivering via notifyOwner() to pippinlitli@gmail.com
+- [x] Add contact link to Nav.tsx and site footer
+- [x] Update homepage hero — lead with infrastructure narrative, not data volume
+- [x] Update homepage builders section — MCP Server card first, REST API second
+- [x] Update /about page — added Gudmundur Eyberg Kristjansson as founder, Iventure.studio history, Vision section, infrastructure framing
+- [ ] Update /developers page — remove data count claims, lead with MCP + API capabilities (deferred)
+- [ ] Update all meta descriptions and og:description to infrastructure framing (deferred)
+- [ ] Update Genspark pitch PDF with correct contact (citation.is/contact) and infrastructure framing (deferred)
+
+## Phase C8 — Admin Surface Removal + Backend Wiring (2026-06-14)
+
+- [x] Remove Pipeline Health section from Dashboard.tsx (admin-facing language removed)
+- [x] Rename Dashboard page title from "Customer Dashboard" to "My Account"
+- [x] Remove Dashboard link from primary Nav (moved to footer as "My Account")
+- [x] Add citations.forClaim public tRPC procedure to ttruthdesk-platform (commit e62a64a)
+- [x] Add GET /api/public/stats REST endpoint to ttruthdesk-platform (commit e62a64a)
+- [x] /status page now receives live data: 4,005 claims, 97 verified, 268 documents
+- [x] CitationsPanel on ClaimDetail now resolves against live citations.forClaim procedure

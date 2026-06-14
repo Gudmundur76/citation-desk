@@ -465,8 +465,6 @@ export function Dashboard() {
                 </p>
               </section>
             )}
-
-
           </>
         )}
       </div>
