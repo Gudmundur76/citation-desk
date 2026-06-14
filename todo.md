@@ -569,3 +569,20 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Add GET /api/public/stats REST endpoint to ttruthdesk-platform (commit e62a64a)
 - [x] /status page now receives live data: 4,005 claims, 97 verified, 268 documents
 - [x] CitationsPanel on ClaimDetail now resolves against live citations.forClaim procedure
+
+## Phase C9 — Audit Fixes (2026-06-14)
+
+- [x] Fix /rss.xml timeout: fetch paginated 50 claims instead of full corpus, use correct live API field names
+- [x] Fix verdict taxonomy mismatch: Methodology page "Needs Context" → "Insufficient Evidence"
+- [x] Fix Developers page: vertical domain filter updated to reflect only live verticals (structural_biology | salmon_biotech)
+- [x] MCP GET /mcp: documented as expected SSE behaviour — persistent stream by design, POST is JSON-RPC
+- [x] /api/external/public/claims 404: confirmed working on dev server, resolved by redeployment
+
+## Phase C10 — v2 Endpoint Proxy + Claim History Surface (2026-06-14)
+- [x] Add UPSTREAM_V2 constant and /api/external/v2/* proxy route to externalProxy.ts
+- [x] Add POST /api/external/v2/verify/batch proxy route to externalProxy.ts
+- [x] Add ClaimScoreHistoryResponse type to api.ts
+- [x] Add api.claimScoreHistory() helper in api.ts
+- [x] Add ScoreHistoryChart component to ClaimDetail (uses ConfidenceSparkline data)
+- [x] Run quality gate: 0 TS errors, all tests pass
+- [ ] Save checkpoint and push to GitHub

@@ -6,6 +6,7 @@
  */
 const BASE = '/api/external/trpc'
 const PUBLIC_BASE = '/api/external/public'
+const V2_BASE = '/api/external/v2'
 
 /**
  * Rewrite legacy Cloud Run / ttruthdesk.claims URLs to citation.is equivalents.
@@ -351,6 +352,31 @@ export interface RegistryQuery {
   claim_type?: string
 }
 
+// ─── v2 REST API types ────────────────────────────────────────────────────────
+
+export interface ScoreHistoryEntry {
+  id: number
+  claimId: number
+  compositeScore: number | null
+  supportScore: number | null
+  refuteScore: number | null
+  snapshotAt: string
+}
+
+export interface ConfidenceHistoryEntry {
+  id: number
+  claimId: number
+  confidenceScore: number
+  recordedAt: string
+  source: string | null
+}
+
+export interface ClaimScoreHistoryResponse {
+  claimId: number
+  scoreHistory: ScoreHistoryEntry[]
+  confidenceHistory: ConfidenceHistoryEntry[]
+}
+
 // ─── API calls ───────────────────────────────────────────────────────────────
 
 export const api = {
@@ -460,5 +486,39 @@ export const api = {
     if (res.status === 404) throw new Error('Claim not found')
     if (!res.ok) throw new Error(`Claim API error ${res.status}`)
     return res.json() as Promise<PublicClaimDetail>
+  },
+
+  // ─── v2 REST API ───────────────────────────────────────────────────────────
+
+  /**
+   * Fetch the full temporal score history for a claim.
+   * Returns both the composite truth score history and the confidence score history.
+   * Ordered oldest → newest.
+   */
+  claimScoreHistory: async (claimId: number): Promise<ClaimScoreHistoryResponse> => {
+    const url = `${V2_BASE}/claims/${claimId}/history`
+    const res = await fetch(url)
+    if (res.status === 404) throw new Error('Claim not found')
+    if (!res.ok) throw new Error(`Score history API error ${res.status}`)
+    const json = await res.json() as { ok: boolean; data: ClaimScoreHistoryResponse }
+    if (!json.ok) throw new Error('Score history API returned ok:false')
+    return json.data
+  },
+
+  /**
+   * Trigger batch re-verification for up to 20 documents.
+   * Returns per-document status: queued | not_found | failed.
+   */
+  batchVerify: async (documentIds: number[]): Promise<{ total: number; results: Array<{ documentId: number; status: string; error?: string }> }> => {
+    const url = `${V2_BASE}/verify/batch`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ documentIds }),
+    })
+    if (!res.ok) throw new Error(`Batch verify API error ${res.status}`)
+    const json = await res.json() as { ok: boolean; data: { total: number; results: Array<{ documentId: number; status: string; error?: string }> } }
+    if (!json.ok) throw new Error('Batch verify API returned ok:false')
+    return json.data
   },
 }

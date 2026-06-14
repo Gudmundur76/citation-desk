@@ -31,6 +31,9 @@ import {
   Code2,
   Copy,
   Check,
+  TrendingUp,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react'
 import { useState as useLocalState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -42,7 +45,7 @@ import { EvidenceTimeline } from '@/components/citation/EvidenceTimeline'
 import { ProvenanceAuditTrail } from '@/components/citation/ProvenanceAuditTrail'
 import { SimilarClaims } from '@/components/citation/SimilarClaims'
 import { domainLabel, confidenceColor, confidenceLabel } from '@/lib/utils'
-import type { PublicClaimDetail } from '@/lib/api'
+import type { PublicClaimDetail, ClaimScoreHistoryResponse } from '@/lib/api'
 
 // ─── Verdict icon map ─────────────────────────────────────────────────────────
 
@@ -192,6 +195,112 @@ function JsonLdHead({ claim }: { claim: PublicClaimDetail }) {
   }, [claim])
 
   return null
+}
+
+// ─── Score history panel ─────────────────────────────────────────────────────
+
+function ScoreHistoryPanel({ claimId }: { claimId: number }) {
+  const [open, setOpen] = useLocalState(false)
+  const { data, isLoading } = useQuery({
+    queryKey: ['scoreHistory', claimId],
+    queryFn: () => api.claimScoreHistory(claimId),
+    staleTime: 10 * 60_000,
+    enabled: open,
+    retry: 1,
+  })
+  const history = data as ClaimScoreHistoryResponse | undefined
+  const confidencePoints = history?.confidenceHistory?.map((e) => ({
+    score: e.confidenceScore,
+    recordedAt: e.recordedAt,
+  })) ?? []
+  const hasData = confidencePoints.length >= 2 || (history?.scoreHistory?.length ?? 0) >= 2
+  return (
+    <div className="mb-6">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 text-sm font-bold text-slate-900 uppercase tracking-wide w-full text-left group"
+        style={{ fontFamily: 'Syne, sans-serif' }}
+        aria-expanded={open}
+      >
+        {open ? (
+          <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+        )}
+        <TrendingUp className="w-3.5 h-3.5 text-slate-400" />
+        Score History
+        {history && (
+          <span className="text-xs font-normal text-slate-400 normal-case tracking-normal ml-1">
+            ({history.confidenceHistory.length} data points)
+          </span>
+        )}
+      </button>
+      {open && (
+        <div className="mt-3">
+          {isLoading && (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-8 bg-slate-100 rounded-lg animate-pulse" />
+              ))}
+            </div>
+          )}
+          {!isLoading && hasData && (
+            <div className="space-y-4">
+              {confidencePoints.length >= 2 && (
+                <div>
+                  <p className="text-xs text-slate-500 mb-2">Confidence score over time</p>
+                  <div className="flex items-center gap-3">
+                    <ConfidenceSparkline points={confidencePoints} width={200} height={48} />
+                    <div className="text-xs text-slate-500">
+                      <span className="font-semibold text-slate-700">
+                        {(confidencePoints[confidencePoints.length - 1].score * 100).toFixed(0)}%
+                      </span>{' '}
+                      current
+                    </div>
+                  </div>
+                </div>
+              )}
+              {(history?.scoreHistory?.length ?? 0) >= 2 && (
+                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-slate-200">
+                        <th className="px-3 py-2 text-left text-slate-500 font-medium">Date</th>
+                        <th className="px-3 py-2 text-right text-slate-500 font-medium">Composite</th>
+                        <th className="px-3 py-2 text-right text-slate-500 font-medium">Support</th>
+                        <th className="px-3 py-2 text-right text-slate-500 font-medium">Refute</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {history!.scoreHistory.slice(-10).reverse().map((row, i) => (
+                        <tr key={row.id} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'}>
+                          <td className="px-3 py-2 text-slate-500">
+                            {new Date(row.snapshotAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </td>
+                          <td className="px-3 py-2 text-right font-semibold text-slate-700">
+                            {row.compositeScore !== null ? `${(row.compositeScore * 100).toFixed(0)}%` : '—'}
+                          </td>
+                          <td className="px-3 py-2 text-right text-emerald-600">
+                            {row.supportScore !== null ? `${(row.supportScore * 100).toFixed(0)}%` : '—'}
+                          </td>
+                          <td className="px-3 py-2 text-right text-red-500">
+                            {row.refuteScore !== null ? `${(row.refuteScore * 100).toFixed(0)}%` : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          )}
+          {!isLoading && !hasData && (
+            <p className="text-xs text-slate-400 py-2">No score history recorded yet.</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── Confidence trend sparkline (inline) ─────────────────────────────────────
@@ -455,6 +564,9 @@ export function ClaimDetail() {
 
         {/* ── Provenance Audit Trail (Priority 5) ── */}
         <ProvenanceAuditTrail claimId={claim.claim_id} />
+
+        {/* ── Score History (Priority 6) ── */}
+        <ScoreHistoryPanel claimId={claim.claim_id} />
 
         {/* ── External links ── */}
         <div className="mb-6">
