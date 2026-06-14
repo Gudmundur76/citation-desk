@@ -16,19 +16,25 @@ const CACHE_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
 interface Claim {
   id?: string | number
+  claim_id?: number
   claim_text?: string
   claimText?: string
   verdict?: string
+  confidence_score?: number
   confidence?: number
+  document_title?: string
   source_title?: string
   sourceTitle?: string
+  evidence_url?: string
   source_url?: string
   sourceUrl?: string
+  vertical_domain?: string
+  vertical?: string
   doi?: string
   entities?: Array<{ name?: string; type?: string }>
   created_at?: string
   createdAt?: string
-  vertical?: string
+  page_url?: string
 }
 
 function escapeXml(str: string): string {
@@ -43,17 +49,21 @@ function escapeXml(str: string): string {
 function renderItem(claim: Claim): string {
   const text = claim.claim_text ?? claim.claimText ?? '(no text)'
   const verdict = claim.verdict ?? 'UNVERIFIED'
-  const id = claim.id ?? ''
-  const sourceTitle = claim.source_title ?? claim.sourceTitle ?? ''
-  const sourceUrl = claim.source_url ?? claim.sourceUrl ?? ''
+  const id = claim.claim_id ?? claim.id ?? ''
+  const sourceTitle = claim.document_title ?? claim.source_title ?? claim.sourceTitle ?? ''
+  const sourceUrl = claim.evidence_url ?? claim.source_url ?? claim.sourceUrl ?? ''
   const createdAt = claim.created_at ?? claim.createdAt ?? new Date().toISOString()
-  const vertical = claim.vertical ?? 'General'
+  const vertical = claim.vertical_domain ?? claim.vertical ?? 'General'
   const entities = (claim.entities ?? [])
     .map((e) => e.name ?? '')
     .filter(Boolean)
     .join(', ')
 
-  const link = `https://citation.is/claims/${id}`
+  // Rewrite upstream domain to citation.is and normalise path (/claim/ → /claims/)
+  const rawLink = claim.page_url ?? `https://citation.is/claims/${id}`
+  const link = rawLink
+    .replace(/^https?:\/\/ttruthdesk\.claims\/claim\//i, 'https://citation.is/claims/')
+    .replace(/^https?:\/\/ttruthdesk\.claims\//i, 'https://citation.is/')
   const pubDate = new Date(createdAt).toUTCString()
   const description = [
     `Verdict: ${verdict}`,
@@ -76,10 +86,12 @@ function renderItem(claim: Claim): string {
 }
 
 async function buildRss(): Promise<string> {
-  const url = `${UPSTREAM_BASE}/api/public/claims.json`
+  // Fetch the 50 most recently updated claims via the paginated endpoint.
+  // Avoids fetching the full 3,800+ claim corpus which times out on cold starts.
+  const url = `${UPSTREAM_BASE}/api/public/claims?page=1&page_size=50`
   const upstream = await fetch(url, {
     headers: { Accept: 'application/json' },
-    signal: AbortSignal.timeout(15_000),
+    signal: AbortSignal.timeout(12_000),
   })
 
   if (!upstream.ok) throw new Error(`Upstream returned ${upstream.status}`)
@@ -92,12 +104,6 @@ async function buildRss(): Promise<string> {
     claims = (data as { claims: Claim[] }).claims
   }
 
-  // Sort by created_at descending so we get the 50 most recently verified claims
-  claims.sort((a, b) => {
-    const ta = new Date(a.created_at ?? a.createdAt ?? 0).getTime()
-    const tb = new Date(b.created_at ?? b.createdAt ?? 0).getTime()
-    return tb - ta
-  })
   const recent = claims.slice(0, 50)
   const now = new Date().toUTCString()
 

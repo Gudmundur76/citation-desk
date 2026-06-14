@@ -309,6 +309,92 @@ export function registerExternalProxy(app: Express): void {
 
   // ─── Public REST proxy ─────────────────────────────────────────────────────
 
+  // ─── Analytics endpoints (tRPC-backed, served as clean REST JSON) ─────────────
+  // The upstream /api/public/stats|verticals|leaderboard|contradictions paths return
+  // the SPA HTML shell (not JSON). We proxy to the correct tRPC procedures instead.
+
+  /** GET /api/external/public/stats → tRPC verticals.stats + verticals.globalStats */
+  app.get('/api/external/public/stats', async (_req: Request, res: Response) => {
+    try {
+      const [statsRes, vertRes] = await Promise.all([
+        fetch(`${UPSTREAM_TRPC}/verticals.globalStats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
+          headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10_000),
+        }),
+        fetch(`${UPSTREAM_TRPC}/verticals.stats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
+          headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10_000),
+        }),
+      ])
+      const [statsData, vertData] = await Promise.all([statsRes.json(), vertRes.json()])
+      type TrpcResp = { result?: { data?: { json?: unknown } } }
+      const gs = ((statsData as TrpcResp)?.result?.data?.json ?? {}) as Record<string, unknown>
+      const vs = (vertData as TrpcResp)?.result?.data?.json ?? []
+      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({
+        totalClaims: gs.totalClaims ?? null,
+        verifiedClaims: gs.supportedVerdicts ?? null,
+        totalDocuments: gs.totalDocuments ?? null,
+        verticals: vs,
+      })))
+    } catch (err) {
+      console.error('[ExternalProxy] /api/external/public/stats error:', err)
+      res.status(502).json({ error: 'stats_unavailable', message: String(err) })
+    }
+  })
+
+  /** GET /api/external/public/verticals → tRPC verticals.stats */
+  app.get('/api/external/public/verticals', async (_req: Request, res: Response) => {
+    try {
+      const upstream = await fetch(
+        `${UPSTREAM_TRPC}/verticals.stats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`,
+        { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10_000) },
+      )
+      type TrpcResp = { result?: { data?: { json?: unknown } } }
+      const data = await upstream.json() as TrpcResp
+      const verticals = data?.result?.data?.json ?? []
+      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ verticals })))
+    } catch (err) {
+      console.error('[ExternalProxy] /api/external/public/verticals error:', err)
+      res.status(502).json({ error: 'verticals_unavailable', message: String(err) })
+    }
+  })
+
+  /** GET /api/external/public/leaderboard → tRPC leaderboard.topEntities */
+  app.get('/api/external/public/leaderboard', async (req: Request, res: Response) => {
+    try {
+      const limit = Math.min(parseInt((req.query.limit as string) ?? '20', 10), 100)
+      const entityType = (req.query.entityType as string) ?? undefined
+      const verticalDomain = (req.query.verticalDomain as string) ?? undefined
+      const input = JSON.stringify({ json: { limit, ...(entityType ? { entityType } : {}), ...(verticalDomain ? { verticalDomain } : {}) } })
+      const upstream = await fetch(
+        `${UPSTREAM_TRPC}/leaderboard.topEntities?input=${encodeURIComponent(input)}`,
+        { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10_000) },
+      )
+      type TrpcResp = { result?: { data?: { json?: unknown } } }
+      const data = await upstream.json() as TrpcResp
+      const entities = data?.result?.data?.json ?? []
+      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ entities })))
+    } catch (err) {
+      console.error('[ExternalProxy] /api/external/public/leaderboard error:', err)
+      res.status(502).json({ error: 'leaderboard_unavailable', message: String(err) })
+    }
+  })
+
+  /** GET /api/external/public/contradictions → tRPC graph.contradictions */
+  app.get('/api/external/public/contradictions', async (_req: Request, res: Response) => {
+    try {
+      const upstream = await fetch(
+        `${UPSTREAM_TRPC}/graph.contradictions?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`,
+        { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(10_000) },
+      )
+      type TrpcResp = { result?: { data?: { json?: unknown } } }
+      const data = await upstream.json() as TrpcResp
+      const contradictions = data?.result?.data?.json ?? []
+      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ contradictions })))
+    } catch (err) {
+      console.error('[ExternalProxy] /api/external/public/contradictions error:', err)
+      res.status(502).json({ error: 'contradictions_unavailable', message: String(err) })
+    }
+  })
+
   app.get('/api/external/public/*', async (req: Request, res: Response) => {
     const suffix = req.params[0] as string
     const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''

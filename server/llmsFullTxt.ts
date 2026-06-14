@@ -148,7 +148,19 @@ async function buildLlmsFullTxt(): Promise<string> {
   const claimsWithText = allClaims.filter(
     (c) => (c.claim_text ?? c.claimText ?? '').trim() !== ''
   )
-  const claimsToRender = claimsWithText.slice(0, MAX_CLAIMS)
+
+  // Deduplicate by claim text — the upstream database sometimes stores the same
+  // claim text multiple times (multiple extraction passes on the same document).
+  // Deduplication reduces file size and improves quality for AI consumers.
+  const seenTexts = new Set<string>()
+  const deduplicated = claimsWithText.filter((c) => {
+    const text = (c.claim_text ?? c.claimText ?? '').trim()
+    if (seenTexts.has(text)) return false
+    seenTexts.add(text)
+    return true
+  })
+
+  const claimsToRender = deduplicated.slice(0, MAX_CLAIMS)
 
   const now = new Date().toISOString().slice(0, 10)
   const supported = claimsWithText.filter((c) => {

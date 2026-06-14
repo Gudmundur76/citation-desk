@@ -585,4 +585,17 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [x] Add api.claimScoreHistory() helper in api.ts
 - [x] Add ScoreHistoryChart component to ClaimDetail (uses ConfidenceSparkline data)
 - [x] Run quality gate: 0 TS errors, all tests pass
-- [ ] Save checkpoint and push to GitHub
+- [x] Save checkpoint and push to GitHub
+
+## Phase C11 — Fourth Pass Test Report Fixes (2026-06-14)
+- [x] Fix RSS <link>/<guid> domain: rewrite ttruthdesk.claims → citation.is in rss.xml route
+- [x] Fix /api/external/public/stats — now proxies to tRPC verticals.stats + verticals.globalStats
+- [x] Fix /api/external/public/verticals — now proxies to tRPC verticals.stats
+- [x] Fix /api/external/public/leaderboard — now proxies to tRPC leaderboard.topEntities
+- [x] Fix /api/external/public/contradictions — now proxies to tRPC graph.contradictions
+- [x] Fix llms-full.txt: add deduplication by claim text (upstream has duplicate claims from re-extraction)
+- [ ] [BACKEND] Fix organism→NCBI Taxonomy routing (Streptococcus zooepidemicus routed to PubChem) — requires fix in ttruthdesk-platform adapter routing logic
+- [ ] [BACKEND] Fix MCP /mcp endpoint timeout — SSE stream works (design), but connection drops; requires ttruthdesk-platform fix
+- [ ] [BACKEND] Verify verify-claim POST endpoint works for real-time submission — GET returns HTML (SPA), POST behavior unconfirmed; requires ttruthdesk-platform test
+- [x] Run quality gate: 0 TS errors, 35/35 tests pass
+- [x] Save checkpoint and push to GitHub
