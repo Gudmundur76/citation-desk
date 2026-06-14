@@ -235,7 +235,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
-            Customer Dashboard
+            My Account
           </h1>
           <p className="text-sm text-slate-500">
             Manage your subscription and API keys. Enter the email address you used at checkout.
@@ -466,26 +466,7 @@ export function Dashboard() {
               </section>
             )}
 
-            {/* Pipeline status link */}
-            <section className="mt-8 pt-6 border-t border-slate-100">
-              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-                Pipeline Health
-              </h2>
-              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-700 mb-0.5">System Status</p>
-                  <p className="text-xs text-slate-400">
-                    View live pipeline metrics, scheduled job status, and SIA generation progress.
-                  </p>
-                </div>
-                <Link
-                  to="/status"
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-100 transition-colors shrink-0 ml-4"
-                >
-                  View status <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </section>
+
           </>
         )}
       </div>

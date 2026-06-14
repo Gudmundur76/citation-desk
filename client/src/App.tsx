@@ -16,7 +16,7 @@ import { Developers } from '@/pages/Developers'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
-import { Dashboard } from '@/pages/Dashboard'
+import { Dashboard as MyAccount } from '@/pages/Dashboard'
 import { Status } from '@/pages/Status'
 
 function NotFound() {
@@ -57,6 +57,7 @@ function SiteFooter() {
             <li><a href="/methodology" className="hover:text-slate-600">Methodology</a></li>
             <li><a href="/pricing" className="hover:text-slate-600">Pricing</a></li>
             <li><a href="/developers" className="hover:text-slate-600">API</a></li>
+            <li><a href="/dashboard" className="hover:text-slate-600">My Account</a></li>
             <li><a href="/status" className="hover:text-slate-600">Status</a></li>
             <li><a href="/llms.txt" className="hover:text-slate-600">llms.txt</a></li>
             <li><a href="/openapi.json" className="hover:text-slate-600">OpenAPI</a></li>
@@ -94,7 +95,7 @@ export default function App() {
             <Route path="/contradictions" element={<Contradictions />} />
             <Route path="/methodology" element={<Methodology />} />
             <Route path="/pricing" element={<Pricing />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<MyAccount />} />
             <Route path="/status" element={<Status />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
