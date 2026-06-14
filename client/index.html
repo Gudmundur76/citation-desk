@@ -78,7 +78,7 @@
       "dataset": {
         "@type": "Dataset",
         "name": "Verified Scientific Claims",
-        "description": "Structured dataset of verified scientific claims with verdicts (Supported, Refuted, Inconclusive, Needs Context), source documents, and cross-references to authoritative biological databases.",
+        "description": "Structured dataset of verified scientific claims with verdicts (Supported, Refuted, Ambiguous, Insufficient Evidence), source documents, and cross-references to authoritative biological databases.",
         "license": "https://creativecommons.org/licenses/by/4.0/",
         "url": "https://citation.is/registry",
         "distribution": [
@@ -131,7 +131,7 @@
           "name": "What is citation.is?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "citation.is is an open registry of verified scientific claims. Each claim is extracted from peer-reviewed literature, assigned a structured verdict (Supported, Refuted, Inconclusive, or Needs Context), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed. All data is published under CC BY 4.0."
+            "text": "citation.is is an open registry of verified scientific claims. Each claim is extracted from peer-reviewed literature, assigned a structured verdict (Supported, Refuted, Ambiguous, or Insufficient Evidence), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed. All data is published under CC BY 4.0."
           }
         },
         {
@@ -147,7 +147,7 @@
           "name": "What verdicts can a claim receive?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Each claim receives one of four verdicts: Supported (the evidence directly confirms the claim), Refuted (the evidence contradicts it), Inconclusive (the evidence is mixed or insufficient), or Needs Context (the claim is conditionally true and requires additional framing). A confidence score from 0 to 1 reflects the strength of the evidence."
+            "text": "Each claim receives one of four verdicts: Supported (the evidence directly confirms the claim), Refuted (the evidence contradicts it), Ambiguous (the evidence is mixed), or Insufficient Evidence (the primary sources could not be verified). A confidence score from 0 to 1 reflects the strength of the evidence."
           }
         },
         {
@@ -298,7 +298,7 @@
             <p itemprop="description">
               <strong>citation.is is an open registry of verified scientific claims.</strong>
               Each claim is extracted from peer-reviewed literature, assigned a structured verdict —
-              Supported, Refuted, Inconclusive, or Needs Context — and cross-referenced
+              Supported, Refuted, Ambiguous, or Insufficient Evidence — and cross-referenced
               against authoritative databases including
               <a href="https://www.uniprot.org"><abbr title="Universal Protein Resource">UniProt</abbr></a>,
               <a href="https://pubchem.ncbi.nlm.nih.gov"><abbr title="PubChem Compound Database">PubChem</abbr></a>,
@@ -442,8 +442,8 @@
               document and any corroborating or contradicting literature. The final verdict
               is one of four values: <strong>Supported</strong> (the evidence directly
               confirms the claim), <strong>Refuted</strong> (the evidence contradicts it),
-              <strong>Inconclusive</strong> (the evidence is mixed or insufficient), or
-              <strong>Needs Context</strong> (the claim is conditionally true and requires
+              <strong>Ambiguous</strong> (the evidence is mixed), or
+              <strong>Insufficient Evidence</strong> (the primary sources could not be verified;
               additional framing to be interpreted correctly).
             </p>
             <p>
