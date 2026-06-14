@@ -163,6 +163,17 @@ export function Leaderboard() {
           ))}
         </div>
 
+        {/* Data pipeline note — shown when all entities share identical citation counts */}
+        {entities && entities.length > 1 && entities.every(e => e.totalCitations === entities![0].totalCitations) && (
+          <div className="mb-4 flex items-start gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-xs text-blue-800">
+            <span className="mt-0.5 shrink-0">ℹ️</span>
+            <span>
+              Citation counts are currently uniform — the graph enrichment pipeline is still
+              populating relation data. Rankings will differentiate as the pipeline completes.
+            </span>
+          </div>
+        )}
+
         {/* Trending movers */}
         {entities && <TrendingSection entries={entities} />}
 

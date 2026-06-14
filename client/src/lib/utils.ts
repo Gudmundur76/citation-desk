@@ -5,14 +5,26 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export type Verdict = 'Supported' | 'Refuted' | 'Ambiguous' | 'Insufficient Evidence'
+export type Verdict =
+  | 'Supported'
+  | 'Partially Supported'
+  | 'Refuted'
+  | 'Ambiguous'
+  | 'Contradicted'
+  | 'Insufficient Evidence'
+  | 'Out of Scope'
+  | 'Needs Expert Review'
 
 export function verdictColor(verdict: string): string {
   switch (verdict) {
     case 'Supported': return 'text-emerald-700 bg-emerald-50 border-emerald-200'
+    case 'Partially Supported': return 'text-teal-700 bg-teal-50 border-teal-200'
     case 'Refuted': return 'text-red-700 bg-red-50 border-red-200'
     case 'Ambiguous': return 'text-amber-700 bg-amber-50 border-amber-200'
+    case 'Contradicted': return 'text-orange-700 bg-orange-50 border-orange-200'
     case 'Insufficient Evidence': return 'text-slate-600 bg-slate-50 border-slate-200'
+    case 'Out of Scope': return 'text-purple-700 bg-purple-50 border-purple-200'
+    case 'Needs Expert Review': return 'text-blue-700 bg-blue-50 border-blue-200'
     default: return 'text-slate-600 bg-slate-50 border-slate-200'
   }
 }
@@ -20,9 +32,13 @@ export function verdictColor(verdict: string): string {
 export function verdictDot(verdict: string): string {
   switch (verdict) {
     case 'Supported': return 'bg-emerald-500'
+    case 'Partially Supported': return 'bg-teal-500'
     case 'Refuted': return 'bg-red-500'
     case 'Ambiguous': return 'bg-amber-500'
+    case 'Contradicted': return 'bg-orange-500'
     case 'Insufficient Evidence': return 'bg-slate-400'
+    case 'Out of Scope': return 'bg-purple-400'
+    case 'Needs Expert Review': return 'bg-blue-400'
     default: return 'bg-slate-400'
   }
 }

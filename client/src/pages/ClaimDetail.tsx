@@ -471,19 +471,23 @@ export function ClaimDetail() {
         <CitationsPanel claimId={claim.claim_id} />
 
         {/* ── Verdict rationale ── */}
-        {claim.verdict_rationale && (
-          <div className="mb-6">
-            <h2
-              className="text-sm font-bold text-slate-900 mb-2 uppercase tracking-wide"
-              style={{ fontFamily: 'Syne, sans-serif' }}
-            >
-              Verification Rationale
-            </h2>
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div className="mb-6">
+          <h2
+            className="text-sm font-bold text-slate-900 mb-2 uppercase tracking-wide"
+            style={{ fontFamily: 'Syne, sans-serif' }}
+          >
+            Verification Rationale
+          </h2>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            {claim.verdict_rationale ? (
               <p className="text-sm text-slate-700 leading-relaxed">{claim.verdict_rationale}</p>
-            </div>
+            ) : (
+              <p className="text-sm text-slate-400 italic">
+                Rationale not yet recorded for this claim. Re-verification may populate this field.
+              </p>
+            )}
           </div>
-        )}
+        </div>
 
         {/* ── Evidence source ── */}
         {claim.evidence_url && (

@@ -649,8 +649,8 @@ export function Developers() {
               { name: 'page', type: 'integer', description: 'Page number (default: 1)' },
               { name: 'page_size', type: 'integer', description: 'Results per page (default: 20, max: 100)' },
               { name: 'q', type: 'string', description: 'Free-text search across claim text and document title' },
-              { name: 'verdict', type: 'string', description: 'Filter by verdict: Supported | Refuted | Ambiguous | Insufficient Evidence' },
-              { name: 'vertical', type: 'string', description: 'Filter by vertical domain: structural_biology | salmon_biotech | genomics' },
+              { name: 'verdict', type: 'string', description: 'Filter by verdict: Supported | Partially Supported | Ambiguous | Contradicted | Insufficient Evidence | Out of Scope | Needs Expert Review' },
+              { name: 'vertical', type: 'string', description: 'Filter by vertical domain: structural_biology | salmon_biotech (more verticals added continuously)' },
               { name: 'claim_type', type: 'string', description: 'Filter by claim type: quantitative | qualitative | structural | functional' },
             ]}
             example={`curl "https://citation.is/api/external/public/claims?verdict=Supported&vertical=structural_biology&page=1"`}
@@ -1036,10 +1036,13 @@ harvest_all()`}
 
 export type Verdict =
   | 'Supported'
+  | 'Partially Supported'
   | 'Refuted'
   | 'Ambiguous'
+  | 'Contradicted'
   | 'Insufficient Evidence'
   | 'Out of Scope'
+  | 'Needs Expert Review'
 
 export type VerticalDomain =
   | 'structural_biology'
@@ -1219,14 +1222,7 @@ export async function searchClaims(params: {
           >
             OAI-PMH <ExternalLink className="w-3 h-3" />
           </a>
-          <a
-            href="https://ttruthdesk.claims"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1 transition-colors"
-          >
-            Truth Desk <ExternalLink className="w-3 h-3" />
-          </a>
+
         </div>
       </div>
     </div>

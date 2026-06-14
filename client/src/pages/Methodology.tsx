@@ -19,6 +19,7 @@ import {
   XCircle,
   HelpCircle,
   Minus,
+  AlertCircle,
 } from 'lucide-react'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
@@ -133,7 +134,7 @@ export function Methodology() {
               icon: GitMerge,
               step: '02',
               title: 'Entity resolution',
-              desc: 'Named entities in each claim are resolved against four authoritative databases: UniProt (proteins), PubChem (compounds), NCBI Taxonomy (organisms), and PubMed (publications). Unresolvable entities are flagged as "Needs Context".',
+              desc: 'Named entities in each claim are resolved against four authoritative databases: UniProt (proteins), PubChem (compounds), NCBI Taxonomy (organisms), and PubMed (publications). Unresolvable entities are flagged as "Insufficient Evidence" and queued for expert review.',
             },
             {
               icon: ShieldCheck,
@@ -165,7 +166,7 @@ export function Methodology() {
       {/* 2. Verdicts */}
       <Section id="verdicts" title="Verdict definitions">
         <p className="text-slate-600 leading-relaxed mb-6">
-          Four verdict buckets are used. Each has a precise definition to minimise ambiguity.
+          Seven verdict categories are used. Each has a precise definition to minimise ambiguity.
         </p>
         <div className="space-y-3">
           {[
@@ -196,6 +197,34 @@ export function Methodology() {
               bg: 'bg-slate-50 border-slate-200',
               label: 'Insufficient Evidence',
               def: 'The source document does not contain enough information to evaluate the claim. This includes claims that go beyond the scope of the cited paper.',
+            },
+            {
+              icon: XCircle,
+              color: 'text-orange-500',
+              bg: 'bg-orange-50 border-orange-200',
+              label: 'Contradicted',
+              def: 'A separate, independent source directly contradicts this claim. The contradiction is logged in the knowledge graph and both claims are retained with their individual verdicts.',
+            },
+            {
+              icon: AlertCircle,
+              color: 'text-amber-600',
+              bg: 'bg-amber-50 border-amber-200',
+              label: 'Partially Supported',
+              def: 'The source document supports part of the claim but not all of it. The supported and unsupported components are identified in the rationale.',
+            },
+            {
+              icon: Minus,
+              color: 'text-purple-500',
+              bg: 'bg-purple-50 border-purple-200',
+              label: 'Out of Scope',
+              def: 'The claim falls outside the domain of verifiable scientific literature — for example, policy opinions, future predictions, or value judgements. No verdict is assigned.',
+            },
+            {
+              icon: HelpCircle,
+              color: 'text-blue-500',
+              bg: 'bg-blue-50 border-blue-200',
+              label: 'Needs Expert Review',
+              def: 'The automated pipeline could not reach a confident verdict. The claim is flagged for human domain-expert review before a final verdict is issued.',
             },
           ].map(({ icon: Icon, color, bg, label, def }) => (
             <div key={label} className={`flex gap-4 p-4 border rounded-xl ${bg}`}>
@@ -300,7 +329,8 @@ export function Methodology() {
             <p className="text-sm font-semibold text-slate-800 mb-1">Evidence evaluation</p>
             <p className="text-sm text-slate-500 leading-relaxed">
               Given a claim and the relevant passage from the source document, the LLM classifies
-              the relationship as Supported / Refuted / Ambiguous / Insufficient Evidence. The
+              the relationship as Supported / Refuted / Ambiguous / Insufficient Evidence /
+              Contradicted / Partially Supported / Out of Scope / Needs Expert Review. The
               database cross-reference results are provided as context.
             </p>
           </div>
@@ -404,17 +434,8 @@ export function Methodology() {
       {/* Footer note */}
       <div className="border-t border-slate-100 pt-8 text-sm text-slate-400 leading-relaxed">
         Last updated: June 2026. Questions or corrections:{' '}
-        <a href="mailto:info@citation.is" className="text-blue-500 hover:underline">
-          info@citation.is
-        </a>
-        . This methodology document is itself versioned in the{' '}
-        <a
-          href="https://github.com/Gudmundur76/ttruthdesk-platform"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:underline"
-        >
-          ttruthdesk-platform repository
+        <a href="/contact" className="text-blue-500 hover:underline">
+          citation.is/contact
         </a>
         .
       </div>
