@@ -484,12 +484,12 @@ export function Developers() {
           className="text-4xl font-bold text-slate-900 mb-4 leading-tight"
           style={{ fontFamily: 'Syne, sans-serif' }}
         >
-          Build with citation.is
+          Integrate citation.is
         </h1>
         <p className="text-slate-500 text-lg max-w-2xl leading-relaxed">
-          The citation.is public API gives you programmatic access to 3,900+ verified scientific
-          claims, the knowledge graph, and one-shot claim verification — all backed by the
-          Protein Truth Desk pipeline.
+          citation.is is the scientific grounding layer for AI systems. Add verified claim
+          lookup and real-time verification to any AI agent, LLM pipeline, or application
+          in under two minutes — via MCP, REST API, or bulk data. No authentication required.
         </p>
       </div>
 
@@ -497,30 +497,30 @@ export function Developers() {
       <div className="grid sm:grid-cols-4 gap-3 mb-12">
         {[
           {
-            icon: Database,
-            title: 'REST API',
-            desc: 'Paginated claims, filtering, and detail endpoints',
-            href: '/openapi.json',
-            label: 'OpenAPI spec',
-          },
-          {
             icon: Cpu,
-            title: 'MCP Tool',
-            desc: 'Use citation.is as an MCP tool in your AI agent',
+            title: 'MCP Server',
+            desc: 'One-click integration for Claude, Cursor, and any MCP-compatible AI platform',
             href: '/.well-known/mcp.json',
             label: 'MCP card',
           },
           {
+            icon: Database,
+            title: 'REST API',
+            desc: 'Paginated claims, filtering, verify endpoint — no auth required',
+            href: '/openapi.json',
+            label: 'OpenAPI spec',
+          },
+          {
             icon: Globe,
-            title: 'LLM Grounding',
-            desc: 'Markdown summary for grounding language models',
-            href: '/api/md',
-            label: 'View /api/md',
+            title: 'Bulk Data',
+            desc: 'Full JSON corpus and LLM grounding document for offline and RAG use',
+            href: '/api/public/claims.json',
+            label: 'claims.json',
           },
           {
             icon: Bot,
-            title: 'Agent Card',
-            desc: 'A2A agent card for autonomous agent discovery',
+            title: 'Agent Discovery',
+            desc: 'A2A agent card and well-known files for autonomous agent integration',
             href: '/.well-known/agent-card.json',
             label: 'agent-card.json',
           },
@@ -823,23 +823,77 @@ export function Developers() {
         </div>
       </div>
 
-      {/* MCP section */}
+      {/* MCP section — first-class, enterprise-ready */}
       <div className="mb-12">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            Recommended integration
+          </span>
+        </div>
         <h2
           className="text-xl font-bold text-slate-900 mb-4"
           style={{ fontFamily: 'Syne, sans-serif' }}
         >
-          MCP Integration
+          MCP Server — One-Click Setup
         </h2>
         <p className="text-slate-500 text-sm mb-6 leading-relaxed">
-          citation.is exposes a Model Context Protocol (MCP) server, allowing AI agents and
-          coding assistants (Claude, Cursor, Windsurf, Continue) to query the verified claims
-          registry as a native tool call.
+          citation.is exposes a Model Context Protocol (MCP) server at{' '}
+          <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">https://citation.is/mcp</code>.
+          Any MCP-compatible AI platform can integrate it in under two minutes with no authentication
+          and no custom engineering. The server exposes two tools:{' '}
+          <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">search_claims</code> and{' '}
+          <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">verify_claim</code>.
         </p>
-        <div className="space-y-4">
+
+        <div className="space-y-6">
+          {/* Available tools */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Add to Claude / Cursor / Windsurf</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-3">Available MCP tools</h3>
+            <div className="space-y-2">
+              {[
+                {
+                  name: 'search_claims',
+                  desc: 'Search the verified claims registry. Returns structured verdicts with PubMed source IDs and confidence scores. Params: query (required), domain (optional), verdict (optional).',
+                },
+                {
+                  name: 'verify_claim',
+                  desc: 'Verify a specific scientific claim against peer-reviewed literature. Returns verdict (Supported / Refuted / Ambiguous / Insufficient Evidence), confidence score, evidence snippet, and DOI. Params: claim_text (required), vertical_domain (optional).',
+                },
+              ].map(tool => (
+                <div key={tool.name} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <code className="text-xs bg-slate-900 text-emerald-400 px-2.5 py-1.5 rounded font-mono shrink-0 mt-0.5">{tool.name}</code>
+                  <p className="text-xs text-slate-600 leading-relaxed">{tool.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Claude Desktop */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Claude Desktop</h3>
+            <p className="text-xs text-slate-400 mb-3">Add to <code className="font-mono">~/Library/Application Support/Claude/claude_desktop_config.json</code></p>
             <CodeBlock
+              lang="json"
+              code={`{
+  "mcpServers": {
+    "citation-is": {
+      "command": "npx",
+      "args": ["-y", "@citation-is/mcp-server"],
+      "env": {
+        "MCP_SERVER_URL": "https://citation.is/mcp"
+      }
+    }
+  }
+}`}
+            />
+          </div>
+
+          {/* Cursor / Windsurf / VS Code */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Cursor / Windsurf / VS Code</h3>
+            <CodeBlock
+              lang="json"
               code={`{
   "mcpServers": {
     "citation-is": {
@@ -847,26 +901,93 @@ export function Developers() {
     }
   }
 }`}
-              lang="json"
             />
           </div>
+
+          {/* TypeScript MCP client */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Available MCP tools</h3>
-            <div className="space-y-2">
-              {[
-                { name: 'list_claims', desc: 'Search and filter the claims registry. Params: q, verdict, vertical, page, page_size.' },
-                { name: 'get_claim', desc: 'Fetch full detail for a single claim by ID. Params: claim_id (required).' },
-                { name: 'verify_claim', desc: 'One-shot claim verification. Params: claim_text (required), vertical_domain (optional).' },
-              ].map(tool => (
-                <div key={tool.name} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <code className="text-xs bg-slate-900 text-emerald-400 px-2 py-1 rounded font-mono shrink-0">{tool.name}</code>
-                  <p className="text-xs text-slate-600 leading-relaxed">{tool.desc}</p>
-                </div>
-              ))}
-            </div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">TypeScript — MCP client</h3>
+            <CodeBlock
+              lang="typescript"
+              code={`import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+
+const client = new Client({ name: "my-agent", version: "1.0.0" });
+await client.connect(
+  new StreamableHTTPClientTransport(new URL("https://citation.is/mcp"))
+);
+
+// Search for verified claims
+const results = await client.callTool({
+  name: "search_claims",
+  arguments: { query: "PAX7", domain: "salmon_biotech", verdict: "Supported" }
+});
+
+// Verify a specific claim
+const verdict = await client.callTool({
+  name: "verify_claim",
+  arguments: { claim_text: "PAX7 binds to muscle enhancers in Atlantic salmon" }
+});
+
+console.log(verdict.content);`}
+            />
           </div>
+
+          {/* LangChain */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">MCP tool card</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">LangChain — add as tool</h3>
+            <CodeBlock
+              lang="python"
+              code={`from langchain.tools import BaseTool
+import requests
+
+class CitationIsTool(BaseTool):
+    name = "citation_is_verify"
+    description = "Verify a scientific claim against peer-reviewed literature. Returns verdict, confidence score, PubMed evidence, and DOI."
+
+    def _run(self, claim: str) -> str:
+        response = requests.post(
+            "https://citation.is/api/external/public/claims/verify",
+            json={"claim": claim}
+        )
+        result = response.json()
+        return f"Verdict: {result['verdict']}\\nConfidence: {result['confidence_score']}\\nEvidence: {result['evidence']}\\nSource: {result['source']}"
+
+# Add to your agent
+tool = CitationIsTool()
+agent = create_tool_calling_agent(llm, [tool], messages)`}
+            />
+          </div>
+
+          {/* LlamaIndex */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">LlamaIndex — add as tool</h3>
+            <CodeBlock
+              lang="python"
+              code={`from llama_index.tools import FunctionTool
+import requests
+
+def verify_claim(claim: str) -> dict:
+    """Verify a scientific claim against citation.is peer-reviewed registry."""
+    response = requests.post(
+        "https://citation.is/api/external/public/claims/verify",
+        json={"claim": claim}
+    )
+    return response.json()
+
+tool = FunctionTool.from_defaults(
+    verify_claim,
+    name="citation_is_verify",
+    description="Verify scientific claims against peer-reviewed literature"
+)
+
+agent = ReActAgent.from_tools([tool], llm=llm, verbose=True)`}
+            />
+          </div>
+
+          {/* MCP card */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Discover the MCP server programmatically</h3>
             <CodeBlock
               code={`curl "https://citation.is/.well-known/mcp.json"`}
               lang="bash"
@@ -922,19 +1043,54 @@ export function Developers() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Terminal className="w-4 h-4 text-slate-400" />
+              <h3 className="text-sm font-semibold text-slate-700">Python — verify a claim</h3>
+            </div>
+            <CodeBlock
+              lang="python"
+              code={`import requests
+
+def verify_claim(claim_text: str) -> dict:
+    """Verify a scientific claim against the citation.is registry."""
+    response = requests.post(
+        "https://citation.is/api/external/public/claims/verify",
+        json={"claim": claim_text}
+    )
+    return response.json()
+
+# Example usage
+result = verify_claim("PAX7 binds to muscle enhancers in Atlantic salmon")
+print(f"Verdict: {result['verdict']}")
+print(f"Confidence: {result['confidence_score']}")
+print(f"Evidence: {result['evidence']}")
+print(f"Source: {result['source']}")`}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Terminal className="w-4 h-4 text-slate-400" />
               <h3 className="text-sm font-semibold text-slate-700">Python — search claims</h3>
             </div>
             <CodeBlock
               lang="python"
               code={`import requests
 
-resp = requests.get(
-    "https://citation.is/api/external/public/claims",
-    params={"q": "lysozyme", "verdict": "Supported", "page_size": 10}
-)
-data = resp.json()
+def search_claims(query: str, domain: str = None, verdict: str = None) -> list:
+    """Search claims with optional domain and verdict filters."""
+    params = {"q": query, "page_size": 10}
+    if domain:
+        params["vertical"] = domain
+    if verdict:
+        params["verdict"] = verdict
+    response = requests.get(
+        "https://citation.is/api/external/public/claims",
+        params=params
+    )
+    return response.json()["claims"]
 
-for claim in data["claims"]:
+# Example usage
+claims = search_claims("PAX7", domain="salmon_biotech", verdict="Supported")
+for claim in claims:
     print(f"[{claim['verdict']}] {claim['claim_text'][:80]}")`}
             />
           </div>
@@ -946,16 +1102,37 @@ for claim in data["claims"]:
             </div>
             <CodeBlock
               lang="javascript"
-              code={`const response = await fetch("https://citation.is/api/public/verify-claim", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    claim_text: "Lysozyme has a molecular weight of 14.3 kDa"
-  })
-});
+              code={`async function verifyClaim(claimText) {
+  const response = await fetch(
+    "https://citation.is/api/external/public/claims/verify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ claim: claimText })
+    }
+  );
+  return response.json();
+}
 
-const result = await response.json();
-console.log(result.verdict, result.confidence_score);`}
+// Example usage
+const result = await verifyClaim("CRISPR-Cas9 has no off-target effects in human cells");
+console.log('Verdict: ' + result.verdict);
+console.log('Evidence: ' + result.evidence);`}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Database className="w-4 h-4 text-slate-400" />
+              <h3 className="text-sm font-semibold text-slate-700">Bulk download — offline / RAG use</h3>
+            </div>
+            <CodeBlock
+              lang="bash"
+              code={`# Download full JSON corpus
+curl "https://citation.is/api/public/claims.json" > claims.json
+
+# Download Markdown corpus for LLM grounding
+curl "https://citation.is/llms-full.txt" > llms-full.txt`}
             />
           </div>
 
