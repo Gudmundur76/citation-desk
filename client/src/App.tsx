@@ -14,6 +14,7 @@ import { AuditDetail } from '@/pages/AuditDetail'
 import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
 import DevelopersMcp from '@/pages/DevelopersMcp'
+import DevelopersSlm from '@/pages/DevelopersSlm'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
@@ -109,6 +110,7 @@ function AppShell() {
           <Route path="/entity/:type/:name" element={<EntityPage />} />
           <Route path="/developers" element={<Developers />} />
           <Route path="/developers/mcp" element={<DevelopersMcp />} />
+          <Route path="/developers/slm" element={<DevelopersSlm />} />
           <Route path="/contradictions" element={<Contradictions />} />
           <Route path="/methodology" element={<Methodology />} />
           <Route path="/pricing" element={<Pricing />} />
