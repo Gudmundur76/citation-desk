@@ -13,6 +13,7 @@
  * Mounted paths:
  *   /api/external/trpc/*        → upstream /api/trpc/*
  *   /api/external/public/*      → upstream /api/public/*
+ *   /api/public/claims          → 301 redirect to /api/external/public/claims (documented alias)
  *   /api/public/verify-claim    → upstream /api/public/verify-claim (POST)
  *   /api/public/claims.json     → upstream /api/public/claims.json
  *   /api/public/graph.json      → upstream /api/public/graph.json
@@ -518,6 +519,14 @@ export function registerExternalProxy(app: Express): void {
   })
 
   // ─── Machine-readable / developer-facing public endpoints ──────────────────
+
+  // Documented alias: /api/public/claims → canonical /api/external/public/claims
+  // The homepage, llms.txt, and some older docs advertised this shorter path.
+  // 301 redirect so crawlers and agents update their bookmarks.
+  app.get('/api/public/claims', (req: Request, res: Response) => {
+    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : ''
+    res.redirect(301, `/api/external/public/claims${qs}`)
+  })
 
   app.post('/api/public/verify-claim', async (req: Request, res: Response) => {
     await proxyPost(`${UPSTREAM_PUBLIC}/verify-claim`, req, res)

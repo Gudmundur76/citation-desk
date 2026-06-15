@@ -35,7 +35,7 @@ function ApiDemo() {
         <span className="w-3 h-3 rounded-full bg-red-500/70" />
         <span className="w-3 h-3 rounded-full bg-amber-500/70" />
         <span className="w-3 h-3 rounded-full bg-emerald-500/70" />
-        <span className="ml-3 text-slate-400 text-xs">POST api.citation.is/v1/verify</span>
+        <span className="ml-3 text-slate-400 text-xs">POST citation.is/api/public/verify-claim</span>
       </div>
       {/* Request */}
       <div className="px-5 py-4 border-b border-slate-700/40">

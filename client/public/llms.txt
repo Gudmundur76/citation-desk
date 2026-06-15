@@ -2,7 +2,7 @@
 
 > The open registry of verified scientific claims. Every claim is cross-referenced against authoritative databases and assigned a structured verdict. CC BY 4.0.
 
-citation.is is a public scientific data registry that stores, indexes, and exposes verified claims extracted from peer-reviewed literature and preprints. Each claim is linked to its source document, assigned a verification verdict (Supported, Refuted, Inconclusive, or Needs Context), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed.
+citation.is is a public scientific data registry that stores, indexes, and exposes verified claims extracted from peer-reviewed literature and preprints. Each claim is linked to its source document, assigned a verification verdict (Supported, Contradicted, Partially Supported, Insufficient Evidence, Out of Scope, Needs Expert Review, or Ambiguous), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed.
 
 The registry is fully open — no authentication required. All data is available via REST API, MCP (Model Context Protocol), OAI-PMH, and bulk download.
 
@@ -31,7 +31,8 @@ The registry is fully open — no authentication required. All data is available
 
 ## Data access
 
-- REST API: `GET https://citation.is/api/external/public/claims` — paginated JSON list of all verified claims
+- REST API: `GET https://citation.is/api/external/public/claims` — paginated JSON list of all verified claims (canonical path)
+- Alias: `GET https://citation.is/api/public/claims` — redirects (301) to the canonical path above
 - Search: `GET https://citation.is/api/external/public/claims?q={query}` — full-text search
 - Verify: `POST https://citation.is/api/public/verify-claim` — submit a claim for verification
 - OpenAPI spec: `GET https://citation.is/openapi.json`
