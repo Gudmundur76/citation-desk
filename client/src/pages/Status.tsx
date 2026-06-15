@@ -228,6 +228,9 @@ export function Status() {
                     <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider text-right">
                       Documents
                     </th>
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      SLM Training
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -248,6 +251,33 @@ export function Status() {
                       </td>
                       <td className="py-3 px-4 text-sm tabular-nums text-slate-500 text-right">
                         {d.totalDocuments.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4 min-w-[140px]">
+                        {d.slm ? (
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                              <div
+                                className={`h-1.5 rounded-full transition-all ${
+                                  d.slm.slmReady
+                                    ? 'bg-emerald-500'
+                                    : d.slm.pctToThreshold >= 50
+                                    ? 'bg-amber-400'
+                                    : 'bg-slate-300'
+                                }`}
+                                style={{ width: `${d.slm.pctToThreshold}%` }}
+                              />
+                            </div>
+                            <span className="text-xs tabular-nums text-slate-500 whitespace-nowrap">
+                              {d.slm.slmReady ? (
+                                <span className="text-emerald-600 font-medium">Ready</span>
+                              ) : (
+                                `${d.slm.pairsEstimate}/${d.slm.threshold}`
+                              )}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-300">—</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -279,6 +309,9 @@ export function Status() {
                       </td>
                       <td className="py-2.5 px-4 text-xs font-semibold tabular-nums text-slate-500 text-right">
                         {domainsData.totals.totalDocuments.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-4 text-xs text-slate-400">
+                        {domainsData.domains.filter(d => d.slm?.slmReady).length} / {domainsData.domains.length} ready
                       </td>
                     </tr>
                   </tfoot>

@@ -383,6 +383,12 @@ export const appRouter = router({
             verificationRate: number;
             totalDocuments: number;
             completedDocuments: number;
+            slm?: {
+              pairsEstimate: number;
+              slmReady: boolean;
+              pctToThreshold: number;
+              threshold: number;
+            };
           }>;
           totals: {
             totalClaims: number;
@@ -404,6 +410,12 @@ export const appRouter = router({
             verificationRate: number;
             totalDocuments: number;
             completedDocuments: number;
+            slm?: {
+              pairsEstimate: number;
+              slmReady: boolean;
+              pctToThreshold: number;
+              threshold: number;
+            };
           }>,
           totals: { totalClaims: 0, supportedClaims: 0, totalDocuments: 0 },
           updatedAt: new Date().toISOString(),
