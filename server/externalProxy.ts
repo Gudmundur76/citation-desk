@@ -205,6 +205,7 @@ function rewriteMcpCard(raw: string): string {
 
 /** Warm the MCP card cache on server startup to avoid cold-start timeouts. */
 export async function warmProxyCache(): Promise<void> {
+  // Warm MCP card
   try {
     const res = await fetch(`${UPSTREAM_BASE}/.well-known/mcp.json`, {
       headers: { Accept: 'application/json' },
@@ -219,6 +220,42 @@ export async function warmProxyCache(): Promise<void> {
   } catch (err) {
     console.warn('[ExternalProxy] MCP card cache warm failed (non-fatal):', String(err))
   }
+
+  // Warm analytics endpoints (stats, verticals, contradictions) in parallel
+  // so the first real request always gets a cache hit instead of a cold upstream fetch.
+  void (async () => {
+    try {
+      type TrpcResp = { result?: { data?: { json?: unknown } } }
+      const [statsRes, vertRes, contRes] = await Promise.allSettled([
+        fetch(`${UPSTREAM_TRPC}/verticals.globalStats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
+          headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000),
+        }),
+        fetch(`${UPSTREAM_TRPC}/verticals.stats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
+          headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000),
+        }),
+        fetch(`${UPSTREAM_TRPC}/graph.contradictions?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
+          headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(15_000),
+        }),
+      ])
+      if (statsRes.status === 'fulfilled' && vertRes.status === 'fulfilled' && statsRes.value.ok && vertRes.value.ok) {
+        const [gsData, vsData] = await Promise.all([statsRes.value.json() as Promise<TrpcResp>, vertRes.value.json() as Promise<TrpcResp>])
+        const gs = (gsData?.result?.data?.json ?? {}) as Record<string, unknown>
+        const vs = vsData?.result?.data?.json ?? []
+        const body = rewriteBrand(JSON.stringify({ totalClaims: gs.totalClaims ?? null, verifiedClaims: gs.supportedVerdicts ?? null, totalDocuments: gs.totalDocuments ?? null, verticals: vs }))
+        cacheSet('analytics:stats', body, 'application/json')
+        cacheSet('analytics:verticals', rewriteBrand(JSON.stringify({ verticals: vs })), 'application/json')
+        console.log('[ExternalProxy] Analytics stats/verticals cache warmed')
+      }
+      if (contRes.status === 'fulfilled' && contRes.value.ok) {
+        const contData = await contRes.value.json() as TrpcResp
+        const contradictions = contData?.result?.data?.json ?? []
+        cacheSet('analytics:contradictions', rewriteBrand(JSON.stringify({ contradictions })), 'application/json')
+        console.log('[ExternalProxy] Analytics contradictions cache warmed')
+      }
+    } catch (err) {
+      console.warn('[ExternalProxy] Analytics cache warm failed (non-fatal):', String(err))
+    }
+  })()
 }
 
 // ─── Proxy helpers ────────────────────────────────────────────────────────────
@@ -315,6 +352,18 @@ export function registerExternalProxy(app: Express): void {
 
   /** GET /api/external/public/stats → tRPC verticals.stats + verticals.globalStats */
   app.get('/api/external/public/stats', async (_req: Request, res: Response) => {
+    const CACHE_KEY = 'analytics:stats'
+    const cached = cacheGet(CACHE_KEY, 60_000) // 60s TTL
+    if (cached) {
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .set('X-Cache', 'HIT')
+        .send(cached.body)
+    }
     try {
       const [statsRes, vertRes] = await Promise.all([
         fetch(`${UPSTREAM_TRPC}/verticals.globalStats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`, {
@@ -328,20 +377,40 @@ export function registerExternalProxy(app: Express): void {
       type TrpcResp = { result?: { data?: { json?: unknown } } }
       const gs = ((statsData as TrpcResp)?.result?.data?.json ?? {}) as Record<string, unknown>
       const vs = (vertData as TrpcResp)?.result?.data?.json ?? []
-      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({
+      const body = rewriteBrand(JSON.stringify({
         totalClaims: gs.totalClaims ?? null,
         verifiedClaims: gs.supportedVerdicts ?? null,
         totalDocuments: gs.totalDocuments ?? null,
         verticals: vs,
-      })))
+      }))
+      cacheSet(CACHE_KEY, body, 'application/json')
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .set('X-Cache', 'MISS')
+        .send(body)
     } catch (err) {
       console.error('[ExternalProxy] /api/external/public/stats error:', err)
-      res.status(502).json({ error: 'stats_unavailable', message: String(err) })
+      return res.status(502).json({ error: 'stats_unavailable', message: String(err) })
     }
   })
 
   /** GET /api/external/public/verticals → tRPC verticals.stats */
   app.get('/api/external/public/verticals', async (_req: Request, res: Response) => {
+    const cachedV = cacheGet('analytics:verticals', 60_000)
+    if (cachedV) {
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .set('X-Cache', 'HIT')
+        .send(cachedV.body)
+    }
     try {
       const upstream = await fetch(
         `${UPSTREAM_TRPC}/verticals.stats?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`,
@@ -350,10 +419,18 @@ export function registerExternalProxy(app: Express): void {
       type TrpcResp = { result?: { data?: { json?: unknown } } }
       const data = await upstream.json() as TrpcResp
       const verticals = data?.result?.data?.json ?? []
-      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ verticals })))
+      const body = rewriteBrand(JSON.stringify({ verticals }))
+      cacheSet('analytics:verticals', body, 'application/json')
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .send(body)
     } catch (err) {
       console.error('[ExternalProxy] /api/external/public/verticals error:', err)
-      res.status(502).json({ error: 'verticals_unavailable', message: String(err) })
+      return res.status(502).json({ error: 'verticals_unavailable', message: String(err) })
     }
   })
 
@@ -371,15 +448,33 @@ export function registerExternalProxy(app: Express): void {
       type TrpcResp = { result?: { data?: { json?: unknown } } }
       const data = await upstream.json() as TrpcResp
       const entities = data?.result?.data?.json ?? []
-      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ entities })))
+      const body = rewriteBrand(JSON.stringify({ entities }))
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .send(body)
     } catch (err) {
       console.error('[ExternalProxy] /api/external/public/leaderboard error:', err)
-      res.status(502).json({ error: 'leaderboard_unavailable', message: String(err) })
+      return res.status(502).json({ error: 'leaderboard_unavailable', message: String(err) })
     }
   })
 
   /** GET /api/external/public/contradictions → tRPC graph.contradictions */
   app.get('/api/external/public/contradictions', async (_req: Request, res: Response) => {
+    const cachedC = cacheGet('analytics:contradictions', 60_000)
+    if (cachedC) {
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .set('X-Cache', 'HIT')
+        .send(cachedC.body)
+    }
     try {
       const upstream = await fetch(
         `${UPSTREAM_TRPC}/graph.contradictions?input=${encodeURIComponent(JSON.stringify({ json: {} }))}`,
@@ -388,10 +483,18 @@ export function registerExternalProxy(app: Express): void {
       type TrpcResp = { result?: { data?: { json?: unknown } } }
       const data = await upstream.json() as TrpcResp
       const contradictions = data?.result?.data?.json ?? []
-      res.set('Content-Type', 'application/json').send(rewriteBrand(JSON.stringify({ contradictions })))
+      const body = rewriteBrand(JSON.stringify({ contradictions }))
+      cacheSet('analytics:contradictions', body, 'application/json')
+      return res
+        .set('Content-Type', 'application/json')
+        .set('Cache-Control', 'no-store, no-cache, must-revalidate')
+        .set('CDN-Cache-Control', 'no-store')
+        .set('Cloudflare-CDN-Cache-Control', 'no-store')
+        .set('Surrogate-Control', 'no-store')
+        .send(body)
     } catch (err) {
       console.error('[ExternalProxy] /api/external/public/contradictions error:', err)
-      res.status(502).json({ error: 'contradictions_unavailable', message: String(err) })
+      return res.status(502).json({ error: 'contradictions_unavailable', message: String(err) })
     }
   })
 
