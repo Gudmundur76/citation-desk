@@ -306,7 +306,9 @@ const response = await agent.chat(
   "confidenceScore": 0.94,
   "evidenceSource": "PDB: 1JM7",
   "rationale": "Crystal structure confirms RING-RING heterodimer interface at 2.8Å resolution.",
-  "sourceUrl": "https://www.rcsb.org/structure/1JM7"
+  "sourceUrl": "https://www.rcsb.org/structure/1JM7",
+  "claimId": 142,
+  "loopTriggered": true
 }`} />
             </div>
 
@@ -333,6 +335,44 @@ const response = await agent.chat(
           </div>
         </section>
 
+        {/* Live Routing */}
+        <section>
+          <h2 className="text-2xl font-bold text-white mb-6">Live Routing &amp; Autonomous Ingestion</h2>
+          <div className="bg-gray-900 border border-blue-900 rounded-xl p-6 space-y-4">
+            <p className="text-gray-300 text-sm leading-relaxed">
+              citation.is <span className="text-blue-400 font-medium">never returns an empty result</span>. When a claim is not found
+              in the registry, the system routes the query to authoritative public databases in real time, verifies the result,
+              and returns a grounded answer. The verified claim is then written back to the registry asynchronously — every
+              enterprise query compounds the knowledge graph automatically.
+            </p>
+            <div className="grid grid-cols-3 gap-4">
+              {([
+                { step: "1", label: "Registry Lookup", desc: "Fast cache hit — returns immediately if claim exists.", color: "green" },
+                { step: "2", label: "Live Routing", desc: "On miss, routes to PubMed / UniProt / PDB in real time.", color: "blue" },
+                { step: "3", label: "Autonomous Ingest", desc: "Verified result written back to registry asynchronously.", color: "purple" },
+              ] as const).map((s) => (
+                <div key={s.step} className="bg-gray-950 border border-gray-800 rounded-lg p-4">
+                  <div className="text-xs font-bold text-blue-400 mb-1">Step {s.step}</div>
+                  <div className="text-sm font-medium text-white mb-1">{s.label}</div>
+                  <div className="text-xs text-gray-500">{s.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-gray-950 rounded-lg p-4">
+              <div className="text-xs text-gray-500 mb-2">Response fields that signal live routing activity</div>
+              <div className="space-y-2">
+                <div className="flex items-start gap-3">
+                  <code className="text-xs text-blue-300 font-mono bg-gray-900 px-2 py-0.5 rounded shrink-0">loopTriggered</code>
+                  <span className="text-xs text-gray-400"><span className="text-green-400">true</span> when PubMed results were found and the autonomous ingestion loop was triggered for this query.</span>
+                </div>
+                <div className="flex items-start gap-3">
+                  <code className="text-xs text-blue-300 font-mono bg-gray-900 px-2 py-0.5 rounded shrink-0">claimId</code>
+                  <span className="text-xs text-gray-400">Registry ID of the claim when it already existed. <span className="text-gray-500">null</span> for live queries where ingestion is still in progress.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         {/* Verdicts */}
         <section>
           <h2 className="text-2xl font-bold text-white mb-6">Verdict Schema</h2>
