@@ -524,6 +524,13 @@ export function Developers() {
             href: '/.well-known/agent-card.json',
             label: 'agent-card.json',
           },
+          {
+            icon: Database,
+            title: 'RAG Integration',
+            desc: 'LangChain and LlamaIndex retrievers, OpenAI function calling, trust-tier filters',
+            href: '/developers/rag',
+            label: 'Integration guide',
+          },
         ].map(({ icon: Icon, title, desc, href, label }) => (
           <a
             key={title}

@@ -15,6 +15,7 @@ import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
 import DevelopersMcp from '@/pages/DevelopersMcp'
 import DevelopersSlm from '@/pages/DevelopersSlm'
+import DevelopersRag from '@/pages/DevelopersRag'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
@@ -111,6 +112,7 @@ function AppShell() {
           <Route path="/developers" element={<Developers />} />
           <Route path="/developers/mcp" element={<DevelopersMcp />} />
           <Route path="/developers/slm" element={<DevelopersSlm />} />
+          <Route path="/developers/rag" element={<DevelopersRag />} />
           <Route path="/contradictions" element={<Contradictions />} />
           <Route path="/methodology" element={<Methodology />} />
           <Route path="/pricing" element={<Pricing />} />
