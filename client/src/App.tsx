@@ -13,6 +13,7 @@ import { ClaimDetail } from '@/pages/ClaimDetail'
 import { AuditDetail } from '@/pages/AuditDetail'
 import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
+import DevelopersMcp from '@/pages/DevelopersMcp'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
@@ -107,6 +108,7 @@ function AppShell() {
           <Route path="/claims/:id" element={<ClaimDetail />} />
           <Route path="/entity/:type/:name" element={<EntityPage />} />
           <Route path="/developers" element={<Developers />} />
+          <Route path="/developers/mcp" element={<DevelopersMcp />} />
           <Route path="/contradictions" element={<Contradictions />} />
           <Route path="/methodology" element={<Methodology />} />
           <Route path="/pricing" element={<Pricing />} />
