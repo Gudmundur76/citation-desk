@@ -119,7 +119,7 @@
     }
     </script>
 
-    <!-- JSON-LD: FAQPage — answer-first structure for AI citation -->
+    <!-- JSON-LD: FAQPage — answer-first structure for AI citation (Sprint 20 File 5) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -131,55 +131,47 @@
           "name": "What is citation.is?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "citation.is is an open registry of verified scientific claims. Each claim is extracted from peer-reviewed literature, assigned a structured verdict (Supported, Refuted, Ambiguous, or Insufficient Evidence), and cross-referenced against authoritative databases including UniProt, PubChem, NCBI Taxonomy, and PubMed. All data is published under CC BY 4.0."
+            "text": "citation.is is the universal AI grounding layer — an open registry of 4,000+ verified scientific claims across medicine, climate, economics, law, and structural biology. Each claim is extracted from peer-reviewed literature, assigned a structured verdict (Supported, Refuted, Inconclusive, Needs Context, or Superseded), and cross-referenced against authoritative databases including UniProt, PubMed, WHO, Cochrane, IPCC, OECD, EUR-Lex, and ClinicalTrials.gov. All data is published under CC BY 4.0."
           }
         },
         {
           "@type": "Question",
-          "name": "How are scientific claims verified?",
+          "name": "How are scientific claims verified on citation.is?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claims are processed through a multi-stage pipeline: extraction from source documents, entity resolution against UniProt, PubChem, NCBI Taxonomy, and PubMed, cross-referencing against corroborating or contradicting literature, and assignment of a structured verdict with a confidence score. Each claim receives a persistent identifier and is immediately available via the public API."
+            "text": "Claims are processed through a 4-stage autonomous pipeline: (1) Extraction — claims are extracted from peer-reviewed source documents and normalised into subject-predicate-object triples. (2) Entity Resolution — subjects and objects are resolved against 30+ authoritative databases. (3) Cross-referencing — the resolved claim is evaluated against corroborating and contradicting literature. (4) Verdict Assignment — a structured verdict and 0-to-1 confidence score are assigned. Each claim receives a persistent identifier and is immediately available via the public API."
           }
         },
         {
           "@type": "Question",
-          "name": "What verdicts can a claim receive?",
+          "name": "What verdicts can a claim receive on citation.is?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Each claim receives one of four verdicts: Supported (the evidence directly confirms the claim), Refuted (the evidence contradicts it), Ambiguous (the evidence is mixed), or Insufficient Evidence (the primary sources could not be verified). A confidence score from 0 to 1 reflects the strength of the evidence."
+            "text": "Each claim receives one of five verdicts: Supported (evidence directly confirms the claim), Refuted (evidence contradicts it), Inconclusive (evidence is mixed or insufficient), Needs Context (claim is true but requires qualification), or Superseded (claim was valid but has been replaced by newer evidence). A confidence score from 0 to 1 reflects the strength of the evidence consensus."
           }
         },
         {
           "@type": "Question",
-          "name": "How can AI agents and LLMs access the registry?",
+          "name": "How can AI agents and LLMs access the citation.is registry?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "AI agents can access the registry via the MCP (Model Context Protocol) server at https://citation.is/mcp, which exposes two tools: search_claims for full-text search with filters, and verify_claim to submit a claim text and receive a structured verdict with supporting evidence. No authentication is required. The full claim corpus is also available as a single markdown file at https://citation.is/llms-full.txt."
+            "text": "AI agents access citation.is via the MCP (Model Context Protocol) server at https://ttruthdesk.claims/api/mcp (discovery: https://ttruthdesk.claims/.well-known/mcp.json). The server exposes 12 tools: verify_claim, search_claims, get_claim, get_source_version, ask_question, verify_claim_at_date, verify_claims_batch, submit_claim, flag_stale, report_contradiction, get_provenance, and find_similar. Anonymous access is free (10 req/hr per IP). The full claim corpus is also available as a single markdown file at https://citation.is/llms-full.txt for RAG grounding."
           }
         },
         {
           "@type": "Question",
-          "name": "What databases does citation.is cross-reference against?",
+          "name": "What research domains does citation.is cover?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "citation.is cross-references claims against UniProt (protein sequences and annotations), PubChem (chemical compounds), NCBI Taxonomy (organism classification), and PubMed (biomedical literature). Proteins are matched to UniProt accessions, compounds to PubChem CIDs, organisms to NCBI Taxonomy IDs, and publications to PubMed PMIDs."
+            "text": "citation.is covers 30+ research domains via dedicated vertical adapters: Medicine (WHO, Cochrane, ClinicalTrials.gov, ClinVar, ChEMBL, OpenFDA, Europe PMC, bioRxiv), Climate (IPCC, Our World in Data, World Bank), Economics (OECD, Eurostat, World Bank, SEC EDGAR), Law (EUR-Lex, CourtListener, IETF RFC), and Structural Biology (UniProt, PDB, PubMed, Semantic Scholar, OpenAlex). Each vertical maps claims to entities in the knowledge graph and cross-references them against the relevant authoritative databases."
           }
         },
         {
           "@type": "Question",
-          "name": "Is the data free to use?",
+          "name": "Is citation.is data free to use?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. All data is published under the Creative Commons CC BY 4.0 license. Bulk download is available at https://citation.is/api/public/claims.json. OAI-PMH harvesting is available at https://citation.is/oai in both Dublin Core and DataCite 4.x formats. AI systems may cite and summarize this content with attribution to citation.is."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "What research verticals does citation.is cover?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "citation.is currently covers structural biology, salmon aquaculture biotech, and general biomedical research. Each vertical has a dedicated claim verification engine that maps claims to entities in the knowledge graph and cross-references them against the relevant authoritative databases."
+            "text": "Yes. All data is published under the Creative Commons CC BY 4.0 license. Bulk download is available at https://citation.is/api/public/claims.json. OAI-PMH harvesting is available at https://citation.is/oai in both Dublin Core and DataCite 4.x formats. The REST API v2 is publicly accessible at https://ttruthdesk.claims/api/v2/ with no authentication required. AI systems may cite and summarise this content with attribution to citation.is."
           }
         },
         {
@@ -187,7 +179,15 @@
           "name": "How can I integrate citation.is into my application?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "citation.is provides a public REST API (documented at https://citation.is/openapi.json), an MCP server at https://citation.is/mcp, an OAI-PMH endpoint at https://citation.is/oai, and an RSS feed at https://citation.is/rss.xml. Full integration documentation is available at https://citation.is/developers. No API key is required for public endpoints."
+            "text": "citation.is provides: (1) REST API v2 at https://ttruthdesk.claims/api/v2/ — claims, entities, verticals, entity resolution (GET /api/v2/entities/resolve?name=lysozyme). (2) MCP server at https://ttruthdesk.claims/api/mcp — 12 tools for AI agent grounding. (3) OAI-PMH at https://citation.is/oai — for academic harvesters. (4) llms.txt at https://citation.is/llms.txt — AI-readable endpoint index. Full documentation at https://citation.is/developers. No API key required for public endpoints."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the citation.is MCP server?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The citation.is MCP (Model Context Protocol) server is a Streamable HTTP server (MCP 2025-03-26 spec) at https://ttruthdesk.claims/api/mcp. It exposes 12 tools that allow AI agents to verify claims, search the registry, get provenance chains, and submit feedback. It is listed on mcpservers.org and the punkpeye/awesome-mcp-servers directory. The server manifest is at https://ttruthdesk.claims/.well-known/mcp.json."
           }
         }
       ]
@@ -236,16 +236,54 @@
     }
     </script>
 
-    <!-- JSON-LD: Organization -->
+    <!-- JSON-LD: Organization (Sprint 20 File 5) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": "https://citation.is/#organization",
       "name": "citation.is",
+      "alternateName": "Truth Desk",
       "url": "https://citation.is/",
-      "description": "Open registry of verified scientific claims",
-      "sameAs": ["https://citation.is/about"]
+      "description": "The universal AI grounding layer. Open registry of 4,000+ verified scientific claims across medicine, climate, economics, law, and structural biology. CC BY 4.0.",
+      "foundingDate": "2024",
+      "knowsAbout": [
+        "Scientific claim verification",
+        "Evidence-based medicine",
+        "Climate science",
+        "Economics research",
+        "Legal document analysis",
+        "Structural biology",
+        "AI hallucination prevention",
+        "Model Context Protocol",
+        "Knowledge graphs",
+        "Open science"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "technical support",
+        "url": "https://citation.is/developers",
+        "availableLanguage": "English"
+      },
+      "sameAs": [
+        "https://citation.is/about",
+        "https://ttruthdesk.claims",
+        "https://github.com/Gudmundur76/ttruthdesk-platform",
+        "https://github.com/punkpeye/awesome-mcp-servers"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "citation.is API and MCP Server",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Free API Access",
+            "description": "Anonymous access to the citation.is REST API v2 and MCP server. No API key required. 10 req/hr per IP per MCP tool.",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        ]
+      }
     }
     </script>
 
@@ -291,7 +329,7 @@
           <meta itemprop="description" content="Open registry of verified scientific claims. Cross-referenced against UniProt, PubChem, NCBI Taxonomy, and PubMed. CC BY 4.0." />
           <meta itemprop="url" content="https://citation.is/" />
           <meta itemprop="license" content="https://creativecommons.org/licenses/by/4.0/" />
-          <meta itemprop="dateModified" content="2026-06-11" />
+          <meta itemprop="dateModified" content="2026-06-15" />
 
           <article aria-labelledby="static-h1" itemscope itemtype="https://schema.org/WebPage">
             <h1 id="static-h1" itemprop="headline">Every claim, verified.</h1>
@@ -308,26 +346,27 @@
               <a href="/about">Learn more about citation.is →</a>
             </p>
             <p>
-              The registry currently contains over 3,900 verified claims across domains
-              including structural biology, salmon aquaculture, and biotech. All data is
+              The registry currently contains over 4,000 verified claims across 30+ domains
+              including medicine, climate, economics, law, and structural biology. All data is
               published under
               <abbr title="Creative Commons Attribution 4.0 International">CC BY 4.0</abbr>
               and is freely accessible via
               <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>,
-              <abbr title="Model Context Protocol">MCP</abbr>,
+              <abbr title="Model Context Protocol">MCP</abbr> (12 tools),
               <abbr title="Open Archives Initiative Protocol for Metadata Harvesting">OAI-PMH</abbr>,
               and bulk download.
             </p>
             <!-- Attributed statistics with source and date — AI agents prefer this format -->
             <p>
-              As of <time datetime="2026-06-11">June 2026</time>,
-              <strong>3,900+</strong> claims have been verified against
-              <abbr title="Universal Protein Resource">UniProt</abbr>,
-              <abbr title="PubChem Compound Database">PubChem</abbr>,
-              <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>,
-              and PubMed.
-              Cross-referencing against authoritative biological databases reduces hallucination
-              risk in <abbr title="Artificial Intelligence">AI</abbr>-generated scientific summaries.
+              As of <time datetime="2026-06-15">June 2026</time>,
+              <strong>4,000+</strong> claims have been verified across medicine, climate,
+              economics, law, and structural biology. Sources include
+              <abbr title="World Health Organization">WHO</abbr>, Cochrane,
+              <abbr title="Intergovernmental Panel on Climate Change">IPCC</abbr>,
+              <abbr title="Organisation for Economic Co-operation and Development">OECD</abbr>,
+              EUR-Lex, <abbr title="Universal Protein Resource">UniProt</abbr>, and PubMed.
+              Cross-referencing against 30+ authoritative databases reduces hallucination
+              risk in <abbr title="Artificial Intelligence">AI</abbr>-generated summaries.
               <cite>Source: citation.is internal registry, updated continuously.</cite>
             </p>
             <blockquote cite="https://citation.is/about">
@@ -340,30 +379,47 @@
           <section aria-label="Research Verticals">
             <h2 id="static-h2-verticals">Which research domains does citation.is cover?</h2>
             <p>
-              Domain-specific claim verification engines cover structural biology,
-              salmon aquaculture biotech, and more. Each vertical maps claims to
-              entities in the knowledge graph and cross-references them against the
+              citation.is covers 30+ research domains via dedicated vertical adapters. Each vertical
+              maps claims to entities in the knowledge graph and cross-references them against the
               relevant authoritative databases.
             </p>
+            <article aria-label="Medicine vertical">
+              <h3>Medicine</h3>
+              <p>
+                Covers clinical claims, drug interactions, and treatment efficacy. Sources include
+                <abbr title="World Health Organization">WHO</abbr>, Cochrane systematic reviews,
+                ClinicalTrials.gov, ClinVar, ChEMBL, OpenFDA drug labels, Europe PMC, and bioRxiv.
+              </p>
+            </article>
+            <article aria-label="Climate vertical">
+              <h3>Climate</h3>
+              <p>
+                Covers climate science claims, emissions data, and environmental statistics. Sources
+                include <abbr title="Intergovernmental Panel on Climate Change">IPCC</abbr> reports,
+                Our World in Data, and World Bank development indicators.
+              </p>
+            </article>
+            <article aria-label="Economics vertical">
+              <h3>Economics</h3>
+              <p>
+                Covers macroeconomic claims, trade statistics, and financial data. Sources include
+                <abbr title="Organisation for Economic Co-operation and Development">OECD</abbr>,
+                Eurostat, World Bank, and SEC EDGAR filings.
+              </p>
+            </article>
+            <article aria-label="Law vertical">
+              <h3>Law</h3>
+              <p>
+                Covers legal claims, regulatory statements, and standards. Sources include
+                EUR-Lex (EU law), CourtListener (US case law), and IETF RFC standards.
+              </p>
+            </article>
             <article aria-label="Structural Biology vertical">
               <h3>Structural Biology</h3>
               <p>
                 Covers protein structure, function, and interaction claims. Entities are resolved
-                against <abbr title="Universal Protein Resource">UniProt</abbr> accessions and
-                PubMed structural biology literature. Claims about protein binding, folding, and
-                post-translational modifications are verified against experimental evidence from
-                peer-reviewed journals.
-              </p>
-            </article>
-            <article aria-label="Salmon Aquaculture Biotech vertical">
-              <h3>Salmon Aquaculture Biotech</h3>
-              <p>
-                Covers claims about salmon biology, genetics, disease resistance, and aquaculture
-                practices. Entities are resolved against
-                <abbr title="National Center for Biotechnology Information Taxonomy">NCBI Taxonomy</abbr>
-                species classification, <abbr title="Universal Protein Resource">UniProt</abbr> salmon
-                proteins, and <abbr title="PubChem Compound Database">PubChem</abbr> compounds used
-                in aquaculture. Particularly relevant for the Norwegian aquaculture industry.
+                against <abbr title="Universal Protein Resource">UniProt</abbr> accessions,
+                PubMed, Semantic Scholar, and OpenAlex.
               </p>
             </article>
           </section>
@@ -374,20 +430,23 @@
               All claims are accessible via a public
               <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>
               at <a href="/api/external/public/claims">/api/external/public/claims</a>.
-              An <abbr title="Model Context Protocol">MCP</abbr> server is available at
-              <a href="/mcp">/mcp</a> for direct agent integration. Full API
-              documentation is available at <a href="/developers">/developers</a>.
+              An <abbr title="Model Context Protocol">MCP</abbr> server with 12 tools is available at
+              <a href="https://ttruthdesk.claims/api/mcp">https://ttruthdesk.claims/api/mcp</a>
+              (discovery: <a href="https://ttruthdesk.claims/.well-known/mcp.json">/.well-known/mcp.json</a>)
+              for direct agent integration. Full API documentation is available at
+              <a href="/developers">/developers</a>.
               The <abbr title="OpenAPI Specification">OAS</abbr> specification is at
               <a href="/openapi.json">/openapi.json</a>.
             </p>
             <h3>Agent Integration</h3>
             <p>
               Agents and <abbr title="Large Language Models">LLMs</abbr> can query the registry
-              directly via the <abbr title="Model Context Protocol">MCP</abbr> server, which exposes
-              two tools: <code>search_claims</code> (full-text search with filters) and
-              <code>verify_claim</code> (submit a claim text and receive a structured verdict with
-              supporting evidence). No authentication is required. All endpoints are rate-limit free
-              for reasonable use.
+              directly via the <abbr title="Model Context Protocol">MCP</abbr> server at
+              <a href="https://ttruthdesk.claims/api/mcp">https://ttruthdesk.claims/api/mcp</a>,
+              which exposes 12 tools including <code>verify_claim</code>, <code>search_claims</code>,
+              <code>get_provenance</code>, <code>verify_claims_batch</code>, and
+              <code>find_similar</code>. Anonymous access is free (10 req/hr per IP per tool).
+              No API key required.
             </p>
           </section>
 
