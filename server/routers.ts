@@ -22,6 +22,65 @@ import {
 
 const PLAN_TIER_SCHEMA = z.enum(["starter", "diligence", "platform"]);
 
+type VerifyPageVerdict =
+  | "supported"
+  | "refuted"
+  | "ambiguous"
+  | "insufficient_evidence"
+  | "error";
+
+type StoredVerification = {
+  shareId: string;
+  claimText: string;
+  verdict: VerifyPageVerdict;
+  confidenceScore: number;
+  evidenceSummary: string;
+  sourceUrls: string[];
+};
+
+const verificationStore = new Map<string, StoredVerification>();
+
+function mapUpstreamVerdict(verdict: string): VerifyPageVerdict {
+  switch (verdict) {
+    case "Supported":
+      return "supported";
+    case "Contradicted":
+      return "refuted";
+    case "Partially Supported":
+    case "Ambiguous":
+    case "Needs Expert Review":
+      return "ambiguous";
+    case "Insufficient Evidence":
+    case "Out of Scope":
+      return "insufficient_evidence";
+    default:
+      return "error";
+  }
+}
+
+function confidenceForVerdict(verdict: VerifyPageVerdict, signalDensity?: unknown): number {
+  if (typeof signalDensity === "number" && Number.isFinite(signalDensity)) {
+    return Math.max(1, Math.min(99, Math.round(signalDensity * 100)));
+  }
+
+  switch (verdict) {
+    case "supported":
+      return 88;
+    case "refuted":
+      return 84;
+    case "ambiguous":
+      return 56;
+    case "insufficient_evidence":
+      return 34;
+    default:
+      return 20;
+  }
+}
+
+function uniqueUrls(values: Array<unknown>): string[] {
+  return Array.from(new Set(values.filter((value): value is string => typeof value === "string" && value.length > 0)));
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -234,6 +293,68 @@ export const appRouter = router({
           });
         }
         return { success: true };
+      }),
+  }),
+
+  /**
+   * Public verification procedures — power the /verify page on citation.is.
+   * Uses the upstream ttruthdesk public verification endpoint and normalizes
+   * the response to the frontend verdict-card schema.
+   */
+  verify: router({
+    verifyClaim: publicProcedure
+      .input(
+        z.object({
+          claimText: z.string().trim().min(10).max(2000),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const res = await fetch("https://ttruthdesk.claims/api/public/verify-claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ claim: input.claimText }),
+          signal: AbortSignal.timeout(15_000),
+        });
+
+        if (!res.ok) {
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: `Verification upstream returned ${res.status}. Please try again.`,
+          });
+        }
+
+        const data = (await res.json()) as {
+          claimText?: string;
+          verdict?: string;
+          rationale?: string;
+          evidenceUrl?: string | null;
+          signalDensity?: number;
+          pubmedResults?: Array<{ url?: string | null; citationUrl?: string | null }>;
+        };
+
+        const verdict = mapUpstreamVerdict(data.verdict ?? "");
+        const shareId = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+        const sourceUrls = uniqueUrls([
+          data.evidenceUrl ?? null,
+          ...(data.pubmedResults ?? []).flatMap(result => [result.url ?? null, result.citationUrl ?? null]),
+        ]);
+
+        const result: StoredVerification = {
+          shareId,
+          claimText: data.claimText ?? input.claimText,
+          verdict,
+          confidenceScore: confidenceForVerdict(verdict, data.signalDensity),
+          evidenceSummary: data.rationale ?? "Verification completed.",
+          sourceUrls,
+        };
+
+        verificationStore.set(shareId, result);
+        return result;
+      }),
+    getVerification: publicProcedure
+      .input(z.object({ shareId: z.string().min(1) }))
+      .query(({ input }) => {
+        return verificationStore.get(input.shareId) ?? null;
       }),
   }),
 

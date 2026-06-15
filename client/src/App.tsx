@@ -19,6 +19,7 @@ import { Pricing } from '@/pages/Pricing'
 import { Dashboard as MyAccount } from '@/pages/Dashboard'
 import { Status } from '@/pages/Status'
 import { Welcome } from '@/pages/Welcome'
+import Verify from '@/pages/Verify'
 
 function NotFound() {
   return (
@@ -111,6 +112,8 @@ function AppShell() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/dashboard" element={<MyAccount />} />
           <Route path="/status" element={<Status />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/verify/:shareId" element={<Verify />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
