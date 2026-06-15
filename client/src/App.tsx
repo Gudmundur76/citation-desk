@@ -15,7 +15,6 @@ import { EntityPage } from '@/pages/EntityPage'
 import { Developers } from '@/pages/Developers'
 import DevelopersMcp from '@/pages/DevelopersMcp'
 import DevelopersSlm from '@/pages/DevelopersSlm'
-import DevelopersRag from '@/pages/DevelopersRag'
 import { Contradictions } from '@/pages/Contradictions'
 import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
@@ -23,6 +22,10 @@ import { Dashboard as MyAccount } from '@/pages/Dashboard'
 import { Status } from '@/pages/Status'
 import { Welcome } from '@/pages/Welcome'
 import Verify from '@/pages/Verify'
+import { Loop } from '@/pages/Loop'
+import Sources from '@/pages/Sources'
+import Compare from '@/pages/Compare'
+import Contact from '@/pages/Contact'
 
 function NotFound() {
   return (
@@ -112,7 +115,6 @@ function AppShell() {
           <Route path="/developers" element={<Developers />} />
           <Route path="/developers/mcp" element={<DevelopersMcp />} />
           <Route path="/developers/slm" element={<DevelopersSlm />} />
-          <Route path="/developers/rag" element={<DevelopersRag />} />
           <Route path="/contradictions" element={<Contradictions />} />
           <Route path="/methodology" element={<Methodology />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -120,6 +122,11 @@ function AppShell() {
           <Route path="/status" element={<Status />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/verify/:shareId" element={<Verify />} />
+          <Route path="/loop" element={<Loop />} />
+          <Route path="/sources" element={<Sources />} />
+          <Route path="/compare" element={<Compare />} />
+          <Route path="/compare/:shareId" element={<Compare />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
