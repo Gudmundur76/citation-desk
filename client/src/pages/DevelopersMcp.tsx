@@ -90,6 +90,15 @@ export default function DevelopersMcp() {
             <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
             MCP 2024-11-05 · JSON-RPC 2.0 · No auth required for reads
           </div>
+          <a
+            href="https://aaif.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1 bg-gray-900 border border-gray-700 rounded-full text-gray-300 text-xs font-medium mb-6 hover:border-blue-600 transition-colors"
+          >
+            <span className="w-2 h-2 bg-green-400 rounded-full" />
+            AAIF Ecosystem · goose · agentgateway compatible
+          </a>
           <h1 className="text-4xl font-bold text-white mb-4">
             citation.is MCP Server
           </h1>
@@ -152,6 +161,67 @@ export default function DevelopersMcp() {
     }
   }
 }`} />
+                </div>
+              ),
+            },
+            {
+              label: "goose",
+              content: (
+                <div className="space-y-4">
+                  <p className="text-gray-400 text-sm">
+                    Add citation.is to{" "}
+                    <a href="https://github.com/block/goose" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">goose</a>
+                    {" "}— the open-source AAIF-compatible agent runtime by Block.
+                  </p>
+                  <CodeBlock language="yaml" code={`# ~/.config/goose/profiles/citation-is.yaml
+extensions:
+  - name: citation-is
+    type: mcp
+    url: https://citation.is/mcp
+    transport: streamable_http`} />
+                  <p className="text-gray-400 text-sm">Or via the goose CLI:</p>
+                  <CodeBlock language="bash" code={`goose session --profile citation-is`} />
+                  <p className="text-xs text-gray-500">
+                    goose will call citation.is automatically when answering scientific questions.
+                    Part of the{" "}
+                    <a href="https://aaif.io" target="_blank" rel="noopener noreferrer" className="text-blue-400">Agentic AI Foundation</a>
+                    {" "}ecosystem.
+                  </p>
+                </div>
+              ),
+            },
+            {
+              label: "agentgateway",
+              content: (
+                <div className="space-y-4">
+                  <p className="text-gray-400 text-sm">
+                    Use{" "}
+                    <a href="https://github.com/agentgateway/agentgateway" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">agentgateway</a>
+                    {" "}as a local MCP proxy — useful for enterprise deployments with observability, retries, and routing.
+                  </p>
+                  <CodeBlock language="yaml" code={`# agentgateway config.yaml
+listeners:
+  - name: mcp-listener
+    protocol: MCP
+    address: "0.0.0.0:8080"
+
+targets:
+  - name: citation-is
+    protocol: MCP
+    url: https://citation.is/mcp
+    transport: streamable_http
+    timeout_ms: 10000
+    retry:
+      max_attempts: 3
+      backoff_ms: 500
+
+routing:
+  default: citation-is`} />
+                  <CodeBlock language="bash" code={`# Run the gateway
+agentgateway --config config.yaml
+
+# Point any MCP client to:
+# http://localhost:8080/mcp`} />
                 </div>
               ),
             },
