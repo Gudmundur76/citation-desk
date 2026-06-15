@@ -6,6 +6,7 @@
  *   - Last ingest and quality-pass timestamps
  *   - SIA generation and upgrade rate
  *   - Scheduled job status indicators
+ *   - Domain coverage widget (Sprint 14) — per-domain claim counts and verification rates
  */
 import { trpc } from "@/lib/trpc";
 
@@ -69,11 +70,45 @@ function JobRow({
   );
 }
 
+/** Colour-coded verification rate badge */
+function VerificationBadge({ rate }: { rate: number }) {
+  if (rate >= 70) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+        {rate}%
+      </span>
+    );
+  }
+  if (rate >= 40) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-100 rounded-full px-2 py-0.5">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+        {rate}%
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+      {rate > 0 ? `${rate}%` : "—"}
+    </span>
+  );
+}
+
 export function Status() {
   const { data, isLoading } = trpc.status.pipeline.useQuery(undefined, {
     refetchInterval: 60_000, // refresh every minute
     staleTime: 30_000,
   });
+
+  const { data: domainsData, isLoading: domainsLoading } = trpc.status.domains.useQuery(
+    undefined,
+    {
+      refetchInterval: 300_000, // refresh every 5 minutes
+      staleTime: 240_000,
+    }
+  );
 
   const pipelineOk = data?.ok ?? null;
   const verifiedPct =
@@ -149,6 +184,117 @@ export function Status() {
         />
       </section>
 
+      {/* Domain coverage widget (Sprint 14) */}
+      <section aria-label="Domain coverage" className="mb-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2
+            className="text-base font-semibold text-slate-700"
+            style={{ fontFamily: "Syne, sans-serif" }}
+          >
+            Domain Coverage
+          </h2>
+          {domainsData?.updatedAt && (
+            <span className="text-xs text-slate-400">
+              Updated {new Date(domainsData.updatedAt).toLocaleTimeString()}
+            </span>
+          )}
+        </div>
+        <div className="bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+          {domainsLoading ? (
+            <div className="px-4 py-6 text-center text-sm text-slate-400">
+              <span className="animate-pulse">Loading domain coverage…</span>
+            </div>
+          ) : !domainsData?.domains || domainsData.domains.length === 0 ? (
+            <div className="px-4 py-6 text-center text-sm text-slate-400">
+              Domain coverage data not yet available. The autonomous ingest loop will populate this as claims are verified.
+            </div>
+          ) : (
+            <>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50">
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Domain
+                    </th>
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider text-right">
+                      Claims
+                    </th>
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider text-right">
+                      Supported
+                    </th>
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider text-right">
+                      Verification Rate
+                    </th>
+                    <th className="py-2.5 px-4 text-xs font-medium text-slate-400 uppercase tracking-wider text-right">
+                      Documents
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {domainsData.domains.map((d) => (
+                    <tr key={d.domain} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                      <td className="py-3 px-4">
+                        <span className="text-sm font-medium text-slate-700">{d.label}</span>
+                        <span className="ml-2 text-xs font-mono text-slate-400">{d.domain}</span>
+                      </td>
+                      <td className="py-3 px-4 text-sm tabular-nums text-slate-600 text-right">
+                        {d.totalClaims.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4 text-sm tabular-nums text-slate-600 text-right">
+                        {d.supportedClaims.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <VerificationBadge rate={d.verificationRate} />
+                      </td>
+                      <td className="py-3 px-4 text-sm tabular-nums text-slate-500 text-right">
+                        {d.totalDocuments.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                {domainsData.totals && (
+                  <tfoot>
+                    <tr className="border-t border-slate-200 bg-slate-50">
+                      <td className="py-2.5 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        Total
+                      </td>
+                      <td className="py-2.5 px-4 text-xs font-semibold tabular-nums text-slate-600 text-right">
+                        {domainsData.totals.totalClaims.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-4 text-xs font-semibold tabular-nums text-slate-600 text-right">
+                        {domainsData.totals.supportedClaims.toLocaleString()}
+                      </td>
+                      <td className="py-2.5 px-4 text-right">
+                        <VerificationBadge
+                          rate={
+                            domainsData.totals.totalClaims > 0
+                              ? Math.round(
+                                  (domainsData.totals.supportedClaims /
+                                    domainsData.totals.totalClaims) *
+                                    100
+                                )
+                              : 0
+                          }
+                        />
+                      </td>
+                      <td className="py-2.5 px-4 text-xs font-semibold tabular-nums text-slate-500 text-right">
+                        {domainsData.totals.totalDocuments.toLocaleString()}
+                      </td>
+                    </tr>
+                  </tfoot>
+                )}
+              </table>
+              <div className="px-4 py-3 border-t border-slate-50 bg-slate-50/50">
+                <p className="text-xs text-slate-400">
+                  Autonomous ingest runs every 6 hours across biology, medicine, chemistry, physics, and climate domains.
+                  Claims are verified against PubMed, UniProt, and PDB in real time.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
       {/* Scheduled jobs */}
       <section aria-label="Scheduled jobs" className="mb-10">
         <h2
@@ -203,6 +349,11 @@ export function Status() {
               <JobRow
                 name="discovery-loop-daily"
                 schedule="Daily 08:00 UTC"
+                ok={pipelineOk}
+              />
+              <JobRow
+                name="domain-ingest-6h"
+                schedule="Every 6 hours"
                 ok={pipelineOk}
               />
               <JobRow

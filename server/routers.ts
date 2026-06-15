@@ -363,6 +363,53 @@ export const appRouter = router({
    * Used by the /status page on citation.is.
    */
   status: router({
+    /**
+     * Domain coverage metrics — proxies /api/public/status/domains from ttruthdesk.
+     * Returns per-domain claim counts, verification rates, and totals.
+     * Used by the domain coverage widget on the /status page.
+     */
+    domains: publicProcedure.query(async () => {
+      try {
+        const res = await fetch("https://ttruthdesk.claims/api/public/status/domains", {
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!res.ok) throw new Error(`ttruthdesk domains returned ${res.status}`);
+        const data = (await res.json()) as {
+          domains: Array<{
+            domain: string;
+            label: string;
+            totalClaims: number;
+            supportedClaims: number;
+            verificationRate: number;
+            totalDocuments: number;
+            completedDocuments: number;
+          }>;
+          totals: {
+            totalClaims: number;
+            supportedClaims: number;
+            totalDocuments: number;
+          };
+          updatedAt: string;
+        };
+        return { ok: true, ...data };
+      } catch (e) {
+        console.warn("[status.domains] Failed to fetch domain stats:", e);
+        return {
+          ok: false,
+          domains: [] as Array<{
+            domain: string;
+            label: string;
+            totalClaims: number;
+            supportedClaims: number;
+            verificationRate: number;
+            totalDocuments: number;
+            completedDocuments: number;
+          }>,
+          totals: { totalClaims: 0, supportedClaims: 0, totalDocuments: 0 },
+          updatedAt: new Date().toISOString(),
+        };
+      }
+    }),
     pipeline: publicProcedure.query(async () => {
       try {
         const res = await fetch("https://ttruthdesk.claims/api/public/stats", {
