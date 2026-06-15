@@ -371,6 +371,16 @@ export interface ConfidenceHistoryEntry {
   source: string | null
 }
 
+export interface CorpusGrowthStats {
+  papersQueued: number
+  claimsExtracted: number
+  verdictsAssigned: number
+  graphNodes: number
+  graphEdges: number
+  totalClaims: number
+  updatedAt: string
+}
+
 export interface ClaimScoreHistoryResponse {
   claimId: number
   scoreHistory: ScoreHistoryEntry[]
@@ -491,10 +501,16 @@ export const api = {
   // ─── v2 REST API ───────────────────────────────────────────────────────────
 
   /**
-   * Fetch the full temporal score history for a claim.
-   * Returns both the composite truth score history and the confidence score history.
-   * Ordered oldest → newest.
+   * Fetch live corpus growth stats for the homepage loop animation cards.
+   * Sprint 20: wires Papers Queued, Claims Extracted, Verdicts Assigned to live data.
    */
+  corpusGrowth: async (): Promise<CorpusGrowthStats> => {
+    const url = `${PUBLIC_BASE}/corpus-growth`
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`Corpus growth API error ${res.status}`)
+    return res.json() as Promise<CorpusGrowthStats>
+  },
+
   claimScoreHistory: async (claimId: number): Promise<ClaimScoreHistoryResponse> => {
     const url = `${V2_BASE}/claims/${claimId}/history`
     const res = await fetch(url)

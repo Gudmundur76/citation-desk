@@ -5,7 +5,7 @@ import {
   Search, ArrowRight, CheckCircle, AlertCircle, HelpCircle, Minus,
   Zap, Globe, RefreshCw, Code2, ChevronRight, Shield, Database
 } from 'lucide-react'
-import { api } from '@/lib/api'
+import { api, type CorpusGrowthStats } from '@/lib/api'
 import { formatNumber, confidenceColor } from '@/lib/utils'
 
 const VERDICT_ICONS = {
@@ -151,6 +151,14 @@ export function Home() {
     queryFn: () => api.registryClaims({ page: 1, page_size: 10 }),
     staleTime: 120_000,
   })
+
+  // Sprint 20: live corpus growth for loop animation cards
+  const { data: growth } = useQuery<CorpusGrowthStats>({
+    queryKey: ['corpusGrowth'],
+    queryFn: api.corpusGrowth,
+    staleTime: 60_000,
+    retry: false,
+  })
   const recentClaims = recentClaimsData?.claims ?? []
   const liveTotal = recentClaimsData?.total
 
@@ -219,7 +227,7 @@ export function Home() {
                 {[
                   { label: 'Verified Claims', value: liveTotal ?? stats?.totalClaims },
                   { label: 'Source Documents', value: stats?.totalDocuments },
-                  { label: 'Supported', value: stats?.supportedVerdicts },
+                  { label: 'Supported Claims', value: stats?.supportedVerdicts },
                 ].map(({ label, value }) => (
                   <div key={label}>
                     <div
@@ -311,7 +319,7 @@ export function Home() {
               step: '03',
               icon: CheckCircle,
               title: 'Verdict',
-              desc: 'Each claim receives one of seven verdicts: Supported, Partially Supported, Ambiguous, Contradicted, Insufficient Evidence, Out of Scope, or Needs Expert Review 2014 with confidence score and provenance chain.',
+              desc: 'Each claim receives one of seven verdicts: Supported, Partially Supported, Ambiguous, Contradicted, Insufficient Evidence, Out of Scope, or Needs Expert Review — with confidence score and provenance chain.',
               color: 'text-emerald-600',
               bg: 'bg-emerald-50 border-emerald-100',
             },
@@ -373,16 +381,50 @@ export function Home() {
             </Link>
           </div>
 
-          {/* Loop diagram */}
+          {/* Loop diagram — Sprint 20: wired to live corpus-growth endpoint */}
           <div className="grid grid-cols-2 gap-4">
             {[
-              { label: 'Papers Queued', sublabel: 'PubMed Central OA', color: 'border-blue-100 bg-blue-50', dot: 'bg-blue-400' },
-              { label: 'Claims Extracted', sublabel: 'LLM pipeline', color: 'border-purple-100 bg-purple-50', dot: 'bg-purple-400' },
-              { label: 'Verdicts Assigned', sublabel: 'Evidence grounded', color: 'border-emerald-100 bg-emerald-50', dot: 'bg-emerald-400' },
-              { label: 'Loop Improves', sublabel: 'SIA feedback agent', color: 'border-amber-100 bg-amber-50', dot: 'bg-amber-400' },
-            ].map(({ label, sublabel, color, dot }) => (
+              {
+                label: 'Papers Queued',
+                sublabel: 'PubMed Central OA',
+                value: growth?.papersQueued,
+                valueSuffix: ' today',
+                color: 'border-blue-100 bg-blue-50',
+                dot: 'bg-blue-400',
+              },
+              {
+                label: 'Claims Extracted',
+                sublabel: 'LLM pipeline',
+                value: growth?.claimsExtracted,
+                valueSuffix: ' today',
+                color: 'border-purple-100 bg-purple-50',
+                dot: 'bg-purple-400',
+              },
+              {
+                label: 'Verdicts Assigned',
+                sublabel: 'Evidence grounded',
+                value: growth?.verdictsAssigned,
+                valueSuffix: ' today',
+                color: 'border-emerald-100 bg-emerald-50',
+                dot: 'bg-emerald-400',
+              },
+              {
+                label: 'Graph Nodes',
+                sublabel: 'Knowledge graph',
+                value: growth?.graphNodes,
+                valueSuffix: ' total',
+                color: 'border-amber-100 bg-amber-50',
+                dot: 'bg-amber-400',
+              },
+            ].map(({ label, sublabel, value, valueSuffix, color, dot }) => (
               <div key={label} className={`border rounded-xl p-5 ${color}`}>
                 <div className={`w-2 h-2 rounded-full ${dot} mb-3 animate-pulse`} />
+                {value !== undefined && (
+                  <p className="text-xl font-bold text-slate-900 mb-0.5" style={{ fontFamily: 'DM Mono, monospace' }}>
+                    {formatNumber(value)}
+                    <span className="text-xs font-normal text-slate-400 ml-1">{valueSuffix}</span>
+                  </p>
+                )}
                 <p className="font-semibold text-slate-800 text-sm">{label}</p>
                 <p className="text-xs text-slate-400 mt-1">{sublabel}</p>
               </div>
