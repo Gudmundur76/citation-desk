@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import { Nav } from '@/components/citation/Nav'
 import { Home as CitationHome } from '@/pages/CitationHome'
@@ -18,6 +18,7 @@ import { Methodology } from '@/pages/Methodology'
 import { Pricing } from '@/pages/Pricing'
 import { Dashboard as MyAccount } from '@/pages/Dashboard'
 import { Status } from '@/pages/Status'
+import { Welcome } from '@/pages/Welcome'
 
 function NotFound() {
   return (
@@ -68,43 +69,63 @@ function SiteFooter() {
   )
 }
 
+function AppShell() {
+  const { pathname } = useLocation()
+  const isFullscreen = pathname === '/welcome'
+
+  if (isFullscreen) {
+    return (
+      <>
+        <Routes>
+          <Route path="/welcome" element={<Welcome />} />
+        </Routes>
+        <Toaster />
+      </>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Semantic header landmark — contains the primary site navigation */}
+      <header role="banner">
+        <Nav />
+      </header>
+
+      {/* Main content landmark */}
+      <main role="main" className="flex-1">
+        <Routes>
+          <Route path="/" element={<CitationHome />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/verticals" element={<Verticals />} />
+          <Route path="/verticals/:domain" element={<VerticalDetail />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/audit" element={<Audit />} />
+          <Route path="/audit/:id" element={<AuditDetail />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/registry" element={<RegistryPage />} />
+          <Route path="/claims/:id" element={<ClaimDetail />} />
+          <Route path="/entity/:type/:name" element={<EntityPage />} />
+          <Route path="/developers" element={<Developers />} />
+          <Route path="/contradictions" element={<Contradictions />} />
+          <Route path="/methodology" element={<Methodology />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/dashboard" element={<MyAccount />} />
+          <Route path="/status" element={<Status />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      {/* Semantic footer landmark */}
+      <SiteFooter />
+      <Toaster />
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-white flex flex-col">
-        {/* Semantic header landmark — contains the primary site navigation */}
-        <header role="banner">
-          <Nav />
-        </header>
-
-        {/* Main content landmark */}
-        <main role="main" className="flex-1">
-          <Routes>
-            <Route path="/" element={<CitationHome />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/verticals" element={<Verticals />} />
-            <Route path="/verticals/:domain" element={<VerticalDetail />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/audit" element={<Audit />} />
-            <Route path="/audit/:id" element={<AuditDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/registry" element={<RegistryPage />} />
-            <Route path="/claims/:id" element={<ClaimDetail />} />
-            <Route path="/entity/:type/:name" element={<EntityPage />} />
-            <Route path="/developers" element={<Developers />} />
-            <Route path="/contradictions" element={<Contradictions />} />
-            <Route path="/methodology" element={<Methodology />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/dashboard" element={<MyAccount />} />
-            <Route path="/status" element={<Status />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-
-        {/* Semantic footer landmark */}
-        <SiteFooter />
-      </div>
-      <Toaster />
+      <AppShell />
     </BrowserRouter>
   )
 }

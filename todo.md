@@ -599,3 +599,21 @@ in index.html that the crawler sees immediately, while React still mounts into #
 - [ ] [BACKEND] Verify verify-claim POST endpoint works for real-time submission — GET returns HTML (SPA), POST behavior unconfirmed; requires ttruthdesk-platform test
 - [x] Run quality gate: 0 TS errors, 35/35 tests pass
 - [x] Save checkpoint and push to GitHub
+
+## Phase C12 — Backend Issue Resolution (2026-06-15)
+- [x] [BACKEND] Fix organism→NCBI Taxonomy routing — fixed in ttruthdesk-platform Sprint 6: ORGANISM_PATTERNS expanded to 6 patterns in salmonBiotech.ts
+- [x] [BACKEND] Fix MCP /mcp endpoint timeout — confirmed as correct SSE keep-alive behaviour in Sprint 6; no fix needed
+- [x] [BACKEND] Verify verify-claim POST endpoint — confirmed: POST /api/public/verify-claim exists in verifyClaimRoute.ts and is registered in _core/index.ts
+- [x] Save checkpoint and push to GitHub
+
+## Phase C13 — Onboarding Flow (2026-06-15)
+- [x] Build /welcome page — 3-step onboarding wizard (What is citation.is → How it works → Try a search)
+- [x] Step 1: Verdict taxonomy visual — 6 verdict cards with colour-coded dots and descriptions
+- [x] Step 2: Pipeline stages visual — 4-stage flow (Extract → Resolve → Validate → Score)
+- [x] Step 3: Example search queries visual — 3 live-style claim cards with verdict badges
+- [x] Step breadcrumb navigation with animated progress indicator
+- [x] Skip intro link — sets localStorage `citation_onboarded` flag and navigates to /
+- [x] Final step CTA navigates to /search; sets onboarded flag
+- [x] Fullscreen layout — Welcome page renders without Nav/Footer shell (AppShell routing)
+- [x] TSC 0 errors, 35/35 tests pass
+- [x] Save checkpoint and push to GitHub
