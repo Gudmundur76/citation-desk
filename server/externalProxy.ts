@@ -648,6 +648,53 @@ export function registerExternalProxy(app: Express): void {
     }
   })
 
+  // ─── Citation Search SSE proxy ─────────────────────────────────────────────
+  // GET /api/citation-search/stream?q=<query>
+  // Pipes the upstream SSE stream through, rewriting brand strings in each chunk.
+  // Rate limit enforced by upstream (20 req/hr per IP). No auth required.
+  app.get('/api/citation-search/stream', async (req: Request, res: Response) => {
+    const q = (req.query.q as string ?? '').trim()
+    if (!q) {
+      return res.status(400).json({ error: 'missing_query', message: 'q parameter is required' })
+    }
+    const url = `${UPSTREAM_BASE}/api/citation-search/stream?q=${encodeURIComponent(q)}`
+    try {
+      const upstream = await fetch(url, {
+        headers: {
+          Accept: 'text/event-stream',
+          'Cache-Control': 'no-cache',
+        },
+        // No AbortSignal — SSE streams are long-lived by design
+      })
+      res
+        .status(upstream.status)
+        .set('Content-Type', 'text/event-stream')
+        .set('Cache-Control', 'no-cache')
+        .set('X-Accel-Buffering', 'no')
+        .set('Access-Control-Allow-Origin', '*')
+      if (!upstream.body) { res.end(); return }
+      const reader = upstream.body.getReader()
+      const decoder = new TextDecoder()
+      const encoder = new TextEncoder()
+      const pump = async () => {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) { res.end(); break }
+          const chunk = decoder.decode(value, { stream: true })
+          res.write(encoder.encode(rewriteBrand(chunk)))
+        }
+      }
+      req.on('close', () => reader.cancel())
+      pump().catch(err => {
+        console.error('[ExternalProxy] citation-search SSE pipe error:', err)
+        res.end()
+      })
+    } catch (err) {
+      console.error('[ExternalProxy] GET /api/citation-search/stream error:', err)
+      res.status(502).json({ error: 'search_unavailable', message: String(err) })
+    }
+  })
+
   // ─── v2 REST proxy ────────────────────────────────────────────────────────
   // GET /api/external/v2/claims/:id/history   → upstream /api/v2/claims/:id/history
   // GET /api/external/v2/claims/:id/provenance → upstream /api/v2/claims/:id/provenance

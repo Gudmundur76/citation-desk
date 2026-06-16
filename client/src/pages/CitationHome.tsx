@@ -1,9 +1,10 @@
 import { useNavigate, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   Search, ArrowRight, CheckCircle, AlertCircle, HelpCircle, Minus,
-  Zap, Globe, RefreshCw, Code2, ChevronRight, Shield, Database
+  Zap, Globe, RefreshCw, Code2, ChevronRight, Shield, Database,
+  X, ExternalLink, Loader2
 } from 'lucide-react'
 import { api, type CorpusGrowthStats } from '@/lib/api'
 import { formatNumber, confidenceColor } from '@/lib/utils'
@@ -24,10 +25,182 @@ const VERDICT_COLORS = {
   'Out of Scope': 'text-slate-400',
 }
 
-// ─── API Demo Component ───────────────────────────────────────────────────────
+// ─── SSE stage types ──────────────────────────────────────────────────────────
 
-function ApiDemo() {
-  const exampleClaim = "Akkermansia muciniphila improves gut barrier function in obese patients"
+type SearchStage = 'idle' | 'decompose' | 'evidence' | 'answer' | 'done' | 'error'
+
+interface SearchSource {
+  adapter: string
+  title?: string
+  journal?: string
+  year?: number
+  confidence?: number
+  url?: string
+}
+
+interface SearchResult {
+  query: string
+  claim?: string
+  answer?: string
+  verdict?: string
+  confidence?: number
+  sources?: SearchSource[]
+  adapterCount?: number
+}
+
+const VERDICT_PANEL: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+  Supported:             { bg: 'bg-emerald-950/60', border: 'border-emerald-700/50', text: 'text-emerald-300', dot: 'bg-emerald-400' },
+  Refuted:               { bg: 'bg-red-950/60',     border: 'border-red-700/50',     text: 'text-red-300',     dot: 'bg-red-400' },
+  Ambiguous:             { bg: 'bg-amber-950/60',   border: 'border-amber-700/50',   text: 'text-amber-300',   dot: 'bg-amber-400' },
+  'Insufficient Evidence':{ bg: 'bg-slate-800/60',  border: 'border-slate-600/50',   text: 'text-slate-300',   dot: 'bg-slate-400' },
+}
+
+const EXAMPLE_QUERIES = [
+  'Does aspirin reduce cardiovascular risk?',
+  'Is Akkermansia muciniphila beneficial for gut health?',
+  'Does vitamin D supplementation prevent depression?',
+]
+
+// ─── HeroSearch Component ─────────────────────────────────────────────────────
+
+function HeroSearch() {
+  const [inputVal, setInputVal] = useState('')
+  const [stage, setStage] = useState<SearchStage>('idle')
+  const [result, setResult] = useState<SearchResult | null>(null)
+  const [errorMsg, setErrorMsg] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const abortRef = useRef<(() => void) | null>(null)
+
+  const reset = useCallback(() => {
+    abortRef.current?.()
+    setStage('idle')
+    setResult(null)
+    setErrorMsg('')
+  }, [])
+
+  // Clean up on unmount
+  useEffect(() => () => { abortRef.current?.() }, [])
+
+  const runSearch = useCallback((q: string) => {
+    if (!q.trim()) return
+    abortRef.current?.()
+    setStage('decompose')
+    setResult(null)
+    setErrorMsg('')
+
+    let cancelled = false
+    const es = new EventSource(`/api/citation-search/stream?q=${encodeURIComponent(q.trim())}`)
+    abortRef.current = () => { cancelled = true; es.close() }
+
+    es.addEventListener('stage:decompose', () => { if (!cancelled) setStage('decompose') })
+    es.addEventListener('stage:evidence',  () => { if (!cancelled) setStage('evidence') })
+    es.addEventListener('stage:answer',    () => { if (!cancelled) setStage('answer') })
+
+    es.addEventListener('final', (e: MessageEvent) => {
+      if (cancelled) return
+      try {
+        const data = JSON.parse(e.data) as SearchResult
+        setResult(data)
+        setStage('done')
+      } catch {
+        setErrorMsg('Unexpected response format')
+        setStage('error')
+      }
+      es.close()
+    })
+
+    es.addEventListener('error', (e: MessageEvent) => {
+      if (cancelled) return
+      try {
+        const data = JSON.parse(e.data) as { message?: string }
+        setErrorMsg(data.message ?? 'Search failed')
+      } catch {
+        setErrorMsg('Search unavailable — please try again')
+      }
+      setStage('error')
+      es.close()
+    })
+
+    // Native SSE error (network / 4xx / 5xx)
+    es.onerror = () => {
+      if (cancelled) return
+      setErrorMsg('Could not reach the search service — please try again shortly')
+      setStage('error')
+      es.close()
+    }
+  }, [])
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    runSearch(inputVal)
+  }
+
+  // ── Idle state — static terminal demo with search bar ────────────────────
+  if (stage === 'idle') {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-slate-900 overflow-hidden font-mono text-sm shadow-lg">
+        {/* Terminal bar */}
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-700/60 bg-slate-800">
+          <span className="w-3 h-3 rounded-full bg-red-500/70" />
+          <span className="w-3 h-3 rounded-full bg-amber-500/70" />
+          <span className="w-3 h-3 rounded-full bg-emerald-500/70" />
+          <span className="ml-3 text-slate-400 text-xs">citation.is — live search</span>
+        </div>
+        {/* Static demo response */}
+        <div className="px-5 py-4 border-b border-slate-700/40">
+          <p className="text-slate-500 text-xs mb-2">// verified claim</p>
+          <p className="text-slate-300"><span className="text-blue-400">{'{'}</span></p>
+          <p className="text-slate-300 pl-4"><span className="text-emerald-400">"verdict"</span><span className="text-slate-500">: </span><span className="text-emerald-300">"Supported"</span><span className="text-slate-500">,</span></p>
+          <p className="text-slate-300 pl-4"><span className="text-emerald-400">"confidence"</span><span className="text-slate-500">: </span><span className="text-amber-300">0.91</span><span className="text-slate-500">,</span></p>
+          <p className="text-slate-300 pl-4"><span className="text-emerald-400">"evidence"</span><span className="text-slate-500">: [</span><span className="text-amber-300">"PMID:38291044"</span><span className="text-slate-500">, </span><span className="text-amber-300">"PMID:37104612"</span><span className="text-slate-500">]</span></p>
+          <p className="text-slate-300"><span className="text-blue-400">{'}'}</span></p>
+        </div>
+        {/* Search bar */}
+        <form onSubmit={handleSubmit} className="px-4 py-3">
+          <div className="flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 focus-within:border-emerald-500 transition-colors">
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
+            <input
+              ref={inputRef}
+              value={inputVal}
+              onChange={e => setInputVal(e.target.value)}
+              placeholder={EXAMPLE_QUERIES[Math.floor(Date.now() / 10000) % EXAMPLE_QUERIES.length]}
+              className="flex-1 bg-transparent text-slate-200 text-xs placeholder:text-slate-500 outline-none font-sans"
+              aria-label="Search a scientific claim"
+            />
+            <button
+              type="submit"
+              disabled={!inputVal.trim()}
+              className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-semibold rounded-lg transition-all active:scale-95"
+            >
+              Verify
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {EXAMPLE_QUERIES.map(q => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => { setInputVal(q); runSearch(q) }}
+                className="text-slate-500 hover:text-emerald-400 text-[10px] font-sans transition-colors truncate max-w-[200px]"
+              >
+                ↗ {q}
+              </button>
+            ))}
+          </div>
+        </form>
+      </div>
+    )
+  }
+
+  // ── Active state — streaming progress + result ────────────────────────────
+  const STAGES: { key: SearchStage; label: string }[] = [
+    { key: 'decompose', label: 'Extracting claim' },
+    { key: 'evidence',  label: 'Fetching evidence' },
+    { key: 'answer',    label: 'Synthesising answer' },
+  ]
+  const stageIdx = STAGES.findIndex(s => s.key === stage)
+  const panel = result?.verdict ? (VERDICT_PANEL[result.verdict] ?? VERDICT_PANEL['Insufficient Evidence']) : null
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-900 overflow-hidden font-mono text-sm shadow-lg">
       {/* Terminal bar */}
@@ -35,24 +208,113 @@ function ApiDemo() {
         <span className="w-3 h-3 rounded-full bg-red-500/70" />
         <span className="w-3 h-3 rounded-full bg-amber-500/70" />
         <span className="w-3 h-3 rounded-full bg-emerald-500/70" />
-        <span className="ml-3 text-slate-400 text-xs">POST citation.is/api/public/verify-claim</span>
+        <span className="ml-3 text-slate-400 text-xs truncate flex-1">{inputVal || '...'}</span>
+        <button onClick={reset} className="text-slate-500 hover:text-slate-300 transition-colors" aria-label="Clear search">
+          <X className="w-3.5 h-3.5" />
+        </button>
       </div>
-      {/* Request */}
-      <div className="px-5 py-4 border-b border-slate-700/40">
-        <p className="text-slate-500 text-xs mb-2">// request</p>
-        <p className="text-slate-300"><span className="text-blue-400">{"{"}</span></p>
-        <p className="text-slate-300 pl-4"><span className="text-emerald-400">"claim"</span><span className="text-slate-500">: </span><span className="text-amber-300">"{exampleClaim}"</span></p>
-        <p className="text-slate-300"><span className="text-blue-400">{"}"}</span></p>
-      </div>
-      {/* Response */}
-      <div className="px-5 py-4">
-        <p className="text-slate-500 text-xs mb-2">// response — 94ms</p>
-        <p className="text-slate-300"><span className="text-blue-400">{"{"}</span></p>
-        <p className="text-slate-300 pl-4"><span className="text-emerald-400">"verdict"</span><span className="text-slate-500">: </span><span className="text-emerald-300">"Supported"</span><span className="text-slate-500">,</span></p>
-        <p className="text-slate-300 pl-4"><span className="text-emerald-400">"confidence"</span><span className="text-slate-500">: </span><span className="text-amber-300">0.91</span><span className="text-slate-500">,</span></p>
-        <p className="text-slate-300 pl-4"><span className="text-emerald-400">"evidence"</span><span className="text-slate-500">: [</span><span className="text-amber-300">"PMID:38291044"</span><span className="text-slate-500">, </span><span className="text-amber-300">"PMID:37104612"</span><span className="text-slate-500">],</span></p>
-        <p className="text-slate-300 pl-4"><span className="text-emerald-400">"contradictions"</span><span className="text-slate-500">: </span><span className="text-amber-300">0</span></p>
-        <p className="text-slate-300"><span className="text-blue-400">{"}"}</span></p>
+
+      <div className="px-5 py-4 space-y-4 max-h-[420px] overflow-y-auto">
+        {/* Stage progress */}
+        {stage !== 'done' && stage !== 'error' && (
+          <div className="space-y-2">
+            {STAGES.map((s, i) => {
+              const isActive = s.key === stage
+              const isDone = stageIdx > i
+              return (
+                <div key={s.key} className="flex items-center gap-2">
+                  {isDone ? (
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  ) : isActive ? (
+                    <Loader2 className="w-3.5 h-3.5 text-emerald-400 animate-spin shrink-0" />
+                  ) : (
+                    <span className="w-3.5 h-3.5 rounded-full border border-slate-600 shrink-0" />
+                  )}
+                  <span className={`text-xs font-sans ${
+                    isDone ? 'text-slate-400' : isActive ? 'text-slate-200' : 'text-slate-600'
+                  }`}>{s.label}{isActive ? '...' : ''}</span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Error */}
+        {stage === 'error' && (
+          <div className="text-red-400 text-xs font-sans">
+            <AlertCircle className="inline w-3.5 h-3.5 mr-1" />
+            {errorMsg}
+          </div>
+        )}
+
+        {/* Result */}
+        {stage === 'done' && result && panel && (
+          <>
+            {/* Verdict panel */}
+            <div className={`rounded-xl border px-4 py-3 ${panel.bg} ${panel.border}`}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className={`w-2 h-2 rounded-full ${panel.dot}`} />
+                <span className={`text-xs font-semibold font-sans ${panel.text}`}>{result.verdict}</span>
+                {result.confidence !== undefined && (
+                  <span className="text-slate-500 text-xs font-sans ml-auto">{Math.round(result.confidence * 100)}% confidence</span>
+                )}
+              </div>
+              {result.answer && (
+                <p className="text-slate-300 text-xs font-sans leading-relaxed mt-1">{result.answer}</p>
+              )}
+            </div>
+
+            {/* Source cards */}
+            {result.sources && result.sources.length > 0 && (
+              <div className="space-y-1.5">
+                <p className="text-slate-500 text-[10px] uppercase tracking-wider font-sans">Sources ({result.sources.length})</p>
+                {result.sources.slice(0, 4).map((src, i) => (
+                  <div key={i} className="flex items-start gap-2 bg-slate-800/60 rounded-lg px-3 py-2">
+                    <span className="text-slate-600 text-[10px] font-sans mt-0.5 shrink-0">{src.adapter}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-300 text-xs font-sans truncate">{src.title ?? '—'}</p>
+                      {(src.journal || src.year) && (
+                        <p className="text-slate-500 text-[10px] font-sans">{[src.journal, src.year].filter(Boolean).join(' · ')}</p>
+                      )}
+                    </div>
+                    {src.url && (
+                      <a href={src.url} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-emerald-400 transition-colors shrink-0">
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* New search bar (always visible in active state) */}
+        <form onSubmit={handleSubmit} className="pt-1">
+          <div className="flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 focus-within:border-emerald-500 transition-colors">
+            <Search className="w-4 h-4 text-slate-400 shrink-0" />
+            <input
+              value={inputVal}
+              onChange={e => setInputVal(e.target.value)}
+              placeholder="Ask another claim..."
+              className="flex-1 bg-transparent text-slate-200 text-xs placeholder:text-slate-500 outline-none font-sans"
+              aria-label="Search a scientific claim"
+            />
+            {stage !== 'done' && stage !== 'error' ? (
+              <button type="button" onClick={reset} className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs font-semibold rounded-lg transition-all">
+                Cancel
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!inputVal.trim()}
+                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-semibold rounded-lg transition-all active:scale-95"
+              >
+                Verify
+              </button>
+            )}
+          </div>
+        </form>
       </div>
     </div>
   )
@@ -242,9 +504,9 @@ export function Home() {
               </div>
             </div>
 
-            {/* Right — API demo */}
+            {/* Right — Live search */}
             <div>
-              <ApiDemo />
+              <HeroSearch />
             </div>
           </div>
         </div>
