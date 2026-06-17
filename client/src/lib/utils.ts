@@ -69,6 +69,13 @@ export function domainLabel(domain: string | null | undefined): string {
     genomics: 'Genomics',
     clinical_trials: 'Clinical Trials',
     nutrition: 'Nutrition Science',
+    food_safety: 'Food Safety',
+    economics_macro: 'Macroeconomics',
+    legal: 'Law & Regulation',
+    molecular_biology: 'Molecular Biology',
+    social_science: 'Social Science',
+    energy: 'Energy',
+    earth_science: 'Earth Science',
   }
   return map[domain] ?? domain.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }

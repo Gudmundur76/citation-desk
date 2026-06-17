@@ -59,6 +59,9 @@ const EXAMPLE_QUERIES = [
   'Does aspirin reduce cardiovascular risk?',
   'Is Akkermansia muciniphila beneficial for gut health?',
   'Does vitamin D supplementation prevent depression?',
+  'Did global renewable energy capacity exceed 3 terawatts in 2023?',
+  'What was the magnitude of the 2023 Turkey-Syria earthquake?',
+  'Does creatine supplementation improve athletic performance?',
 ]
 
 // ─── HeroSearch Component ─────────────────────────────────────────────────────

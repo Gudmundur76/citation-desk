@@ -8,7 +8,20 @@ import { ClaimCard } from '@/components/citation/ClaimCard'
 import { domainLabel } from '@/lib/utils'
 
 const VERDICTS = ['Supported', 'Refuted', 'Ambiguous', 'Insufficient Evidence']
-const DOMAINS = ['structural_biology', 'salmon_biotech']
+const DOMAINS = [
+  'structural_biology',
+  'salmon_biotech',
+  'genomics',
+  'clinical_trials',
+  'nutrition',
+  'food_safety',
+  'economics_macro',
+  'legal',
+  'molecular_biology',
+  'social_science',
+  'energy',
+  'earth_science',
+]
 const CITATION_TYPES: { value: CitationType; label: string; active: string }[] = [
   { value: 'VERIFIED',        label: 'Verified',        active: 'bg-emerald-700 text-white border-emerald-700' },
   { value: 'CONTESTED',       label: 'Contested',       active: 'bg-red-700 text-white border-red-700' },
