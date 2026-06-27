@@ -144,3 +144,60 @@ export const apiKeys = mysqlTable("api_keys", {
 
 export type ApiKey = typeof apiKeys.$inferSelect;
 export type InsertApiKey = typeof apiKeys.$inferInsert;
+
+/**
+ * Tracks autonomous ingestion sources — OpenAlex, Perplexity Search, PubMed, etc.
+ * Each row represents one source with live stats updated by the ingestion scheduled job.
+ */
+export const ingestionSources = mysqlTable("ingestion_sources", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 128 }).notNull().unique(),
+  label: varchar("label", { length: 255 }).notNull(),
+  sourceType: mysqlEnum("sourceType", ["academic", "legal", "financial", "news", "web", "regulatory"]).notNull().default("academic"),
+  isActive: boolean("isActive").notNull().default(true),
+  documentsIngested: int("documentsIngested").notNull().default(0),
+  claimsExtracted: int("claimsExtracted").notNull().default(0),
+  queriesRun: int("queriesRun").notNull().default(0),
+  lastRunAt: timestamp("lastRunAt"),
+  lastError: text("lastError"),
+  config: text("config"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type IngestionSource = typeof ingestionSources.$inferSelect;
+export type InsertIngestionSource = typeof ingestionSources.$inferInsert;
+
+/**
+ * Stores individual verification results from the /verify comparison tool.
+ * Each row is one claim checked through the verdict engine, with a shareable URL.
+ */
+export const verificationResults = mysqlTable("verification_results", {
+  id: int("id").autoincrement().primaryKey(),
+  shareId: varchar("shareId", { length: 32 }).notNull().unique(),
+  claimText: text("claimText").notNull(),
+  verdict: mysqlEnum("verdict", ["supported", "refuted", "ambiguous", "insufficient_evidence", "error"]).notNull(),
+  confidenceScore: int("confidenceScore").notNull().default(0),
+  evidenceSummary: text("evidenceSummary"),
+  sourceUrls: text("sourceUrls"),
+  rawResponse: text("rawResponse"),
+  ipHash: varchar("ipHash", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type VerificationResult = typeof verificationResults.$inferSelect;
+export type InsertVerificationResult = typeof verificationResults.$inferInsert;
+
+/**
+ * Stores comparison results from the /compare Perplexity accuracy tool.
+ * Each row is one query + AI answer + claim verdicts, with a shareable URL.
+ */
+export const comparisons = mysqlTable("comparisons", {
+  id: int("id").autoincrement().primaryKey(),
+  shareId: varchar("shareId", { length: 32 }).notNull().unique(),
+  query: text("query").notNull(),
+  aiAnswer: text("aiAnswer").notNull(),
+  aiSource: varchar("aiSource", { length: 64 }).notNull().default("perplexity-sonar"),
+  claimsJson: text("claimsJson").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Comparison = typeof comparisons.$inferSelect;
+export type InsertComparison = typeof comparisons.$inferInsert;

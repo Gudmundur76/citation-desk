@@ -38,7 +38,7 @@ jobs:
           DATABASE_URL: ""
 
   # ── API contract test ─────────────────────────────────────────────────────────
-  # Runs against the live ttruthdesk.claims API.
+  # Runs against the live citation.manus.space API.
   # Fails loudly if the response shape changes — protecting llms-full.txt,
   # OAI-PMH, and RSS from silent breakage.
   #
@@ -74,7 +74,7 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 10 \
             -H "Accept: application/json" \
-            "https://ttruthdesk.claims/api/public/claims?page_size=1" || echo "000")
+            "https://citation.manus.space/api/public/claims?page_size=1" || echo "000")
           echo "status=$STATUS" >> $GITHUB_OUTPUT
           if [ "$STATUS" = "200" ]; then
             echo "Live API is reachable (HTTP $STATUS). Running contract tests."
@@ -82,11 +82,11 @@ jobs:
             echo "::warning::Live API returned HTTP $STATUS (expected 200). Contract tests will be skipped — likely a billing/infra outage."
           fi
 
-      - name: Run API contract test against live ttruthdesk.claims
+      - name: Run API contract test against live citation.manus.space
         if: steps.reachability.outputs.status == '200'
         run: pnpm test server/apiContract.test.ts
         env:
-          TTRUTHDESK_BASE_URL: "https://ttruthdesk.claims"
+          TTRUTHDESK_BASE_URL: "https://citation.manus.space"
           SKIP_CONTRACT_TESTS: "false"
           JWT_SECRET: "ci-test-secret"
           DATABASE_URL: ""
@@ -94,11 +94,11 @@ jobs:
       - name: Skip contract tests (API unreachable)
         if: steps.reachability.outputs.status != '200'
         run: |
-          echo "Contract tests skipped — ttruthdesk.claims returned HTTP ${{ steps.reachability.outputs.status }}."
-          echo "Tests will run automatically once the live API is restored."
+          echo "Contract tests skipped — citation.manus.space returned HTTP ${{ steps.reachability.outputs.status }}."
+          echo "Tests will run automatically once the live API is restored (citation.manus.space)."
 
   # ── Drive staleness check ─────────────────────────────────────────────────────
-  # Mirrors the same check in ttruthdesk-platform CI.
+  # Mirrors the same check in ttruthdesk-platform CI (citation.manus.space).
   # Warns if manus-persistent-drive has not been updated in > 48 hours.
   drive-staleness:
     name: Drive Staleness
