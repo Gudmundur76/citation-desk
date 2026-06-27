@@ -15,5 +15,10 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["server/**/*.test.ts", "server/**/*.spec.ts"],
+    env: {
+      // Skip live-API contract tests in CI/local when backend is not deployed.
+      // Override by setting SKIP_CONTRACT_TESTS=false in your shell before running tests.
+      SKIP_CONTRACT_TESTS: process.env.SKIP_CONTRACT_TESTS ?? "true",
+    },
   },
 });
