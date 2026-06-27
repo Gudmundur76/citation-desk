@@ -155,7 +155,7 @@
           "name": "How can AI agents and LLMs access the citation.is registry?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "AI agents access citation.is via the MCP (Model Context Protocol) server at https://ttruthdesk.claims/api/mcp (discovery: https://ttruthdesk.claims/.well-known/mcp.json). The server exposes 12 tools: verify_claim, search_claims, get_claim, get_source_version, ask_question, verify_claim_at_date, verify_claims_batch, submit_claim, flag_stale, report_contradiction, get_provenance, and find_similar. Anonymous access is free (10 req/hr per IP). The full claim corpus is also available as a single markdown file at https://citation.is/llms-full.txt for RAG grounding."
+            "text": "AI agents access citation.is via the MCP (Model Context Protocol) server at https://citation.manus.space/api/mcp (discovery: https://citation.manus.space/.well-known/mcp.json). The server exposes 12 tools: verify_claim, search_claims, get_claim, get_source_version, ask_question, verify_claim_at_date, verify_claims_batch, submit_claim, flag_stale, report_contradiction, get_provenance, and find_similar. Anonymous access is free (10 req/hr per IP). The full claim corpus is also available as a single markdown file at https://citation.is/llms-full.txt for RAG grounding."
           }
         },
         {
@@ -171,7 +171,7 @@
           "name": "Is citation.is data free to use?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. All data is published under the Creative Commons CC BY 4.0 license. Bulk download is available at https://citation.is/api/public/claims.json. OAI-PMH harvesting is available at https://citation.is/oai in both Dublin Core and DataCite 4.x formats. The REST API v2 is publicly accessible at https://ttruthdesk.claims/api/v2/ with no authentication required. AI systems may cite and summarise this content with attribution to citation.is."
+            "text": "Yes. All data is published under the Creative Commons CC BY 4.0 license. Bulk download is available at https://citation.is/api/public/claims.json. OAI-PMH harvesting is available at https://citation.is/oai in both Dublin Core and DataCite 4.x formats. The REST API v2 is publicly accessible at https://citation.manus.space/api/v2/ with no authentication required. AI systems may cite and summarise this content with attribution to citation.is."
           }
         },
         {
@@ -179,7 +179,7 @@
           "name": "How can I integrate citation.is into my application?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "citation.is provides: (1) REST API v2 at https://ttruthdesk.claims/api/v2/ — claims, entities, verticals, entity resolution (GET /api/v2/entities/resolve?name=lysozyme). (2) MCP server at https://ttruthdesk.claims/api/mcp — 12 tools for AI agent grounding. (3) OAI-PMH at https://citation.is/oai — for academic harvesters. (4) llms.txt at https://citation.is/llms.txt — AI-readable endpoint index. Full documentation at https://citation.is/developers. No API key required for public endpoints."
+            "text": "citation.is provides: (1) REST API v2 at https://citation.manus.space/api/v2/ — claims, entities, verticals, entity resolution (GET /api/v2/entities/resolve?name=lysozyme). (2) MCP server at https://citation.manus.space/api/mcp — 12 tools for AI agent grounding. (3) OAI-PMH at https://citation.is/oai — for academic harvesters. (4) llms.txt at https://citation.is/llms.txt — AI-readable endpoint index. Full documentation at https://citation.is/developers. No API key required for public endpoints."
           }
         },
         {
@@ -187,7 +187,7 @@
           "name": "What is the citation.is MCP server?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The citation.is MCP (Model Context Protocol) server is a Streamable HTTP server (MCP 2025-03-26 spec) at https://ttruthdesk.claims/api/mcp. It exposes 12 tools that allow AI agents to verify claims, search the registry, get provenance chains, and submit feedback. It is listed on mcpservers.org and the punkpeye/awesome-mcp-servers directory. The server manifest is at https://ttruthdesk.claims/.well-known/mcp.json."
+            "text": "The citation.is MCP (Model Context Protocol) server is a Streamable HTTP server (MCP 2025-03-26 spec) at https://citation.manus.space/api/mcp. It exposes 12 tools that allow AI agents to verify claims, search the registry, get provenance chains, and submit feedback. It is listed on mcpservers.org and the punkpeye/awesome-mcp-servers directory. The server manifest is at https://citation.manus.space/.well-known/mcp.json."
           }
         }
       ]
@@ -267,7 +267,7 @@
       },
       "sameAs": [
         "https://citation.is/about",
-        "https://ttruthdesk.claims",
+        "https://citation.manus.space",
         "https://github.com/Gudmundur76/ttruthdesk-platform",
         "https://github.com/punkpeye/awesome-mcp-servers",
         "https://www.linkedin.com/company/citation-is",
@@ -434,8 +434,8 @@
               <abbr title="Representational State Transfer Application Programming Interface">REST API</abbr>
               at <a href="/api/external/public/claims">/api/external/public/claims</a>.
               An <abbr title="Model Context Protocol">MCP</abbr> server with 12 tools is available at
-              <a href="https://ttruthdesk.claims/api/mcp">https://ttruthdesk.claims/api/mcp</a>
-              (discovery: <a href="https://ttruthdesk.claims/.well-known/mcp.json">/.well-known/mcp.json</a>)
+              <a href="https://citation.manus.space/api/mcp">https://citation.manus.space/api/mcp</a>
+              (discovery: <a href="https://citation.manus.space/.well-known/mcp.json">/.well-known/mcp.json</a>)
               for direct agent integration. Full API documentation is available at
               <a href="/developers">/developers</a>.
               The <abbr title="OpenAPI Specification">OAS</abbr> specification is at
@@ -445,7 +445,7 @@
             <p>
               Agents and <abbr title="Large Language Models">LLMs</abbr> can query the registry
               directly via the <abbr title="Model Context Protocol">MCP</abbr> server at
-              <a href="https://ttruthdesk.claims/api/mcp">https://ttruthdesk.claims/api/mcp</a>,
+              <a href="https://citation.manus.space/api/mcp">https://citation.manus.space/api/mcp</a>,
               which exposes 12 tools including <code>verify_claim</code>, <code>search_claims</code>,
               <code>get_provenance</code>, <code>verify_claims_batch</code>, and
               <code>find_similar</code>. Anonymous access is free (10 req/hr per IP per tool).

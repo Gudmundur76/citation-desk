@@ -2,7 +2,7 @@
  * Heartbeat handler: /api/scheduled/claimDigest
  *
  * Triggered hourly by the Manus platform cron. Fetches the latest global
- * stats from the ttruthdesk.claims backend and dispatches a push notification
+ * stats from the citation.manus.space backend and dispatches a push notification
  * to all users who have enabled browser push.
  *
  * Auth: sdk.authenticateRequest -> user.isCron === true, user.taskUid set.

@@ -8,7 +8,7 @@
  *   - oai_dc  (Dublin Core — required by OAI-PMH spec)
  *   - datacite (DataCite Metadata Schema 4.x — required by OpenAIRE Guidelines for Data Archives)
  *
- * Records are fetched from the ttruthdesk.claims public API and mapped to
+ * Records are fetched from the citation.manus.space public API and mapped to
  * the appropriate XML schema on the fly. No local DB is required.
  *
  * Registration targets:
@@ -19,7 +19,7 @@
  */
 import type { Express, Request, Response } from 'express'
 
-const UPSTREAM_BASE = 'https://ttruthdesk.claims'
+const UPSTREAM_BASE = 'https://citation.manus.space'
 const REPOSITORY_NAME = 'citation.is — Verified Scientific Claims Registry'
 const BASE_URL = 'https://citation.is/oai'
 const ADMIN_EMAIL = 'admin@citation.is'

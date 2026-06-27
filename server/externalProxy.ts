@@ -24,7 +24,7 @@
  */
 import type { Express, Request, Response } from 'express'
 
-const UPSTREAM_BASE = process.env.TTRUTHDESK_BASE_URL ?? 'https://ttruthdesk.claims'
+const UPSTREAM_BASE = process.env.TTRUTHDESK_BASE_URL ?? 'https://citation.manus.space'
 
 // ─── In-memory response cache ─────────────────────────────────────────────────
 // Caches slow upstream responses so cold-start + slow upstream don't stack.

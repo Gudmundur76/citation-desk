@@ -21,7 +21,7 @@
  */
 import type { Express, Request, Response, NextFunction } from 'express'
 
-const UPSTREAM_BASE = 'https://ttruthdesk.claims'
+const UPSTREAM_BASE = 'https://citation.manus.space'
 
 const LINK_HEADER_VALUE = [
   // Markdown alternate (RFC 9110 content negotiation)

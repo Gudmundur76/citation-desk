@@ -2,7 +2,7 @@
  * Vitest tests for the /api/external/public/* proxy endpoints.
  *
  * These tests verify that the Express proxy correctly forwards requests to
- * the ttruthdesk.claims public REST API and returns well-formed responses.
+ * the citation.manus.space public REST API and returns well-formed responses.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import express from 'express'
@@ -69,7 +69,7 @@ describe('Public REST proxy — /api/external/public/*', () => {
 
     // Verify the upstream URL was constructed correctly
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('ttruthdesk.claims/api/public/claims')
+    expect(calledUrl).toContain('citation.manus.space/api/public/claims')
     expect(calledUrl).toContain('page=1')
     expect(calledUrl).toContain('page_size=2')
   })
@@ -97,7 +97,7 @@ describe('Public REST proxy — /api/external/public/*', () => {
     expect(res.body.confidence_score).toBe(0.95)
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('ttruthdesk.claims/api/public/claims/300002')
+    expect(calledUrl).toContain('citation.manus.space/api/public/claims/300002')
   })
 
   it('forwards 404 when the upstream returns 404', async () => {

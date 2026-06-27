@@ -309,7 +309,7 @@ export const appRouter = router({
         })
       )
       .mutation(async ({ input }) => {
-        const res = await fetch("https://ttruthdesk.claims/api/public/verify-claim", {
+        const res = await fetch("https://citation.manus.space/api/public/verify-claim", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ claim: input.claimText }),
@@ -359,7 +359,7 @@ export const appRouter = router({
   }),
 
   /**
-   * Public pipeline status — proxies live stats from ttruthdesk.claims API.
+   * Public pipeline status — proxies live stats from citation.manus.space API.
    * Used by the /status page on citation.is.
    */
   status: router({
@@ -370,7 +370,7 @@ export const appRouter = router({
      */
     domains: publicProcedure.query(async () => {
       try {
-        const res = await fetch("https://ttruthdesk.claims/api/public/status/domains", {
+        const res = await fetch("https://citation.manus.space/api/public/status/domains", {
           signal: AbortSignal.timeout(8000),
         });
         if (!res.ok) throw new Error(`ttruthdesk domains returned ${res.status}`);
@@ -424,7 +424,7 @@ export const appRouter = router({
     }),
     pipeline: publicProcedure.query(async () => {
       try {
-        const res = await fetch("https://ttruthdesk.claims/api/public/stats", {
+        const res = await fetch("https://citation.manus.space/api/public/stats", {
           signal: AbortSignal.timeout(8000),
         });
         if (!res.ok) throw new Error(`ttruthdesk stats returned ${res.status}`);

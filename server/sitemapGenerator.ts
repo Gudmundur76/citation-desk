@@ -6,13 +6,13 @@
  *   /sitemap-pages.xml     → Static pages (core routes, OAI-PMH, data endpoints)
  *   /sitemap-claims.xml    → All claim detail pages (/claims/:id), fetched live
  *
- * Claims are fetched from the ttruthdesk.claims public REST API and cached for
+ * Claims are fetched from the citation.manus.space public REST API and cached for
  * 30 minutes (stale-while-revalidate pattern) so the sitemap stays fresh without
  * hammering the upstream on every crawler request.
  */
 import type { Express, Request, Response } from 'express'
 
-const UPSTREAM_BASE = process.env.TTRUTHDESK_BASE_URL ?? 'https://ttruthdesk.claims'
+const UPSTREAM_BASE = process.env.TTRUTHDESK_BASE_URL ?? 'https://citation.manus.space'
 const UPSTREAM_PUBLIC = `${UPSTREAM_BASE}/api/public`
 const SITE_BASE = 'https://citation.is'
 

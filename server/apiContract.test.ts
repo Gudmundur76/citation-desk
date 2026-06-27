@@ -1,7 +1,7 @@
 /**
  * apiContract.test.ts
  *
- * Validates that the ttruthdesk.claims public API response shape matches the
+ * Validates that the citation.manus.space public API response shape matches the
  * contract that citation-desk depends on.
  *
  * This test runs against the LIVE upstream API by default. Set
@@ -13,7 +13,7 @@
  * ── Actual API shape (paginated) ─────────────────────────────────────────────
  * GET /api/public/claims?page_size=5
  * {
- *   "$schema": "https://ttruthdesk.claims/api/public/schemas/claims.schema.json",
+ *   "$schema": "https://citation.manus.space/api/public/schemas/claims.schema.json",
  *   "generated_at": "2026-...",
  *   "page": 1,
  *   "page_size": 5,
@@ -48,7 +48,7 @@
 import { describe, it, expect, beforeAll } from "vitest";
 
 const BASE_URL =
-  process.env.TTRUTHDESK_BASE_URL ?? "https://ttruthdesk.claims";
+  process.env.TTRUTHDESK_BASE_URL ?? "https://citation.manus.space";
 const SKIP = process.env.SKIP_CONTRACT_TESTS === "true";
 
 // ─── Type mirrors (must stay in sync with claimsRoutes.ts serialiser) ─────────
@@ -154,7 +154,7 @@ function validateClaimRecord(claim: Record<string, unknown>, index: number) {
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
-describe("ttruthdesk.claims API contract", () => {
+describe("citation.manus.space API contract", () => {
   let response: PaginatedClaimsResponse;
 
   beforeAll(async () => {
@@ -194,7 +194,7 @@ describe("ttruthdesk.claims API contract", () => {
   it("$schema references the canonical schema URL", () => {
     if (SKIP) return;
     expect(
-      response.$schema.includes("ttruthdesk.claims") || response.$schema.includes("claims.schema.json"),
+      response.$schema.includes("citation.manus.space") || response.$schema.includes("claims.schema.json"),
       `$schema "${response.$schema}" must reference the canonical schema`
     ).toBe(true);
   });
