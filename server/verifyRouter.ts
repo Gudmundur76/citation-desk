@@ -15,7 +15,7 @@ import { verificationResults, ingestionSources } from "../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 
-const UPSTREAM_BASE = process.env.EXTERNAL_API_BASE_URL || "https://citation.manus.space";
+const UPSTREAM_BASE = process.env.EXTERNAL_API_BASE_URL || "https://ttruthdesk.claims";
 
 function generateShareId(): string {
   return crypto.randomBytes(12).toString("base64url");
@@ -64,32 +64,41 @@ export const verifyRouter = router({
       let rawResponse = "";
 
       try {
-        const res = await fetch(`${UPSTREAM_BASE}/api/public/verify`, {
+        const res = await fetch(`${UPSTREAM_BASE}/api/public/verify-claim`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ claim: input.claimText }),
-          signal: AbortSignal.timeout(30_000),
+          signal: AbortSignal.timeout(25_000),
         });
 
         if (res.ok) {
           const data = await res.json() as {
+            ok?: boolean;
             verdict?: string;
             confidence?: number;
-            summary?: string;
-            sources?: string[];
+            rationale?: string;
+            evidenceUrl?: string | null;
+            pubmedResults?: Array<{ pmid: string; title: string }>;
           };
           rawResponse = JSON.stringify(data);
 
           const v = (data.verdict ?? "").toLowerCase();
-          if (v === "supported") verdict = "supported";
-          else if (v === "refuted") verdict = "refuted";
+          if (v === "supported" || v === "partially supported") verdict = "supported";
+          else if (v === "refuted" || v === "contradicted") verdict = "refuted";
           else if (v === "ambiguous") verdict = "ambiguous";
-          else if (v === "insufficient_evidence" || v === "insufficient evidence") verdict = "insufficient_evidence";
+          else if (v === "insufficient evidence" || v === "insufficient_evidence") verdict = "insufficient_evidence";
           else verdict = "ambiguous";
 
-          confidenceScore = Math.round((data.confidence ?? 0) * 100);
-          evidenceSummary = data.summary ?? "";
-          sourceUrls = data.sources ?? [];
+          // ttruthdesk returns confidence as 0-1 or sometimes omits it; derive from verdict
+          confidenceScore = data.confidence != null
+            ? Math.round(data.confidence * 100)
+            : verdict === "supported" ? 75 : verdict === "refuted" ? 80 : 50;
+          evidenceSummary = data.rationale ?? "";
+          // Build source URLs from pubmed results
+          sourceUrls = (data.pubmedResults ?? []).slice(0, 5).map(
+            (r) => `https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/`
+          );
+          if (data.evidenceUrl) sourceUrls.unshift(data.evidenceUrl);
         } else {
           // Fallback: use LLM to provide a preliminary verdict
           const { invokeLLM } = await import("./_core/llm");
