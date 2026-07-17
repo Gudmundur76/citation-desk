@@ -9,6 +9,12 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? "",
   vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? "",
+  // SMTP (Stalwart at mail.iventure.studio)
+  smtpHost: process.env.SMTP_HOST ?? "mail.iventure.studio",
+  smtpPort: parseInt(process.env.SMTP_PORT ?? "587"),
+  smtpUser: process.env.SMTP_USER ?? "hello@iventure.studio",
+  smtpPass: process.env.SMTP_PASS ?? "",
+  smtpFrom: process.env.SMTP_FROM ?? "citation.is <hello@iventure.studio>",
   // PayPal checkout
   paypalClientId: process.env.PAYPAL_CLIENT_ID ?? "",
   paypalSecret: process.env.PAYPAL_SECRET ?? "",

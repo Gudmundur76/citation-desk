@@ -12,7 +12,7 @@ import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import * as db from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { sdk } from "./_core/sdk";
-import { notifyOwner } from "./_core/notification";
+import { sendEmail } from "./_core/mailer";
 
 const MAGIC_LINK_EXPIRY_MS = 15 * 60 * 1000; // 15 minutes
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
@@ -27,9 +27,11 @@ function isValidEmail(email: string): boolean {
 }
 
 async function sendMagicLinkEmail(email: string, magicLink: string): Promise<void> {
-  await notifyOwner({
-    title: `Magic link sign-in request`,
-    content: `Email: ${email}\n\nSign-in link (expires in 15 minutes):\n${magicLink}`,
+  await sendEmail({
+    to: email,
+    subject: "Your citation.is sign-in link",
+    text: `Click the link below to sign in to citation.is. It expires in 15 minutes.\n\n${magicLink}\n\nIf you did not request this, you can safely ignore this email.`,
+    html: `<p>Click the link below to sign in to <strong>citation.is</strong>. It expires in 15 minutes.</p><p><a href="${magicLink}" style="background:#000;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;display:inline-block;">Sign in to citation.is</a></p><p style="color:#666;font-size:12px;">If you did not request this, you can safely ignore this email.</p>`,
   });
 }
 
