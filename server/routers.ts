@@ -5,6 +5,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { createPayPalOrder, capturePayPalOrder } from "./paypal";
+import { storeClaim, recordVerdict } from "./memexBridge";
 import {
   createPendingSubscription,
   activateSubscription,
@@ -349,6 +350,22 @@ export const appRouter = router({
         };
 
         verificationStore.set(shareId, result);
+
+        // ── Memex SM-1 bridge (fire-and-forget, non-blocking) ────────────────
+        // Store claim as mol-frame then record the verdict. Both calls are
+        // silent on failure so they cannot break the verification flow.
+        void (async () => {
+          try {
+            const molId = await storeClaim(result.claimText, shareId);
+            if (molId) {
+              const primaryEvidence = sourceUrls[0] ?? null;
+              await recordVerdict(molId, verdict, primaryEvidence, result.confidenceScore);
+            }
+          } catch {
+            // intentionally silent
+          }
+        })();
+
         return result;
       }),
     getVerification: publicProcedure
