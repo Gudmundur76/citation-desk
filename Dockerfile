@@ -12,7 +12,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.4.1 --activate
 COPY package.json pnpm-lock.yaml ./
 COPY patches/ ./patches/
-RUN pnpm install --frozen-lockfile --prod --ignore-scripts
+RUN pnpm install --frozen-lockfile --ignore-scripts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
 EXPOSE 3000
