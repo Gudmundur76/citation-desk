@@ -1,0 +1,259 @@
+{
+  "version": "v1.1",
+  "run_date": "2026-07-18",
+  "model": "kimi-for-coding (Kimi K2.7 Code)",
+  "pipeline": "ttruthdesk v1.1 (3-rung ladder + affirmative REFUTED rule)",
+  "benchmark_set": "frozen-v1.json",
+  "metrics": {
+    "total_claims": 20,
+    "overall_accuracy": {
+      "n": 20,
+      "correct": 7,
+      "pct": 35.0
+    },
+    "over_abstention_rate": {
+      "n": 20,
+      "abstained": 12,
+      "pct": 60.0
+    },
+    "refuted_recall": {
+      "n": 5,
+      "correct": 0,
+      "pct": 0.0
+    },
+    "verified_recall": {
+      "n": 12,
+      "correct": 7,
+      "pct": 58.3
+    },
+    "mean_latency_s": 18.2
+  },
+  "verdict_distribution": {
+    "Supported": 7,
+    "Insufficient Evidence": 11,
+    "Partially Supported": 1,
+    "PARSE_ERROR": 1
+  },
+  "results": [
+    {
+      "claim": "Aspirin inhibits cyclooxygenase enzymes COX-1 and COX-2.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 18.0,
+      "rationale": "4 peer-reviewed papers support this claim. Top sources: PMID:39617432, PMID:38085520, PMID:38832248."
+    },
+    {
+      "claim": "The BRCA1 gene is located on chromosome 17q21.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 7.8,
+      "rationale": "5 peer-reviewed papers support this claim. Top sources: PMID:29395657, PMID:23946868, PMID:18429825."
+    },
+    {
+      "claim": "Metformin is a first-line treatment for type 2 diabetes.",
+      "expected": "VERIFIED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 23.5,
+      "rationale": "No peer-reviewed papers found for: \"Metformin activates AMP-activated protein kinase (AMPK) in human"
+    },
+    {
+      "claim": "HIV is a retrovirus that integrates into host cell DNA.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 8.5,
+      "rationale": "3 peer-reviewed papers support this claim. Top sources: PMID:41902262, PMID:42212695, PMID:42446939."
+    },
+    {
+      "claim": "The p53 protein is encoded by the TP53 tumor suppressor gene.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 10.0,
+      "rationale": "3 peer-reviewed papers support this claim. Top sources: PMID:42469441, PMID:42469225, PMID:42467280."
+    },
+    {
+      "claim": "Penicillin was discovered by Alexander Fleming in 1928.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 26.0,
+      "rationale": "2 peer-reviewed papers support this claim. Top sources: PMID:42234138, PMID:42346791."
+    },
+    {
+      "claim": "The human genome contains approximately 20,000-25,000 protein-coding genes.",
+      "expected": "VERIFIED",
+      "actual": "Partially Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 9.8,
+      "rationale": "1 peer-reviewed paper found (PMID:15496913): \"Finishing the euchromatic sequence of the human genome"
+    },
+    {
+      "claim": "mRNA vaccines work by introducing genetic instructions for cells to produce a protein.",
+      "expected": "VERIFIED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 23.0,
+      "rationale": "No peer-reviewed papers found for: \"mRNA vaccines against SARS-CoV-2 deliver mRNA encoding the viral"
+    },
+    {
+      "claim": "The MMR vaccine causes autism.",
+      "expected": "REFUTED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 28.0,
+      "rationale": "2 peer-reviewed papers support this claim. Top sources: PMID:32309885, PMID:30831578."
+    },
+    {
+      "claim": "Humans only use 10% of their brain.",
+      "expected": "REFUTED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 28.4,
+      "rationale": "No peer-reviewed papers found for: \"Glucose transporter 1 (SLC2A1/GLUT1) is highly expressed in huma"
+    },
+    {
+      "claim": "Antibiotics are effective against viral infections.",
+      "expected": "REFUTED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 15.6,
+      "rationale": "No peer-reviewed papers found for: \"Beta-lactam antibiotics inhibit bacterial peptidoglycan synthesi"
+    },
+    {
+      "claim": "Vitamin C megadoses cure the common cold.",
+      "expected": "REFUTED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 21.7,
+      "rationale": "No peer-reviewed papers found for: \"High-dose vitamin C supplementation (\u22651000 mg/day) does not sign"
+    },
+    {
+      "claim": "The appendix has no known function in humans.",
+      "expected": "REFUTED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 33.9,
+      "rationale": "No peer-reviewed papers found for: \"The human appendix contains submucosal lymphoid follicles that s"
+    },
+    {
+      "claim": "Coffee consumption is associated with reduced risk of Parkinson's disease.",
+      "expected": "AMBIGUOUS",
+      "actual": "PARSE_ERROR",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "?",
+      "query_rung": "?",
+      "latency_s": 0.4,
+      "rationale": "Parse error: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "claim": "Intermittent fasting is more effective than caloric restriction for weight loss.",
+      "expected": "AMBIGUOUS",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 18.8,
+      "rationale": "No peer-reviewed papers found for: \"Intermittent fasting produces comparable weight loss to continuo"
+    },
+    {
+      "claim": "Statins reduce all-cause mortality in primary prevention.",
+      "expected": "AMBIGUOUS",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 24.7,
+      "rationale": "No peer-reviewed papers found for: \"Statin therapy reduces all-cause mortality in adults without est"
+    },
+    {
+      "claim": "The normal resting heart rate for adults is 60 to 100 beats per minute.",
+      "expected": "VERIFIED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 14.5,
+      "rationale": "No peer-reviewed papers found for: \"Resting heart rate in healthy adults typically ranges from 60 to"
+    },
+    {
+      "claim": "The half-life of aspirin in the body is approximately 15-20 minutes.",
+      "expected": "VERIFIED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 24.3,
+      "rationale": "No peer-reviewed papers found for: \"Aspirin (acetylsalicylic acid) is rapidly hydrolyzed in human bl"
+    },
+    {
+      "claim": "Type 1 diabetes is caused by autoimmune destruction of beta cells in the pancreas.",
+      "expected": "VERIFIED",
+      "actual": "Insufficient Evidence",
+      "normalized": "ABSTAIN",
+      "correct": false,
+      "api_version": "1.5",
+      "query_rung": 3,
+      "latency_s": 19.2,
+      "rationale": "No peer-reviewed papers found for: \"Autoantibodies against glutamic acid decarboxylase 65 (GAD65) ar"
+    },
+    {
+      "claim": "The SARS-CoV-2 spike protein binds to the ACE2 receptor.",
+      "expected": "VERIFIED",
+      "actual": "Supported",
+      "normalized": "VERIFIED",
+      "correct": true,
+      "api_version": "1.5",
+      "query_rung": 1,
+      "latency_s": 8.2,
+      "rationale": "5 peer-reviewed papers support this claim. Top sources: PMID:42469224, PMID:42467522, PMID:42446520."
+    }
+  ]
+}
